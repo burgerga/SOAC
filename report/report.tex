@@ -1,0 +1,32 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[pdftex]{graphicx}
+\usepackage{amsmath,amssymb}
+
+\author{Gerhard Burger \and Jelmer Wolterink}
+\title{schmerzimovka ofzo}
+
+\newcommand{\abs}[1]{\left\lvert#1\right\rvert}
+
+\begin{document}
+\maketitle
+
+Upstream advection equation on staggered grid:
+\begin{equation}
+ \psi_i^{N+1} = \psi_i^N - \left\{ F \left( \psi_i^N,\psi_{i+1}^N,u_{i+1/2}^N\right) 
+-F \left( \psi_{i-1}^N,\psi_{i}^N,u_{i-1/2}^N\right) \right\},
+\end{equation}
+where
+\begin{multline}
+F \left( \psi_i^N,\psi_{i+1}^N,u_{i+1/2}^N\right) = 
+\left[ \left( u_{i+1/2}^N + \abs{u_{i+1/2}^N} \right) \psi_i^N 
++ \left( u_{i+1/2}^N + \abs{u_{i+1/2}^N} \right) \psi_{i+1}^N \right]
+\frac{\Delta t}{2 \Delta x}.
+\end{multline}
+This gives
+\begin{equation}
+\psi_i^{N+1} = \psi_i^N - \left[ \left( u_{i+1/2}^N + \abs{u_{i+1/2}^N} \right) \psi_i^N 
++ \left( u_{i+1/2}^N + \abs{u_{i+1/2}^N} \right) \psi_{i+1}^N \right]
+\frac{\Delta t}{2 \Delta x}
+\end{equation}
+
+\end{document}
