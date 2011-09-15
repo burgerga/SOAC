@@ -1,7 +1,7 @@
-This is pdfeTeX, Version 3.141592-1.21a-2.2 (Web2C 7.5.4) (format=pdflatex 2010.5.8)  15 SEP 2011 10:39
+This is pdfeTeX, Version 3.141592-1.21a-2.2 (Web2C 7.5.4) (format=pdflatex 2010.5.8)  15 SEP 2011 10:38
 entering extended mode
-**report.tex
-(./report.tex
+**report/report.tex
+(./report/report.tex
 LaTeX2e <2003/12/01>
 Babel <v3.8d> and hyphenation patterns for american, french, german, ngerman, b
 ahasa, basque, bulgarian, catalan, croatian, czech, danish, dutch, esperanto, e
@@ -117,7 +117,8 @@ Package: amsfonts 2001/10/25 v2.2f
 \symAMSb=\mathgroup5
 LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
 (Font)                  U/euf/m/n --> U/euf/b/n on input line 132.
-)) (./report.aux)
+))
+No file report.aux.
 \openout1 = `report.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 10.
@@ -132,7 +133,6 @@ LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 10.
 LaTeX Font Info:    ... okay on input line 10.
 LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 10.
 LaTeX Font Info:    ... okay on input line 10.
-
 (/usr/share/texmf/tex/context/base/supp-pdf.tex
 (/usr/share/texmf/tex/context/base/supp-mis.tex
 loading : Context Support Macros / Miscellaneous (2004.10.26)
@@ -179,13 +179,13 @@ File: umsb.fd 2002/01/19 v2.2g AMS font definitions
 
 {/usr/share/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] (./report.aux) ) 
 Here is how much of TeX's memory you used:
- 1782 strings out of 94500
- 20331 string characters out of 1176767
+ 1781 strings out of 94500
+ 20330 string characters out of 1176767
  72500 words of memory out of 1000000
  4962 multiletter control sequences out of 10000+50000
  11192 words of font info for 44 fonts, out of 500000 for 2000
  580 hyphenation exceptions out of 1000
- 27i,18n,24p,222b,189s stack positions out of 1500i,500n,5000p,200000b,5000s
+ 27i,18n,24p,229b,189s stack positions out of 1500i,500n,5000p,200000b,5000s
 PDF statistics:
  28 PDF objects out of 300000
  0 named destinations out of 131072

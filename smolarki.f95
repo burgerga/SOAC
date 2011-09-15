@@ -29,9 +29,22 @@ PROGRAM Smolarkiewicz
 
  PRINT*, grid(1,:)
  PRINT*, velocity_u
+ PRINT*, MATRIX(velocity_u)
  CLOSE(10)
  
  DEALLOCATE(initial_x)
  DEALLOCATE(velocity_u)
  DEALLOCATE(grid)
+ CONTAINS 
+  FUNCTION MATRIX(velocity_u)
+   REAL, DIMENSION(:) :: velocity_u
+   REAL, DIMENSION(size(velocity_u)-1,size(velocity_u)-1) :: MATRIX
+   INTEGER :: i, dimen
+   dimen = size(velocity_u) - 1
+   DO i=1, dimen, 1
+    MATRIX(i,i) = 
+   ENDDO
+
+ END FUNCTION 
+
 END PROGRAM 
