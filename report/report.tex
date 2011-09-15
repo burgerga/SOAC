@@ -12,21 +12,32 @@
 
 Upstream advection equation on staggered grid:
 \begin{equation}
- \psi_i^{N+1} = \psi_i^N - \left\{ F \left( \psi_i^N,\psi_{i+1}^N,u_{i+1/2}^N\right) 
--F \left( \psi_{i-1}^N,\psi_{i}^N,u_{i-1/2}^N\right) \right\},
+ \psi_i^{N+1} = \psi_i^N - \Big( F \left( \psi_i^N,\psi_{i+1}^N,u_{i+1/2}^N\right) 
+-F \left( \psi_{i-1}^N,\psi_{i}^N,u_{i-1/2}^N\right) \Big),
 \end{equation}
 where
 \begin{multline}
-F \left( \psi_i^N,\psi_{i+1}^N,u_{i+1/2}^N\right) = 
-\left[ \left( u_{i+1/2}^N + \abs{u_{i+1/2}^N} \right) \psi_i^N 
-+ \left( u_{i+1/2}^N + \abs{u_{i+1/2}^N} \right) \psi_{i+1}^N \right]
+F \left( \psi_i^N,\psi_{i+1}^N,u_{i+1/2}^N\right) =\\ 
+\Big( \left( u_{i+1/2}^N + \abs{u_{i+1/2}^N} \right) \psi_i^N 
++ \left( u_{i+1/2}^N - \abs{u_{i+1/2}^N} \right) \psi_{i+1}^N \Big)
 \frac{\Delta t}{2 \Delta x}.
 \end{multline}
 This gives
+\begin{multline}
+\psi_i^{N+1} = \psi_i^N - \frac{\Delta t}{2 \Delta x} \bigg( \Big( \left( u_{i+1/2}^N + \abs{u_{i+1/2}^N} \right) \psi_i^N 
++ \left( u_{i+1/2}^N - \abs{u_{i+1/2}^N} \right) \psi_{i+1}^N \Big)
+\\
+- \Big( \left( u_{i-1/2}^N + \abs{u_{i-1/2}^N} \right) \psi_{i-1}^N 
++ \left( u_{i-1/2}^N - \abs{u_{i-1/2}^N} \right) \psi_{i}^N \Big) \bigg).
+\end{multline}
+Collecting terms gives the method of lines representation
 \begin{equation}
-\psi_i^{N+1} = \psi_i^N - \left[ \left( u_{i+1/2}^N + \abs{u_{i+1/2}^N} \right) \psi_i^N 
-+ \left( u_{i+1/2}^N + \abs{u_{i+1/2}^N} \right) \psi_{i+1}^N \right]
-\frac{\Delta t}{2 \Delta x}
+\begin{split}
+\psi_i^{N+1} &= 
+\frac{\Delta t}{2 \Delta x} \left( u_{i-1/2}^N + \abs{u_{i-1/2}^N} \right) \psi_{i-1}^N\\
+&+ \left(1 - \frac{\Delta t}{2 \Delta x} \left( u_{i+1/2}^N + \abs{u_{i+1/2}^N} - u_{i-1/2}^N + \abs{u_{i-1/2}^N} \right) \right) \psi_i^N\\ 
+&-\frac{\Delta t}{2 \Delta x} \left( u_{i+1/2}^N - \abs{u_{i+1/2}^N} \right) \psi_{i+1}^N\\
+\end{split}
 \end{equation}
 
 \end{document}
