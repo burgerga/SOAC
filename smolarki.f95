@@ -1,7 +1,7 @@
 PROGRAM Smolarkiewicz
  IMPLICIT NONE
- INTEGER :: M, N, i
- REAL :: dx, dt, eps
+ INTEGER :: M, N, i, j, antidiffusion = 0
+ REAL :: dx, dt, eps, uv
  REAL, DIMENSION(:,:), ALLOCATABLE :: grid, A
  REAL, DIMENSION(:), ALLOCATABLE :: initial_x, psi_int, velocity_u, velocity_antidif
 
@@ -27,31 +27,36 @@ PROGRAM Smolarkiewicz
  READ*, dt
  PRINT*, "Give epsilon"
  READ*, eps
- 
+ PRINT*, "Give wind speed"
+ READ*, uv
+ PRINT*, "Antidiffusion step?"
+ READ*, antidiffusion
  grid(1,:) = initial_x
- PRINT*, "Initial value"
- PRINT*, initial_x
+ ! PRINT*, "Initial value"
+ ! PRINT*, initial_x
  ! PRINT*, grid(1,:)
+ velocity_u = uv
  ! PRINT*, velocity_u
- 
- A =  MATRIX(velocity_u, dx, dt)
- CALL MVEC(A, initial_x, psi_int)
- 
- PRINT*, "Multiplication matrix for first step"
- do i = 1, M
-  PRINT*, A(i,:)
- ENDDO 
- PRINT*, "PSI*"
- PRINT*, psi_int
-
- PRINT*, "Gting antidiffusion velocity"
- velocity_antidif  = ANTIDIF(velocity_u, psi_int, eps, dx, dt)
- PRINT*, velocity_antidif
- A =  MATRIX(velocity_antidif, dx, dt) 
- CALL MVEC(A, psi_int, initial_x)
- PRINT*, "Postoperation value"
- PRINT*, initial_x
-
+ PRINT*, antidiffusion
+ IF (antidiffusion == 1) THEN 
+ OPEN(20, file = "wavea.dat")
+ ELSE IF (antidiffusion == 0) THEN
+ OPEN(20, file = "wave.dat")
+ END IF
+ DO j = 1, N-1
+  A =  MATRIX(velocity_u, dx, dt)
+  IF(antidiffusion == 1) THEN
+  PRINT*, "Antidiffusion"
+  CALL MVEC(A, grid(j,:), psi_int)
+  velocity_antidif  = ANTIDIF(velocity_u, psi_int, eps, dx, dt)
+  A =  MATRIX(velocity_antidif, dx, dt) 
+  CALL MVEC(A, psi_int, grid(j+1,:))
+  ELSE IF (antidiffusion == 0) THEN 
+  CALL MVEC(A, grid(j,:), grid(j+1,:))
+  END IF
+  WRITE(20,*), grid(j+1,:)
+ ENDDO
+ CLOSE(20)
  DEALLOCATE(initial_x)
  DEALLOCATE(velocity_u)
  DEALLOCATE(grid)
