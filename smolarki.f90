@@ -1,6 +1,6 @@
 PROGRAM Smolarkiewicz
  IMPLICIT NONE
- INTEGER :: M, N, i
+ INTEGER :: M, N, i, ierror
  REAL :: dx, dt, eps
  REAL, DIMENSION(:,:), ALLOCATABLE :: grid, A
  REAL, DIMENSION(:), ALLOCATABLE :: initial_x, psi_int, velocity_u, velocity_antidif
@@ -9,18 +9,18 @@ PROGRAM Smolarkiewicz
  OPEN(10, file = "advec.dat")
  READ(10,*) M
  PRINT*, "Number of elements in space ", M
- ALLOCATE(initial_x(M))
- ALLOCATE(psi_int(M))
- ALLOCATE(velocity_u(M+1))
- ALLOCATE(velocity_antidif(M+1))
- ALLOCATE(A(M,M))
+ ALLOCATE(initial_x(M), STAT=ierror); IF (ierror /= 0) PRINT*, "initial_x : Allocation failed"
+ ALLOCATE(psi_int(M), STAT=ierror); IF (ierror /= 0) PRINT*, "psi_int : Allocation failed"
+ ALLOCATE(velocity_u(M+1), STAT=ierror); IF (ierror /= 0) PRINT*, "velocity_u : Allocation failed"
+ ALLOCATE(velocity_antidif(M+1), STAT=ierror); IF (ierror /= 0) PRINT*, "velocity_antidif : Allocation failed"
+ ALLOCATE(A(M,M), STAT=ierror); IF (ierror /= 0) PRINT*, "A : Allocation failed"
  READ(10,*) initial_x
  READ(10,*) velocity_u
  CLOSE(10)
  
  PRINT*, "How many timesteps?"
  READ*, N
- ALLOCATE(grid(N,M))
+ ALLOCATE(grid(N,M), STAT=ierror); IF (ierror /= 0) PRINT*, "grid : Allocation failed"
  PRINT*, "Give dx"
  READ*, dx
  PRINT*, "Give dt"
@@ -52,9 +52,18 @@ PROGRAM Smolarkiewicz
  PRINT*, "Postoperation value"
  PRINT*, initial_x
 
- DEALLOCATE(initial_x)
- DEALLOCATE(velocity_u)
- DEALLOCATE(grid)
+ IF (ALLOCATED(initial_x)) DEALLOCATE(initial_x,STAT=ierror)
+ IF (ierror /= 0) PRINT*, "initial_x : deallocation failed"
+ IF (ALLOCATED(initial_x)) DEALLOCATE(initial_x,STAT=ierror)
+ IF (ierror /= 0) PRINT*, "initial_x : deallocation failed"
+ IF (ALLOCATED(initial_x)) DEALLOCATE(initial_x,STAT=ierror)
+ IF (ierror /= 0) PRINT*, "initial_x : deallocation failed"
+ IF (ALLOCATED(initial_x)) DEALLOCATE(initial_x,STAT=ierror)
+ IF (ierror /= 0) PRINT*, "initial_x : deallocation failed"
+ IF (ALLOCATED(initial_x)) DEALLOCATE(initial_x,STAT=ierror)
+ IF (ierror /= 0) PRINT*, "initial_x : deallocation failed"
+ IF (ALLOCATED(initial_x)) DEALLOCATE(initial_x,STAT=ierror)
+ IF (ierror /= 0) PRINT*, "initial_x : deallocation failed"
  CONTAINS 
   ! This function builds the multiplication matrix based on the velocity vector u
   FUNCTION MATRIX(u, dx, dt)
