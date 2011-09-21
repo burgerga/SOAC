@@ -1,5 +1,6 @@
 #CC=pgf95
 CC=gfortran
+CFLAGS=-g
 
 TRG1=smolarki
 SRC1=smolarki.f95
@@ -12,7 +13,7 @@ all: $(TRG1)
 $(TRG1): $(OBJ1)
 
 %.out: %.f95
-	$(CC) $^ -o $@
+$(CC) $(CFLAGS) $^ -o $@
 	
 clean:
 	rm -f $(CLEANFLS) 
