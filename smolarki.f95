@@ -1,14 +1,9 @@
 PROGRAM Smolarkiewicz
  IMPLICIT NONE
-<<<<<<< HEAD
- INTEGER :: M, N, i, j, antidiffusion = 0
+ INTEGER :: count, ierror = 0, M, N, i, j, k, iterations
  REAL :: dx, dt, eps, uv, sc
-=======
- INTEGER :: count, ierror = 0, M, N, i, j, antidiffusion = 0
- REAL :: dx, dt, eps, uv
->>>>>>> 511e38922d89c9227b2792cfecafbcc450f56121
  REAL, DIMENSION(:,:), ALLOCATABLE :: grid, A
- REAL, DIMENSION(:), ALLOCATABLE :: initial_x, psi_int, velocity_u, velocity_antidif
+ REAL, DIMENSION(:), ALLOCATABLE :: initial_x, psi_int, psi_tem, velocity_u, velocity_antidif
  character(len=100) :: input_file
 
  count = command_argument_count()
@@ -25,52 +20,25 @@ PROGRAM Smolarkiewicz
 
  call read_input_file(input_file)
  
-<<<<<<< HEAD
- PRINT*, "How many timesteps?"
- READ*, N
- ALLOCATE(grid(N,M))
- PRINT*, "Give dx"
- READ*, dx
- PRINT*, "Give dt"
- READ*, dt
- PRINT*, "Give epsilon"
- READ*, eps
- PRINT*, "Give wind speed"
- READ*, uv
- PRINT*, "Antidiffusion step?"
- READ*, antidiffusion
- PRINT*, "Give Sc factor"
- READ*, sc
-=======
->>>>>>> 511e38922d89c9227b2792cfecafbcc450f56121
  grid(1,:) = initial_x
  velocity_u = uv
- IF (antidiffusion == 1) THEN 
- OPEN(20, file = "wavea.dat")
- ELSE IF (antidiffusion == 0) THEN
  OPEN(20, file = "wave.dat")
- END IF
+
+ PRINT*, iterations
  DO j = 1, N-1
   ! Build multiplication matrix
   A =  MATRIX(velocity_u, dx, dt)
-  
-  ! If antidiffusion step
-  IF(antidiffusion == 1) THEN
-  PRINT*, "Antidiffusion"
-  ! Multiply for first step
-  CALL MVEC(A, grid(j,:), psi_int)
-  ! Get antidiffusion velocity vector
-  velocity_antidif = ANTIDIF(velocity_u, psi_int, eps, dx, dt)
-  velocity_antidif = velocity_antidif * sc
-  ! Get matrix for second step
-  A =  MATRIX(velocity_antidif, dx, dt) 
-  ! Multiply again
-  CALL MVEC(A, psi_int, grid(j+1,:))
-  ! If no antidiffusion step
-  ELSE IF (antidiffusion == 0) THEN 
-  ! Find new vector directly with matrix multiplication
-  CALL MVEC(A, grid(j,:), grid(j+1,:))
-  END IF
+  psi_tem = grid(j,:)  
+  CALL MVEC(A, psi_tem, psi_int)
+  DO k = 1, iterations
+		PRINT*, "Iterating"
+	  psi_tem = psi_int
+	  velocity_antidif = ANTIDIF(velocity_u, psi_tem, eps, dx, dt)
+	  velocity_antidif = velocity_antidif * sc
+	  A =  MATRIX(velocity_antidif, dx, dt) 
+	  CALL MVEC(A, psi_tem, psi_int)
+  ENDDO
+  grid(j+1,:) = psi_int
   WRITE(20,*), grid(j+1,:)
  ENDDO
  CLOSE(20)
@@ -151,6 +119,7 @@ PROGRAM Smolarkiewicz
       read(buffer,*, iostat=ios) M
       ALLOCATE(initial_x(M), STAT=ierror); IF (ierror /= 0) PRINT*, "initial_x : Allocation failed"
       ALLOCATE(psi_int(M), STAT=ierror); IF (ierror /= 0) PRINT*, "psi_int : Allocation failed"
+      ALLOCATE(psi_tem(M), STAT=ierror); IF (ierror /= 0) PRINT*, "psi_tem : Allocation failed"
       ALLOCATE(velocity_u(M+1), STAT=ierror); IF (ierror /= 0) PRINT*, "velocity_u : Allocation failed"
       ALLOCATE(velocity_antidif(M+1), STAT=ierror); IF (ierror /= 0) PRINT*, "velocity_antidif : Allocation failed"
       ALLOCATE(A(M,M), STAT=ierror); IF (ierror /= 0) PRINT*, "A : Allocation failed"
@@ -163,10 +132,12 @@ PROGRAM Smolarkiewicz
       read(buffer,*, iostat=ios) dt
      case ('eps')
       read(buffer,*, iostat=ios) eps
+     case ('iterations')
+      read(buffer,*, iostat=ios) iterations
+     case ('sc')
+      read(buffer,*, iostat=ios) sc
      case ('uv')
       read(buffer,*, iostat=ios) uv
-     case ('antidiffusion')
-      read(buffer,*, iostat=ios) antidiffusion
      case ('initial_x')
       read(buffer,*, iostat=ios) initial_x
      case ('velocity_u')
