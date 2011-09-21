@@ -1,9 +1,9 @@
-PROGRAM Smolarkiewicz
+PROGRAM Smolarkiewicz2D
  IMPLICIT NONE
- INTEGER :: count, ierror = 0, M, N, i, j, k, iterations
- REAL :: dx, dt, eps, uv, sc
- REAL, DIMENSION(:,:), ALLOCATABLE :: grid, A
- REAL, DIMENSION(:), ALLOCATABLE :: initial_x, psi_int, psi_tem, velocity_u, velocity_antidif
+ INTEGER :: count, ierror = 0, MX, MY, N, i, j, k, iterations
+ REAL :: dx, dy, dt, eps, uv, sc
+ REAL, DIMENSION(:,:), ALLOCATABLE :: grid, A, u, v, u_a, v_a
+ REAL, DIMENSION(:), ALLOCATABLE :: initial, psi_int, psi_tem
  character(len=100) :: input_file
 
  count = command_argument_count()
@@ -20,22 +20,23 @@ PROGRAM Smolarkiewicz
 
  call read_input_file(input_file)
  
- grid(1,:) = initial_x
- velocity_u = uv
+ grid(1,:) = initial
+ u = uv
+ v = uv
  OPEN(20, file = "wave.dat")
 
  PRINT*, iterations
  DO j = 1, N-1
   ! Build multiplication matrix
-  A =  MATRIX(velocity_u, dx, dt)
+  A =  MATRIX(u, v, dx, dy, dt, MX, MY)
   psi_tem = grid(j,:)  
   CALL MVEC(A, psi_tem, psi_int)
   DO k = 1, iterations
-		PRINT*, "Iterating"
+	  PRINT*, "Iterating"
 	  psi_tem = psi_int
-	  velocity_antidif = ANTIDIF(velocity_u, psi_tem, eps, dx, dt)
+	  velocity_antidif = ANTIDIF(velocity_u, psi_tem, eps, dx, dy, dt)
 	  velocity_antidif = velocity_antidif * sc
-	  A =  MATRIX(velocity_antidif, dx, dt) 
+	  A =  MATRIX(velocity_antidif, dx, dy, dt, MX, MY) 
 	  CALL MVEC(A, psi_tem, psi_int)
   ENDDO
   grid(j+1,:) = psi_int
@@ -44,14 +45,18 @@ PROGRAM Smolarkiewicz
  CLOSE(20)
 
  !deallocation
- IF (ALLOCATED(initial_x)) DEALLOCATE(initial_x,STAT=ierror)
- IF (ierror /= 0) PRINT*, "initial_x : deallocation failed"
+ IF (ALLOCATED(initial)) DEALLOCATE(initial_x,STAT=ierror)
+ IF (ierror /= 0) PRINT*, "initial : deallocation failed"
  IF (ALLOCATED(psi_int)) DEALLOCATE(psi_int,STAT=ierror)
  IF (ierror /= 0) PRINT*, "psi_int : deallocation failed"
- IF (ALLOCATED(velocity_u)) DEALLOCATE(velocity_u,STAT=ierror)
- IF (ierror /= 0) PRINT*, "velocity_u : deallocation failed"
- IF (ALLOCATED(velocity_antidif)) DEALLOCATE(velocity_antidif,STAT=ierror)
- IF (ierror /= 0) PRINT*, "velocity_antidif : deallocation failed"
+ IF (ALLOCATED(u)) DEALLOCATE(u,STAT=ierror)
+ IF (ierror /= 0) PRINT*, "u : deallocation failed"
+ IF (ALLOCATED(v)) DEALLOCATE(v,STAT=ierror)
+ IF (ierror /= 0) PRINT*, "v : deallocation failed"
+ IF (ALLOCATED(u_a)) DEALLOCATE(u_a,STAT=ierror)
+ IF (ierror /= 0) PRINT*, "u_a : deallocation failed"
+ IF (ALLOCATED(v_a)) DEALLOCATE(v_a,STAT=ierror)
+ IF (ierror /= 0) PRINT*, "v_a : deallocation failed"
  IF (ALLOCATED(A)) DEALLOCATE(A,STAT=ierror)
  IF (ierror /= 0) PRINT*, "A : deallocation failed"
  IF (ALLOCATED(grid)) DEALLOCATE(grid,STAT=ierror)
@@ -59,23 +64,43 @@ PROGRAM Smolarkiewicz
 
  CONTAINS 
   ! This function builds the multiplication matrix based on the velocity vector u
-  FUNCTION MATRIX(u, dx, dt)
+  FUNCTION MATRIX(u, v, dx, dy, dt, MX, MY)
    REAL :: dx, dt, div
-   REAL, DIMENSION(:) :: u
-   REAL, DIMENSION(size(u)-1,size(u)-1) :: MATRIX
+   REAL, DIMENSION(:) :: u, v, uu, vv
+   REAL, DIMENSION(MX*MY) :: MATRIX
    INTEGER :: i, dimen
 
-   dimen = size(u) - 1
-   div = dt/(2*dx)
-   DO i=2, dimen-1, 1
-    MATRIX(i,i-1) = div*(u(i)+abs(u(i))) 
-    MATRIX(i,i) = 1 - div*(u(i+1)+abs(u(i+1))-u(i)+abs(u(i)))
-    MATRIX(i,i+1) = -div*(u(i+1)-abs(u(i+1)))
+   dimen = MX*MY
+   alpha = dt/(2*dx)
+   beta = dt/(2*dy)
+
+   ! Build main diagonal
+   DO i=1, dimen, 1
+     uu = (u(:,i)+u(:,i+1))/2
+     vv = (v(i,:)+v(i+1,:))/2
+     MATRIX(i,i) = 1-alpha*(uu(i+1)+abs(uu(i+1)))+alpha*(uu(i)-abs(uu(i)))-beta*(vv(i+1)+abs(vv(i+1)))+beta*(vv(i)-abs(vv(i)))
    ENDDO
-   MATRIX(1,1) = 1 - div*(u(2)+abs(u(2))-u(1)+abs(u(1)))
-   MATRIX(dimen,dimen) = 1 - div*(u(dimen+1)+abs(u(dimen+1))-u(dimen)+abs(u(dimen))) 
-   MATRIX(1,2) = -div*(u(2)-abs(u(2)))
-   MATRIX(dimen,dimen-1) = div*(u(dimen)+abs(u(dimen)))
+
+   ! Build other for diagonals
+   DO i=1, dimen-1, 1
+     vv = (v(i,:)+v(i+1,:))/2
+     MATRIX(i,i-1) = beta*(vv(i)+abs(vv(i)))
+   ENDDO
+   
+   DO i=1, dimen-1, 1
+     vv = (v(i,:)+v(i+1,:))/2
+     MATRIX(i,i+1) = -beta*(vv(i+1)+abs(vv(i+1)))
+   ENDDO
+
+   DO i=1, dimen-MY, 1
+     uu = (u(:,i)+u(:,i+1))/2
+     MATRIX(i,i+MY) = alpha*(uu(i)+abs(uu(i)))
+   ENDDO
+
+   DO i=MY,dimen, 1
+     uu = (u(:,i)+u(:,i+1))/2
+     MATRIX(i,i-MY) = alpha*(uu(i+1)+abs(uu(i+1)))
+   ENDDO
   END FUNCTION 
 
   FUNCTION ANTIDIF(u, psi, eps, dx, dt)
@@ -115,20 +140,25 @@ PROGRAM Smolarkiewicz
      label = buffer(1:pos)
      buffer = buffer(pos+1:)
      select case (label)
-     case ('M')
-      read(buffer,*, iostat=ios) M
-      ALLOCATE(initial_x(M), STAT=ierror); IF (ierror /= 0) PRINT*, "initial_x : Allocation failed"
-      ALLOCATE(psi_int(M), STAT=ierror); IF (ierror /= 0) PRINT*, "psi_int : Allocation failed"
-      ALLOCATE(psi_tem(M), STAT=ierror); IF (ierror /= 0) PRINT*, "psi_tem : Allocation failed"
-      ALLOCATE(velocity_u(M+1), STAT=ierror); IF (ierror /= 0) PRINT*, "velocity_u : Allocation failed"
-      ALLOCATE(velocity_antidif(M+1), STAT=ierror); IF (ierror /= 0) PRINT*, "velocity_antidif : Allocation failed"
-      ALLOCATE(A(M,M), STAT=ierror); IF (ierror /= 0) PRINT*, "A : Allocation failed"
+     case ('MX')
+      read(buffer,*, iostat=ios) MX
+     case ('MY')
+      read(buffer,*, iostat=ios) MY
+      ALLOCATE(initial(MX*MY), STAT=ierror); IF (ierror /= 0) PRINT*, "initial : Allocation failed"
+      ALLOCATE(psi_int(MX*MY), STAT=ierror); IF (ierror /= 0) PRINT*, "psi_int : Allocation failed"
+      ALLOCATE(psi_tem(MX*MY), STAT=ierror); IF (ierror /= 0) PRINT*, "psi_tem : Allocation failed"
+      ALLOCATE(u((MX+1),(MY+1)), STAT=ierror); IF (ierror /= 0) PRINT*, "u : Allocation failed"
+      ALLOCATE(v((MX+1),(MY+1)), STAT=ierror); IF (ierror /= 0) PRINT*, "v : Allocation failed"
+      ALLOCATE(u_a((MX+1),(MY+1)), STAT=ierror); IF (ierror /= 0) PRINT*, "u_a : Allocation failed"
+      ALLOCATE(v_a((MX+1),(MY+1)), STAT=ierror); IF (ierror /= 0) PRINT*, "v_a : Allocation failed"
+      ALLOCATE(A((MX*MY),(MX*MY)), STAT=ierror); IF (ierror /= 0) PRINT*, "A : Allocation failed"
      case ('N')
       read(buffer,*, iostat=ios) N
       ALLOCATE(grid(N,M), STAT=ierror); IF (ierror /= 0) PRINT*, "grid : Allocation failed"
      case ('dx')
       read(buffer,*, iostat=ios) dx
-     case ('dt')
+     case ('dx')
+      read(buffer,*, iostat=ios) dx     case ('dt')
       read(buffer,*, iostat=ios) dt
      case ('eps')
       read(buffer,*, iostat=ios) eps
@@ -138,10 +168,12 @@ PROGRAM Smolarkiewicz
       read(buffer,*, iostat=ios) sc
      case ('uv')
       read(buffer,*, iostat=ios) uv
-     case ('initial_x')
+     case ('initial')
       read(buffer,*, iostat=ios) initial_x
-     case ('velocity_u')
-      read(buffer,*, iostat=ios) velocity_u
+     case ('u')
+      read(buffer,*, iostat=ios) u
+     case ('v')
+      read(buffer,*, iostat=ios) v
      case default
       if (.not.(label(1:1) == ' ' .or. label(1:1) == '!')) then
        print*, 'Skipping invalid label at line ', line
