@@ -1,13 +1,13 @@
 PROGRAM Smolarkiewicz
  IMPLICIT NONE
- INTEGER :: count, ierror = 0, M, N, i, j, k, iterations
+ INTEGER :: nargs, ierror, M, N, i, j, k, iterations
  REAL :: dx, dt, eps, uv, sc
  REAL, DIMENSION(:,:), ALLOCATABLE :: grid, A
  REAL, DIMENSION(:), ALLOCATABLE :: initial_x, psi_int, psi_tem, velocity_u, velocity_antidif
  character(len=100) :: input_file
 
- count = command_argument_count()
- if(count < 1) then
+ nargs = command_argument_count()
+ if(nargs < 1) then
   print*, "Please provide the name of the input file"
   stop 1
  else
@@ -20,18 +20,18 @@ PROGRAM Smolarkiewicz
 
  call read_input_file(input_file)
  
- grid(1,:) = initial_x
- velocity_u = uv
  OPEN(20, file = "wave.dat")
+ grid(1,:) = initial_x
+ write(20,*), grid(1,:)
+ velocity_u = uv
 
- PRINT*, iterations
  DO j = 1, N-1
   ! Build multiplication matrix
   A =  MATRIX(velocity_u, dx, dt)
   psi_tem = grid(j,:)  
   CALL MVEC(A, psi_tem, psi_int)
   DO k = 1, iterations
-		PRINT*, "Iterating"
+		!PRINT*, "Iterating"
 	  psi_tem = psi_int
 	  velocity_antidif = ANTIDIF(velocity_u, psi_tem, eps, dx, dt)
 	  velocity_antidif = velocity_antidif * sc
@@ -57,7 +57,9 @@ PROGRAM Smolarkiewicz
  IF (ALLOCATED(grid)) DEALLOCATE(grid,STAT=ierror)
  IF (ierror /= 0) PRINT*, "grid : deallocation failed"
 
- CONTAINS 
+ print*, "Program completed succesfully"
+
+CONTAINS 
   ! This function builds the multiplication matrix based on the velocity vector u
   FUNCTION MATRIX(u, dx, dt)
    REAL :: dx, dt, div
@@ -99,21 +101,28 @@ PROGRAM Smolarkiewicz
   END SUBROUTINE
 
   subroutine read_input_file(filename)
+   !inputs all relevant parameters from the inputfile specified on the commandline
    character(len=*), intent(in) :: filename
    character(len=30) :: label
    character(len=200) :: buffer
    integer, parameter :: i1fh = 11
-   integer :: pos, ios = 0, line = 0
+   integer :: pos1, ios = 0, line = 0
+   logical :: file_exists
 
+   inquire(file=filename,exist=file_exists)
+   if(.not. file_exists) then
+    print*, "ERROR: File ", trim(filename), " does not exist"
+    stop 1
+   end if
    open(i1fh, file=filename)
-   print*, "Reading parameters from file", filename
+   print*, "Reading parameters from file ", filename
    do while (ios == 0)
     read(i1fh,'(A)', iostat=ios) buffer
     if(ios == 0) then
      line = line + 1
-     pos = scan(buffer,' ')
-     label = buffer(1:pos)
-     buffer = buffer(pos+1:)
+     pos1 = scan(buffer,' ')
+     label = buffer(1:pos1)
+     buffer = buffer(pos1+1:)
      select case (label)
      case ('M')
       read(buffer,*, iostat=ios) M
@@ -144,7 +153,7 @@ PROGRAM Smolarkiewicz
       read(buffer,*, iostat=ios) velocity_u
      case default
       if (.not.(label(1:1) == ' ' .or. label(1:1) == '!')) then
-       print*, 'Skipping invalid label at line ', line
+       print*, 'Skipping invalid label at line', line
       end if 
      end select
     end if
