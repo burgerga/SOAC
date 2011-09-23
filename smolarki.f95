@@ -1,9 +1,9 @@
 PROGRAM Smolarkiewicz
  IMPLICIT NONE
- INTEGER :: M, N, i, j, antidiffusion = 0
- REAL :: dx, dt, eps, uv
+ INTEGER :: M, N, i, j, k, antidiffusion = 0, iterations 
+ REAL :: dx, dt, eps, uv, sc
  REAL, DIMENSION(:,:), ALLOCATABLE :: grid, A
- REAL, DIMENSION(:), ALLOCATABLE :: initial_x, psi_int, velocity_u, velocity_antidif
+ REAL, DIMENSION(:), ALLOCATABLE :: initial_x, psi_int, psi_tem, velocity_u, velocity_antidif
 
  PRINT*, "Reading dimensions from file"
  OPEN(10, file = "advec.dat")
@@ -11,11 +11,11 @@ PROGRAM Smolarkiewicz
  PRINT*, "Number of elements in space ", M
  ALLOCATE(initial_x(M))
  ALLOCATE(psi_int(M))
+ ALLOCATE(psi_tem(M))
  ALLOCATE(velocity_u(M+1))
  ALLOCATE(velocity_antidif(M+1))
  ALLOCATE(A(M,M))
  READ(10,*) initial_x
- READ(10,*) velocity_u
  CLOSE(10)
  
  PRINT*, "How many timesteps?"
@@ -31,6 +31,10 @@ PROGRAM Smolarkiewicz
  READ*, uv
  PRINT*, "Antidiffusion step?"
  READ*, antidiffusion
+ PRINT*, "Give Sc factor"
+ READ*, sc
+ PRINT*, "How many iterations?"
+ READ*, iterations
  grid(1,:) = initial_x
  ! PRINT*, "Initial value"
  ! PRINT*, initial_x
@@ -44,14 +48,29 @@ PROGRAM Smolarkiewicz
  OPEN(20, file = "wave.dat")
  END IF
  DO j = 1, N-1
+  ! Build multiplication matrix
   A =  MATRIX(velocity_u, dx, dt)
+  
+  ! If antidiffusion step
   IF(antidiffusion == 1) THEN
-  PRINT*, "Antidiffusion"
-  CALL MVEC(A, grid(j,:), psi_int)
-  velocity_antidif  = ANTIDIF(velocity_u, psi_int, eps, dx, dt)
+  psi_int = grid(j,:) 
+  DO k = 1, iterations
+  ! Multiply for first step
+  CALL MVEC(A, psi_int, psi_tem)
+  psi_int = psi_tem
+  ! Get antidiffusion velocity vector
+  velocity_antidif = ANTIDIF(velocity_u, psi_int, eps, dx, dt)
+  velocity_antidif = velocity_antidif * sc
+  ! Get matrix for second step
   A =  MATRIX(velocity_antidif, dx, dt) 
-  CALL MVEC(A, psi_int, grid(j+1,:))
+  ! Multiply again
+  CALL MVEC(A, psi_int, psi_tem)
+  psi_int = psi_tem
+  ! If no antidiffusion step
+  ENDDO
+  grid(j+1,:) = psi_int
   ELSE IF (antidiffusion == 0) THEN 
+  ! Find new vector directly with matrix multiplication
   CALL MVEC(A, grid(j,:), grid(j+1,:))
   END IF
   WRITE(20,*), grid(j+1,:)
@@ -87,8 +106,8 @@ PROGRAM Smolarkiewicz
    REAL, DIMENSION(size(u)) :: ANTIDIF
    INTEGER :: i, dimen
    dimen = size(u) 
-   DO i=1, dimen
-    ANTIDIF(i) = ((abs(u(i))*dx-dt*u(i)**2)*(psi(i+1)-psi(i)))/((psi(i)+psi(i+1)+eps)*dx)
+   DO i=2, dimen
+    ANTIDIF(i) = ((abs(u(i))*dx-dt*u(i)*u(i))*(psi(i)-psi(i-1)))/((psi(i-1)+psi(i)+eps)*dx)
    ENDDO
   END FUNCTION 
  
