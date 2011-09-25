@@ -1,0 +1,8 @@
+load wave.dat
+
+for i = 1 : size(wave,1) ; 
+    ma = reshape(wave(i,:),10,10) ; 
+    clf ; 
+    surf(ma) ; 
+    drawnow ;
+end ;

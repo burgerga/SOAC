@@ -28,6 +28,9 @@ PROGRAM Smolarkiewicz
  DO j = 1, N-1
   ! Build multiplication matrix
   A =  MATRIX(velocity_u, dx, dt)
+  DO k = 1 , 10
+   PRINT*, A(k,1:10)
+  ENDDO
   psi_tem = grid(j,:)  
   CALL MVEC(A, psi_tem, psi_int)
   DO k = 1, iterations
