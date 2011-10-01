@@ -86,60 +86,50 @@ FUNCTION MATRIX(m_u, m_v, dx, dy, dt, MX, MY)
    REAL :: dx, dy, dt, div, alpha, beta
    REAL, DIMENSION(:,:) :: m_u, m_v
    REAL, DIMENSION(MX*MY,MX*MY) :: MATRIX
-   INTEGER :: i, dimen, MX, MY, ii, jj
+   INTEGER :: dimen, MX, MY, ii, jj, di
 
    dimen = MX*MY
    alpha = dt/(2*dx)
    beta = dt/(2*dy)
-
+  ! ii and jj is location in grid, rows are ii columns are jj. eg. (4,3) is fourth row, third column
   ! PRINT*, "Build main diagonal D1"
   ! PRINT*, size(m_u), " en ", size(m_v), " en ", size(A)
-   DO i=1, dimen, 1
-     ii = i/MY + 1
-     jj = mod(i,MX)
-     if(jj.EQ.0) jj = MX
+   DO di=1, dimen, 1
+     ! Get location of psi element on normal grid  
+    CALL GETGRIDLOCATION(di, MX, MY, ii, jj)
     ! PRINT*, ii, " en ", jj, " en ", m_u(ii,jj), " en ", m_v(ii,jj)
      ! Interpolate u and v
-     MATRIX(i,i) = 1-alpha*(m_u(ii+1,jj)-abs(m_u(ii+1,jj)))+alpha*(m_u(ii,jj)+abs(m_u(ii,jj)))
-     MATRIX(i,i) = MATRIX(ii,jj) -beta*(m_v(ii,jj+1)-abs(m_v(ii,jj+1)))+beta*(m_v(ii,jj)+abs(m_v(ii,jj)))
+     MATRIX(di,di) = 1+alpha*(m_u(ii,jj+1)+abs(m_u(ii,jj+1)))-alpha*(m_u(ii,jj)-abs(m_u(ii,jj)))
+     MATRIX(di,di) = MATRIX(di,di) +beta*(m_v(ii+1,jj)+abs(m_v(ii+1,jj)))-beta*(m_v(ii,jj)-abs(m_v(ii,jj)))
    ENDDO
 
    ! Build other for diagonals
 ! D2
-   DO i=2, dimen, 1
-     ii = i/MY + 1
-     jj = mod(i,MX) 
-     if(jj.EQ.0) jj = MX
-     MATRIX(i,i-1) = alpha*(m_u(ii,jj)+abs(m_u(ii,jj)))
+   DO di=2, dimen, 1
+     CALL GETGRIDLOCATION(di, MX, MY, ii, jj)
+     MATRIX(di,di-1) = alpha*(m_u(ii,jj)+abs(m_u(ii,jj)))
    ENDDO
    
 ! D3
-   DO i=1, dimen-1, 1
-     ii = i/MY + 1
-     jj = mod(i,MX) 
-     if(jj.EQ.0) jj = MX
-     MATRIX(i,i+1) = -alpha*(m_u(ii+1,jj)-abs(m_u(ii+1,jj)))
+   DO di=1, dimen-1, 1
+     CALL GETGRIDLOCATION(di, MX, MY, ii, jj) 
+     MATRIX(di,di+1) = -alpha*(m_u(ii,jj+1)-abs(m_u(ii,jj+1)))
    ENDDO
 
 ! D4
-   DO i=MY+1,dimen, 1
-     ii = i/MY + 1
-     jj = mod(i,MX) 
-     if(jj.EQ.0) jj = MX
-
-     MATRIX(i,i-MY) = beta*(m_v(ii,jj)+abs(m_v(ii,jj)))
-
+   DO di=MY+1,dimen, 1
+     CALL GETGRIDLOCATION(di, MX, MY, ii, jj) 
+     MATRIX(di,di-MY) = beta*(m_v(ii,jj)+abs(m_v(ii,jj)))
    ENDDO
 
 ! D5
-   DO i=1, dimen-MY, 1
-     ii = i/MY + 1
-     jj = mod(i,MX) 
-     if(jj.EQ.0) jj = MX
-
-     MATRIX(i,i+MY) = -beta*(m_v(ii,jj+1)-abs(m_v(ii,jj+1)))
-
+   DO di=1, dimen-MY, 1
+     CALL GETGRIDLOCATION(di, MX, MY, ii, jj)
+     MATRIX(di,di+MY) = -beta*(m_v(ii+1,jj)-abs(m_v(ii+1,jj)))
    ENDDO
+
+   PRINT*, MATRIX(1,1:10)
+   PRINT*, MATRIX(2,1:10)
   END FUNCTION 
 
 
@@ -179,6 +169,12 @@ PRINT*, u(i,j),  " naar ", u_a(i,j), " delen door ", ((psi_mat(i-1,j)+psi_mat(i,
    ENDDO  
   END SUBROUTINE
 
+  SUBROUTINE GETGRIDLOCATION(di, MX, MY, ii, jj)
+   integer :: di, MX, MY, ii, jj
+   ii = (di-1) / MX + 1
+   jj = mod(di, MX) 
+   if(jj.EQ.0) jj = MX
+  END SUBROUTINE
 
   !! Read in files
   subroutine read_input_file(filename)
