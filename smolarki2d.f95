@@ -99,8 +99,8 @@ FUNCTION MATRIX(m_u, m_v, dx, dy, dt, MX, MY)
     CALL GETGRIDLOCATION(di, MX, MY, ii, jj)
     ! PRINT*, ii, " en ", jj, " en ", m_u(ii,jj), " en ", m_v(ii,jj)
      ! Interpolate u and v
-     MATRIX(di,di) = 1+alpha*(m_u(ii,jj+1)+abs(m_u(ii,jj+1)))-alpha*(m_u(ii,jj)-abs(m_u(ii,jj)))
-     MATRIX(di,di) = MATRIX(di,di) +beta*(m_v(ii+1,jj)+abs(m_v(ii+1,jj)))-beta*(m_v(ii,jj)-abs(m_v(ii,jj)))
+     MATRIX(di,di) = 1-alpha*(m_u(ii,jj+1)+abs(m_u(ii,jj+1))-(m_u(ii,jj)+abs(m_u(ii,jj))))
+     MATRIX(di,di) = MATRIX(di,di) -beta*(m_v(ii+1,jj)+abs(m_v(ii+1,jj))-(m_v(ii,jj)+abs(m_v(ii,jj))))
    ENDDO
 
    ! Build other for diagonals
