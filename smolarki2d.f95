@@ -36,7 +36,14 @@ PROGRAM Smolarkiewicz2D
 
   A =  MATRIX(m_u, m_v, dx, dy, dt, MX, MY)
   psi_tem = grid(j,:)   
-  !PRINT*, psi_tem 
+ 
+  if(j.EQ.1) THEN
+	OPEN(30, file = "matrix.dat")
+	DO k=1, MX*MY
+	 WRITE(30,*), A(k,:)
+   	ENDDO
+  ENDIF
+	  !PRINT*, psi_tem 
   !Do k = 1, 12
 
   !PRINT*, A(k,1:12)
@@ -99,8 +106,8 @@ FUNCTION MATRIX(m_u, m_v, dx, dy, dt, MX, MY)
     CALL GETGRIDLOCATION(di, MX, MY, ii, jj)
     ! PRINT*, ii, " en ", jj, " en ", m_u(ii,jj), " en ", m_v(ii,jj)
      ! Interpolate u and v
-     MATRIX(di,di) = 1-alpha*(m_u(ii,jj+1)+abs(m_u(ii,jj+1))-(m_u(ii,jj)+abs(m_u(ii,jj))))
-     MATRIX(di,di) = MATRIX(di,di) -beta*(m_v(ii+1,jj)+abs(m_v(ii+1,jj))-(m_v(ii,jj)+abs(m_v(ii,jj))))
+     MATRIX(di,di) = 1-alpha*(m_u(ii,jj+1)+abs(m_u(ii,jj+1))-(m_u(ii,jj)-abs(m_u(ii,jj))))
+     MATRIX(di,di) = MATRIX(di,di) -beta*(m_v(ii+1,jj)+abs(m_v(ii+1,jj))-(m_v(ii,jj)-abs(m_v(ii,jj))))
    ENDDO
 
    ! Build other for diagonals
