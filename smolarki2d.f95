@@ -1,6 +1,6 @@
 PROGRAM Smolarkiewicz2D
  IMPLICIT NONE
- INTEGER :: count, ierror = 0, MX, MY, N, i, j, k, iterations, initial_pos
+ INTEGER :: count, ierror = 0, MX, MY, N, i, j, k, q, iterations, initial_pos
  REAL :: dx, dy, dt, eps, uv, sc, u, v
  REAL, DIMENSION(:,:), ALLOCATABLE :: grid, A, m_u, m_v, m_u_a, m_v_a
  REAL, DIMENSION(:), ALLOCATABLE :: initial, psi_int, psi_tem
@@ -36,21 +36,20 @@ PROGRAM Smolarkiewicz2D
 
   A =  MATRIX(m_u, m_v, dx, dy, dt, MX, MY)
   psi_tem = grid(j,:)   
-  !PRINT*, psi_tem 
-  !Do k = 1, 12
-
-  !PRINT*, A(k,1:12)
-  !ENDDO
   CALL MVEC(A, psi_tem, psi_int)
+  !if(j.EQ.2) THEN
+!	OPEN(30, file = "matrix.dat")!
+!	DO q=1, MX*MY
+!	 WRITE(30,*), A(q,:)
+ ! 	ENDDO
+!	CLOSE(30)
+ ! ENDIF
 
-  DO k = 1, iterations
+
+  DO q = 1, iterations
 	  PRINT*, "Iterating"
 	  psi_tem = psi_int
-
 	  CALL ANTIDIF(m_u, m_v, m_u_a, m_v_a, psi_tem, eps, dx, dy, dt, MX, MY)
-	  PRINT*, m_u(1,1:10), " en ", m_u_a(1,1:10)
-	  m_v_a = m_v_a * sc
-	  m_u_a = m_u_a * sc
 	  A =  MATRIX(m_u_a, m_v_a, dx, dy, dt, MX, MY) 
 	  CALL MVEC(A, psi_tem, psi_int)
   ENDDO
@@ -88,6 +87,7 @@ FUNCTION MATRIX(m_u, m_v, dx, dy, dt, MX, MY)
    REAL, DIMENSION(MX*MY,MX*MY) :: MATRIX
    INTEGER :: dimen, MX, MY, ii, jj, di
 
+   MATRIX = 0 
    dimen = MX*MY
    alpha = dt/(2*dx)
    beta = dt/(2*dy)
@@ -99,8 +99,8 @@ FUNCTION MATRIX(m_u, m_v, dx, dy, dt, MX, MY)
     CALL GETGRIDLOCATION(di, MX, MY, ii, jj)
     ! PRINT*, ii, " en ", jj, " en ", m_u(ii,jj), " en ", m_v(ii,jj)
      ! Interpolate u and v
-     MATRIX(di,di) = 1-alpha*(m_u(ii,jj+1)+abs(m_u(ii,jj+1))-(m_u(ii,jj)+abs(m_u(ii,jj))))
-     MATRIX(di,di) = MATRIX(di,di) -beta*(m_v(ii+1,jj)+abs(m_v(ii+1,jj))-(m_v(ii,jj)+abs(m_v(ii,jj))))
+     MATRIX(di,di) = 1-alpha*(m_u(ii,jj+1)+abs(m_u(ii,jj+1))-(m_u(ii,jj)-abs(m_u(ii,jj))))
+     MATRIX(di,di) = MATRIX(di,di) -beta*(m_v(ii+1,jj)+abs(m_v(ii+1,jj))-(m_v(ii,jj)-abs(m_v(ii,jj))))
    ENDDO
 
    ! Build other for diagonals
@@ -139,24 +139,28 @@ FUNCTION MATRIX(m_u, m_v, dx, dy, dt, MX, MY)
    REAL, DIMENSION(:) :: psi
    REAL, DIMENSION(MX+1, MY) :: u, u_a
    REAL, DIMENSION(MX, MY+1) :: v, v_a 
-   REAL, DIMENSION(MX, MY) :: psi_mat
-   INTEGER :: i, j, MX, MY
-   psi_mat = RESHAPE( psi, (/ MX, MY /))
+   INTEGER :: ii, jj, MX, MY, fi, se
+	
    ! Build antidiffusion vector u_a
-   DO j=1, MY
-	   DO i=2, MX+1
-	    u_a(i,j) = ((abs(u(i,j))*dx-dt*u(i,j)*u(i,j))*(psi_mat(i,j)-psi_mat(i-1,j)))/((psi_mat(i-1,j)+psi_mat(i,j)+eps)*dx)
-if(psi_mat(i,j) > 0) then
-PRINT*, u(i,j),  " naar ", u_a(i,j), " delen door ", ((psi_mat(i-1,j)+psi_mat(i,j)+eps)*dx), " met ", psi_mat(i,j)
-	  endif
- ENDDO
+   DO jj=1, MY
+     DO ii=1, MX-1
+	CALL GETVECTORLOCATION(fi, MX, MY, ii+1, jj) 
+	CALL GETVECTORLOCATION(se, MX, MY, ii, jj) 
+	u_a(ii+1,jj) = ((abs(u(ii+1,jj))*dx-dt*u(ii+1,jj)*u(ii+1,jj))*(psi(fi)-psi(se)))/((psi(fi)+psi(se)+eps)*dx)
+	!IF(abs(u_a(ii,jj)-u(ii,jj)) .GT. u(ii,jj)) THEN	
+	!PRINT*, u_a(ii,jj), " ", psi(fi), " ", psi(se), " ", u(ii,jj), " ", ii, " ", jj, " ", fi, " ", se, " "
+	!ENDIF
+     ENDDO
    ENDDO
    ! Build antidiffusion vector v_a
-   DO i=1, MX
-	   DO j=2, MY+1
-	    v_a(i,j) = ((abs(v(i,j))*dy-dt*v(i,j)*v(i,j))*(psi_mat(i,j)-psi_mat(i,j-1)))/((psi_mat(i,j-1)+psi_mat(i,j)+eps)*dy)
-	   ENDDO
-   ENDDO
+   DO ii=1, MX
+     DO jj=1, MY-1 
+	CALL GETVECTORLOCATION(fi, MX, MY, ii, jj+1) 
+	CALL GETVECTORLOCATION(se, MX, MY, ii, jj) 
+	v_a(ii,jj+1) =  ((abs(v(ii,jj+1))*dy-dt*v(ii,jj+1)*v(ii,jj+1))*(psi(fi)-psi(se)))/((psi(fi)+psi(se)+eps)*dy)
+	!PRINT*, v_a(ii,jj), " ", psi(fi), " ", psi(se), " ", v(ii,jj), " ", ii, " ", jj, " ", fi, " ", se, " "
+     ENDDO
+  ENDDO
   END SUBROUTINE
  
   ! This subroutine multiplies a matrix A with a vector x and returns their product y
@@ -170,10 +174,17 @@ PRINT*, u(i,j),  " naar ", u_a(i,j), " delen door ", ((psi_mat(i-1,j)+psi_mat(i,
   END SUBROUTINE
 
   SUBROUTINE GETGRIDLOCATION(di, MX, MY, ii, jj)
+   !ii, jj are locations in u and v matrices, di is location in gridvector
    integer :: di, MX, MY, ii, jj
    ii = (di-1) / MX + 1
    jj = mod(di, MX) 
    if(jj.EQ.0) jj = MX
+  END SUBROUTINE
+
+  SUBROUTINE GETVECTORLOCATION(di, MX, MY, ii, jj)
+   !ii, jj are locations in u and v matrices, di is location in gridvector
+   integer :: di, MX, MY, ii, jj
+   di = (ii-1)*MX+jj
   END SUBROUTINE
 
   !! Read in files
