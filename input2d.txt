@@ -12,3 +12,4 @@ v -0.2
 sc 1
 iterations 1
 initial_pos 625
+exit
