@@ -1,15 +1,15 @@
 !input file from which parameters are read in 2d case
 !IMPORTANT: M should be the first value to be able to correctly allocate arrays
-MX 50
-MY 50
+MX 100
+MY 100
 N 50
-dt 0.25
-dx 0.2
-dy 0.2  
+dt 1
+dx 0.5
+dy 0.5
 eps 0.000000000000000000000000000001
-u -0.2
-v -0.2
+u 0
+v 0.5
 sc 1
-iterations 1
-initial_pos 625
+iterations 0
+initial_pos 5050
 exit
