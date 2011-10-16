@@ -1,0 +1,11 @@
+!input file from which parameters are read
+!IMPORTANT: M should be the first value to be able to correctly allocate arrays
+M 240
+N 5000
+dt 0.5
+dx 0.5
+eps 0.000000000000000000000000000001
+uv 0.5
+sc 1
+iterations 2
+initial_x 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
