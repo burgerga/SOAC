@@ -26,12 +26,13 @@ PROGRAM Smolarkiewicz
 
 ! Read input file
  call read_input_file(input_file)
- 
+ eps = 0.00000000000000000001
 ! Open output file
  OPEN(20, file = "wave.dat")
 
 ! Initialize and write to file
  write(20,*), initial_x
+
  psi_int = initial_x
 ! Initialize velocity vector
  velocity_u = uv
@@ -124,7 +125,7 @@ CONTAINS
    REAL, DIMENSION(:) :: x, y
    REAL, DIMENSION(:,:) :: A
    !PRINT*, x
-   M = size(x)
+   M = size(x) 
    y(1) = A(1,2)*x(1) + A(1,3)*x(2) 
    DO i=2, M-1
     y(i) = sum(A(i,:) * x(i-1:i+1))
@@ -136,7 +137,7 @@ CONTAINS
 ! Inputs all relevant parameters from the inputfile specified on the commandline
    character(len=*), intent(in) :: filename
    character(len=30) :: label
-   character(len=200) :: buffer
+   character(len=20000) :: buffer
    integer, parameter :: i1fh = 11
    integer :: pos1, ios = 0, line = 0
    logical :: file_exists
