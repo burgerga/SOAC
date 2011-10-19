@@ -203,7 +203,7 @@ function edit1_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to edit1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
-
+kernel
 % Hint: edit controls usually have a white background on Windows.
 %       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
@@ -452,6 +452,7 @@ dt = str2num(get(handles.edit5, 'String')) ;
 sc = str2num(get(handles.edit6, 'String')) ;
 it = str2num(get(handles.edit7, 'String')) ;
 N = str2num(get(handles.edit9, 'String')) ;
+% Write first file
 fid = fopen(get(handles.edit8, 'String'), 'w');
 fprintf(fid, 'M %d\n', size);
 fprintf(fid, 'N %d\n', N);
@@ -470,15 +471,57 @@ for i = 1 : size ;
     fprintf(fid, ' %d', initial(i));
 end ;
 fclose(fid);
-stat = unix('../smolarki.out input.txt') ;
+
+% Write second file
+fid = fopen('noit.txt', 'w');
+fprintf(fid, 'M %d\n', size);
+fprintf(fid, 'N %d\n', N);
+fprintf(fid, 'dt %f\n', dt);
+fprintf(fid, 'dx %f\n', dx);
+fprintf(fid, 'eps %f\n', 0.000001);
+fprintf(fid, 'uv %f\n', u);
+fprintf(fid, 'sc %f\n', sc);
+fprintf(fid, 'iterations %d\n', 0);
+initial = zeros(1,size) ; 
+for i = 1 : numel(posarray) ;
+    initial(posarray(i)) =  1 ;
+end ;
+fprintf(fid, 'initial_x');
+for i = 1 : size ; 
+    fprintf(fid, ' %d', initial(i));
+end ;
+fclose(fid);
+
+stat = unix(['../smolarki.out ' get(handles.edit8, 'String')]) ;
+stat = unix('../smolarki.out noit.txt') ;
+
 disp(stat) ;
 wave = rand(100,240) ;
-load('wave.dat') ;
+load('wave0.dat') ;
+mywave = [] ;
+switch it
+   case 1
+      load('wave1.dat') ;
+      mywave = wave1 ;
+   case 2
+      load('wave2.dat') ;
+      mywave = wave2 ;
+   case 3
+      load('wave3.dat') ;
+      mywave = wave3 ;
+   otherwise
+      disp('Three iterations max.')
+end
+
 axes(handles.axes2);
 cla;
-for i = 1 : N ; plot(wave(i,:)) ;  axis([0 size 0 1]) ;drawnow ; end ;
-axes(handles.axes1);
-cla;
+for i = 1 : N ; 
+    clf ;
+    plot(wave0(i,:)) ;  
+    hold on ;
+    plot(mywave(i,:),'r') ;
+    axis([0 size 0 1]) ;
+    drawnow ; 
+end ;
 
-hist(posarray,size) ;
-axis([0 size 0 1]) ;
+

@@ -28,8 +28,15 @@ PROGRAM Smolarkiewicz
  call read_input_file(input_file)
  eps = 0.00000000000000000001
 ! Open output file
- OPEN(20, file = "wave.dat")
-
+ if(iterations .EQ. 0) then
+ OPEN(20, file = "wave0.dat")
+ elseif(iterations .EQ. 1) then
+ OPEN(20, file = "wave1.dat")
+ elseif(iterations .EQ. 2) then
+ OPEN(20, file = "wave2.dat")
+ elseif(iterations .EQ. 3) then
+ OPEN(20, file = "wave3.dat")
+ endif
 ! Initialize and write to file
  write(20,*), initial_x
 
@@ -39,7 +46,13 @@ PROGRAM Smolarkiewicz
 
 ! Repeat for N time steps
  DO j = 1, N-1
-
+!  CALL UPDATE_VELOCITY(u)
+! Stability check
+  IF (maxval(abs(velocity_u*dt)/dx)>1) then
+	PRINT*, "Unstable! Terminating"
+	exit 
+  ENDIF 
+  
 ! Build tridiagonal sparse multiplication matrix
   A =  MATRIX(velocity_u, dx, dt)
 
@@ -51,7 +64,6 @@ PROGRAM Smolarkiewicz
 
 ! Apply antidiffusion step for some iterations (optional, iterations could be 0)
   DO k = 1, iterations
-
 ! Make local copy of current situation
 	  psi_tem = psi_int
 
