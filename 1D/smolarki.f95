@@ -42,8 +42,10 @@ PROGRAM Smolarkiewicz
 
  psi_int = initial_x
 ! Initialize velocity vector
+if(sum(velocity_u).EQ.0) then
  velocity_u = uv
-
+endif
+PRINT*, velocity_u
 ! Repeat for N time steps
  DO j = 1, N-1
 !  CALL UPDATE_VELOCITY(u)

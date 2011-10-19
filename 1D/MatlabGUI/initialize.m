@@ -22,7 +22,7 @@ function varargout = initialize(varargin)
 
 % Edit the above text to modify the response to help initialize
 
-% Last Modified by GUIDE v2.5 16-Oct-2011 13:54:35
+% Last Modified by GUIDE v2.5 19-Oct-2011 12:59:44
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -70,6 +70,31 @@ for i=1:1:numel(positions)
 end ;
 hist(posarray,size) ;
 axis([0 size 0 1]) ;
+
+
+u_min = str2num(get(handles.edit3, 'String')) ;
+u_max= str2num(get(handles.edit10, 'String')) ;
+velocity_u = [] ;
+if(get(handles.radiobutton2, 'Value')==1)
+   
+    velocity_u = u_max-(0:(u_max-u_min)/(size):u_max-u_min) ;
+    if(u_max==u_min)
+        velocity_u = ones(1,size+1)*u_max ;
+    end ;
+elseif(get(handles.radiobutton1, 'Value')==1)
+    velocity_u = (u_min:(u_max-u_min)/(size):u_max) ;
+    if(u_max==u_min)
+        velocity_u = ones(1,size+1)*u_max ;
+    end 
+elseif(get(handles.radiobutton3, 'Value')==1)
+    mid = floor((size+1)/2) ;
+    a = (u_max-u_min)/(mid^2) ;
+    velocity_u = u_min+a*(-mid:1:-mid+size).^2 ;
+end
+axes(handles.axes2);
+cla;
+plot(velocity_u) ;
+
 end
 
 % UIWAIT makes initialize wait for user response (see UIRESUME)
@@ -203,7 +228,6 @@ function edit1_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to edit1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
-kernel
 % Hint: edit controls usually have a white background on Windows.
 %       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
@@ -239,8 +263,6 @@ function pushbutton4_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton4 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-axes(handles.axes1);
-cla;
 size  = str2num(get(handles.edit2, 'String')) ;
 positions  = explode(get(handles.edit1, 'String'),';') ;
 posarray = [] ; 
@@ -249,12 +271,41 @@ for i=1:1:numel(positions)
 end ;
 hist(posarray,size) ;
 axis([0 size 0 1]) ;
-u = str2num(get(handles.edit3, 'String')) ;
+
+
+u_min = str2num(get(handles.edit3, 'String')) ;
+u_max= str2num(get(handles.edit10, 'String')) ;
+velocity_u = [] ;
+if(get(handles.radiobutton2, 'Value')==1)
+   
+    velocity_u = u_max-(0:(u_max-u_min)/(size):u_max-u_min) ;
+    if(u_max==u_min)
+        velocity_u = ones(1,size+1)*u_max ;
+    end ;
+elseif(get(handles.radiobutton1, 'Value')==1)
+    velocity_u = (u_min:(u_max-u_min)/(size):u_max) ;
+    if(u_max==u_min)
+        velocity_u = ones(1,size+1)*u_max ;
+    end 
+elseif(get(handles.radiobutton3, 'Value')==1)
+    mid = floor((size+1)/2) ;
+    a = (u_max-u_min)/(mid^2) ;
+    velocity_u = u_min+a*(-mid:1:-mid+size).^2 ;
+end
+title('Initial situation psi_0') ; 
+xlabel('Gridbox i') ;
+ylabel('psi_0') ;
+axes(handles.axes2);
+cla;
+plot(velocity_u) ;
+title('Velocity vector u') ; 
+xlabel('Gridbox border i+1/2') ;
+ylabel('u_i+1/2') ;
 dx = str2num(get(handles.edit4, 'String')) ;
 dt = str2num(get(handles.edit5, 'String')) ;
 sc = str2num(get(handles.edit6, 'String')) ;
 it = str2num(get(handles.edit7, 'String')) ;
-if((abs(u)*dt)/dx>1)
+if(max((abs(velocity_u)*dt)/dx)>1)
     set(handles.text8, 'String','UNSTABLE') ;
     set(handles.text8, 'ForegroundColor','red') ;
 
@@ -438,20 +489,37 @@ function pushbutton5_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton5 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-axes(handles.axes1);
-cla;
 size  = str2num(get(handles.edit2, 'String')) ;
 positions  = explode(get(handles.edit1, 'String'),';') ;
 posarray = [] ; 
 for i=1:1:numel(positions)
     posarray(i) = str2num(strtrim(positions{i})) ;
 end ;
-u = str2num(get(handles.edit3, 'String')) ;
+u_min = str2num(get(handles.edit3, 'String')) ;
+u_max= str2num(get(handles.edit10, 'String')) ;
 dx = str2num(get(handles.edit4, 'String')) ;
 dt = str2num(get(handles.edit5, 'String')) ;
 sc = str2num(get(handles.edit6, 'String')) ;
 it = str2num(get(handles.edit7, 'String')) ;
 N = str2num(get(handles.edit9, 'String')) ;
+velocity_u = [] ;
+if(get(handles.radiobutton2, 'Value')==1)
+
+    velocity_u = u_max-(0:(u_max-u_min)/(size):u_max-u_min) ;
+    if(u_max==u_min)
+        velocity_u = ones(1,size+1)*u_max ;
+    end ;
+elseif(get(handles.radiobutton1, 'Value')==1)
+    velocity_u = (u_min:(u_max-u_min)/(size):u_max) ;
+    if(u_max==u_min)
+        velocity_u = ones(1,size+1)*u_max ;
+    end 
+elseif(get(handles.radiobutton3, 'Value')==1)
+    mid = floor((size+1)/2) ;
+    a = (u_max-u_min)/(mid^2) ;
+    velocity_u = u_min+a*(-mid:1:-mid+size).^2 ;
+end
+
 % Write first file
 fid = fopen(get(handles.edit8, 'String'), 'w');
 fprintf(fid, 'M %d\n', size);
@@ -459,7 +527,6 @@ fprintf(fid, 'N %d\n', N);
 fprintf(fid, 'dt %f\n', dt);
 fprintf(fid, 'dx %f\n', dx);
 fprintf(fid, 'eps %f\n', 0.000001);
-fprintf(fid, 'uv %f\n', u);
 fprintf(fid, 'sc %f\n', sc);
 fprintf(fid, 'iterations %d\n', it);
 initial = zeros(1,size) ; 
@@ -470,7 +537,20 @@ fprintf(fid, 'initial_x');
 for i = 1 : size ; 
     fprintf(fid, ' %d', initial(i));
 end ;
+fprintf(fid,'\n') ;
+
+disp(velocity_u) ;
+
+fprintf(fid, 'velocity_u');
+for i = 1 : size+1 ; 
+    fprintf(fid, ' %f',velocity_u(i));
+end ;
+
+
 fclose(fid);
+
+
+
 
 % Write second file
 fid = fopen('noit.txt', 'w');
@@ -479,7 +559,6 @@ fprintf(fid, 'N %d\n', N);
 fprintf(fid, 'dt %f\n', dt);
 fprintf(fid, 'dx %f\n', dx);
 fprintf(fid, 'eps %f\n', 0.000001);
-fprintf(fid, 'uv %f\n', u);
 fprintf(fid, 'sc %f\n', sc);
 fprintf(fid, 'iterations %d\n', 0);
 initial = zeros(1,size) ; 
@@ -490,6 +569,15 @@ fprintf(fid, 'initial_x');
 for i = 1 : size ; 
     fprintf(fid, ' %d', initial(i));
 end ;
+fprintf(fid,'\n') ;
+
+
+fprintf(fid, 'velocity_u');
+for i = 1 : size+1 ; 
+    fprintf(fid, ' %f',velocity_u(i));
+end ;
+
+
 fclose(fid);
 
 stat = unix(['../smolarki.out ' get(handles.edit8, 'String')]) ;
@@ -513,15 +601,72 @@ switch it
       disp('Three iterations max.')
 end
 
-axes(handles.axes2);
-cla;
+figure  ;
 for i = 1 : N ; 
     clf ;
     plot(wave0(i,:)) ;  
     hold on ;
     plot(mywave(i,:),'r') ;
     axis([0 size 0 1]) ;
+    legend('No antidiffusion', ['Antidiffusion with ' num2str(it) ' iterations']) ;
     drawnow ; 
 end ;
 
 
+
+function edit10_Callback(hObject, eventdata, handles)
+% hObject    handle to edit10 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit10 as text
+%        str2double(get(hObject,'String')) returns contents of edit10 as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function edit10_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit10 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in radiobutton1.
+function radiobutton1_Callback(hObject, eventdata, handles)
+% hObject    handle to radiobutton1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of radiobutton1
+
+
+% --- Executes on button press in radiobutton2.
+function radiobutton2_Callback(hObject, eventdata, handles)
+% hObject    handle to radiobutton2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of radiobutton2
+
+
+% --- Executes on button press in radiobutton3.
+function radiobutton3_Callback(hObject, eventdata, handles)
+% hObject    handle to radiobutton3 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of radiobutton3
+
+
+% --- Executes on button press in radiobutton4.
+function radiobutton4_Callback(hObject, eventdata, handles)
+% hObject    handle to radiobutton4 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of radiobutton4
