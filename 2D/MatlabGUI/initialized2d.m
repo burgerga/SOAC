@@ -281,7 +281,7 @@ fprintf(fid, 'MY %d\n', size);
 fprintf(fid, 'N %d\n', N);
 fprintf(fid, 'dt %f\n', dt);
 fprintf(fid, 'dx %f\n', dx);
-fprintf(fid, 'dx %f\n', dy);
+fprintf(fid, 'dy %f\n', dy);
 fprintf(fid, 'eps %f\n', 0.000001);
 fprintf(fid, 'sc %f\n', sc);
 fprintf(fid, 'u %f\n', u);
@@ -331,13 +331,13 @@ switch it
    otherwise
       disp('Three iterations max.')
 end
-for i = 1 : N ; 
+for i = 1 : N-1 ; 
 axes(handles.axes3);
 cla;
-imagesc(reshape(wave0(i,:),100,100)) ; colorbar
+imagesc(reshape(wave0(i,:),size,size)) ; colorbar;
 axes(handles.axes4);
 cla;
-imagesc(reshape(mywave(i,:),100,100)) ; colorbar
+imagesc(reshape(mywave(i,:),size,size)) ; colorbar;
 end ;
 function edit21_Callback(hObject, eventdata, handles)
 % hObject    handle to edit21 (see GCBO)

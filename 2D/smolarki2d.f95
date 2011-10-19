@@ -5,7 +5,7 @@ PROGRAM Smolarkiewicz2D
  IMPLICIT NONE
 
 ! Variables 
- INTEGER :: count, ierror = 0, MX, MY, N, i, j, k, q, iterations, initial_pos, cloudsize
+ INTEGER :: count, ierror = 0, MX, MY, N, i, j, k, q, iterations, initial_pos, cloudsize, hc
  REAL :: dx, dy, dt, eps, uv, sc, u, v
  REAL, DIMENSION(:,:), ALLOCATABLE :: grid, A, m_u, m_v, m_u_a, m_v_a
  REAL, DIMENSION(:), ALLOCATABLE :: initial, psi_int, psi_tem
@@ -40,7 +40,12 @@ PROGRAM Smolarkiewicz2D
 
 ! Initialize system. Initial is an MX*MY vector which represents the 2D space.
  initial = 0 
- initial(initial_pos-(cloudsize/2):initial_pos+(cloudsize/2)) = 1 
+ hc = cloudsize/2
+ DO j = 1 , cloudsize 
+ 
+	initial(initial_pos-(j-1)*MX-hc:initial_pos-(j-1)*MX+hc) = 1
+ ENDDO
+ !initial(initial_pos-(cloudsize/2):initial_pos+(cloudsize/2)) = 1 
  psi_int = initial
 
 ! Set velocity matrices
