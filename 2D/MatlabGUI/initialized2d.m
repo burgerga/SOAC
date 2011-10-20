@@ -276,8 +276,7 @@ N = str2num(get(handles.edit21, 'String')) ;
 
 % Write first file
 fid = fopen('input.txt', 'w');
-fprintf(fid, 'MX %d\n', size);
-fprintf(fid, 'MY %d\n', size);
+fprintf(fid, 'M %d\n', size);
 fprintf(fid, 'N %d\n', N);
 fprintf(fid, 'dt %f\n', dt);
 fprintf(fid, 'dx %f\n', dx);
@@ -297,8 +296,7 @@ fclose(fid);
 
 % Write second file
 fid = fopen('noit.txt', 'w');
-fprintf(fid, 'MX %d\n', size);
-fprintf(fid, 'MY %d\n', size);
+fprintf(fid, 'M %d\n', size);
 fprintf(fid, 'N %d\n', N);
 fprintf(fid, 'dt %f\n', dt);
 fprintf(fid, 'dx %f\n', dx);
