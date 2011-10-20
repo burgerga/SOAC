@@ -5,7 +5,7 @@ PROGRAM Smolarkiewicz2D
  IMPLICIT NONE
 
 ! Variables 
- INTEGER :: count, ierror = 0, MX, MY, N, i, j, k, q, iterations, initial_pos
+ INTEGER :: count, ierror = 0, MX, MY, N, i, j, k, q, iterations, initial_pos, cloudsize, hc
  REAL :: dx, dy, dt, eps, uv, sc, u, v
  REAL, DIMENSION(:,:), ALLOCATABLE :: grid, A, m_u, m_v, m_u_a, m_v_a
  REAL, DIMENSION(:), ALLOCATABLE :: initial, psi_int, psi_tem
@@ -28,11 +28,24 @@ PROGRAM Smolarkiewicz2D
  call read_input_file(input_file)
  
 ! Open output file
- OPEN(20, file = "wave.dat")
+ if(iterations .EQ. 0) then
+ OPEN(20, file = "wave0.dat")
+ elseif(iterations .EQ. 1) then
+ OPEN(20, file = "wave1.dat")
+ elseif(iterations .EQ. 2) then
+ OPEN(20, file = "wave2.dat")
+ elseif(iterations .EQ. 3) then
+ OPEN(20, file = "wave3.dat")
+ endif
 
 ! Initialize system. Initial is an MX*MY vector which represents the 2D space.
  initial = 0 
- initial(initial_pos) = 1 
+ hc = cloudsize/2
+ DO j = 1 , cloudsize 
+ 
+	initial(initial_pos-(j-1)*MX-hc:initial_pos-(j-1)*MX+hc) = 1
+ ENDDO
+ !initial(initial_pos-(cloudsize/2):initial_pos+(cloudsize/2)) = 1 
  psi_int = initial
 
 ! Set velocity matrices
@@ -253,6 +266,8 @@ FUNCTION MATRIX(m_u, m_v, dx, dy, dt, MX, MY)
       read(buffer,*, iostat=ios) u
      case ('v')
       read(buffer,*, iostat=ios) v
+     case ('cloudsize')
+      read(buffer,*, iostat=ios) cloudsize
      case default
       if (.not.(label(1:1) == ' ' .or. label(1:1) == '!')) then
        print*, 'Skipping invalid label at line ', line
