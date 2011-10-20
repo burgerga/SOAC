@@ -22,7 +22,7 @@ function varargout = initialized2d(varargin)
 
 % Edit the above text to modify the response to help initialized2d
 
-% Last Modified by GUIDE v2.5 19-Oct-2011 14:46:23
+% Last Modified by GUIDE v2.5 20-Oct-2011 10:35:54
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -420,4 +420,3 @@ function text22_CreateFcn(hObject, eventdata, handles)
 function figure1_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to figure1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
-
