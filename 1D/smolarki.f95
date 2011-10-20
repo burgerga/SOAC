@@ -10,6 +10,7 @@ PROGRAM Smolarkiewicz
  REAL, DIMENSION(:,:), ALLOCATABLE :: A
  REAL, DIMENSION(:), ALLOCATABLE :: initial_x, psi_int, psi_tem, velocity_u, velocity_antidif
  character(len=100) :: input_file
+logical :: periodic
 
 ! Check whether there is an input file
  nargs = command_argument_count()
@@ -21,6 +22,7 @@ PROGRAM Smolarkiewicz
   if (len_trim(input_file) == 0) then
    print*, "Please provide the name of the input file"
    stop 1
+
   end if
  end if
 
@@ -52,7 +54,7 @@ PRINT*, velocity_u
 ! Stability check
   IF (maxval(abs(velocity_u*dt)/dx)>1) then
 	PRINT*, "Unstable! Terminating"
-	exit 
+	stop 1
   ENDIF 
   
 ! Build tridiagonal sparse multiplication matrix
@@ -110,15 +112,14 @@ CONTAINS
    MATRIX = 0 	
    dimen = size(u) - 1
    div = dt/(2*dx)
-   MATRIX(1,2) = 1 - div*(u(2)+abs(u(2))-u(1)+abs(u(1)))
-   MATRIX(1,3) = -div*(u(2)-abs(u(2)))
-   DO i=2, dimen-1, 1
+   DO i=1, dimen-1, 1
     MATRIX(i,1) = div*(u(i)+abs(u(i))) 
     MATRIX(i,2) = 1 - div*(u(i+1)+abs(u(i+1))-u(i)+abs(u(i)))
     MATRIX(i,3) = -div*(u(i+1)-abs(u(i+1)))
    ENDDO
-   MATRIX(dimen,2) = 1 - div*(u(dimen+1)+abs(u(dimen+1))-u(dimen)+abs(u(dimen))) 
    MATRIX(dimen,1) = div*(u(dimen)+abs(u(dimen)))
+   MATRIX(dimen,2) = 1 - div*(u(dimen+1)+abs(u(dimen+1))-u(dimen)+abs(u(dimen))) 
+   MATRIX(dimen,3) = -div*(u(1)-abs(u(1)))
   END FUNCTION 
 
 ! This function returns the antidiffusion velocity vector based on the velocity vector and the 
@@ -144,7 +145,11 @@ CONTAINS
    DO i=2, M-1
     y(i) = sum(A(i,:) * x(i-1:i+1))
    ENDDO  
-   y(M) = A(M,1)*x(m-1)+A(M,2)*x(2)
+   y(M) = A(M,1)*x(m-1)+A(M,2)*x(m)
+   if(periodic) then
+    y(1) = y(1)+A(1,1)*x(m)
+    y(M) = y(M)+A(M,3)*x(1)
+   endif
   END SUBROUTINE
 
   subroutine read_input_file(filename)
@@ -197,6 +202,8 @@ CONTAINS
       read(buffer,*, iostat=ios) initial_x
      case ('velocity_u')
       read(buffer,*, iostat=ios) velocity_u
+     case ('periodic')
+      read(buffer,*, iostat=ios) periodic
      case default
       if (.not.(label(1:1) == ' ' .or. label(1:1) == '!')) then
        print*, 'Skipping invalid label at line', line

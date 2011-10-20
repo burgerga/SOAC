@@ -90,6 +90,8 @@ elseif(get(handles.radiobutton3, 'Value')==1)
     mid = floor((size+1)/2) ;
     a = (u_max-u_min)/(mid^2) ;
     velocity_u = u_min+a*(-mid:1:-mid+size).^2 ;
+elseif(get(handles.radiobutton4, 'Value')==1)
+    velocity_u = u_min*(1:1:size) ;
 end
 axes(handles.axes2);
 cla;
@@ -147,6 +149,7 @@ fprintf(fid, 'initial_x');
 for i = 1 : size ; 
     fprintf(fid, ' %d', initial(i));
 end ;
+
 fclose(fid);
 
 % --------------------------------------------------------------------
@@ -545,8 +548,7 @@ fprintf(fid, 'velocity_u');
 for i = 1 : size+1 ; 
     fprintf(fid, ' %f',velocity_u(i));
 end ;
-
-
+fprintf(fid, '\nperiodic .true.\n');
 fclose(fid);
 
 
@@ -576,7 +578,7 @@ fprintf(fid, 'velocity_u');
 for i = 1 : size+1 ; 
     fprintf(fid, ' %f',velocity_u(i));
 end ;
-
+fprintf(fid, '\nperiodic .true.\n');
 
 fclose(fid);
 
