@@ -22,7 +22,7 @@ function varargout = initialize(varargin)
 
 % Edit the above text to modify the response to help initialize
 
-% Last Modified by GUIDE v2.5 19-Oct-2011 12:59:44
+% Last Modified by GUIDE v2.5 20-Oct-2011 10:06:08
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -90,8 +90,6 @@ elseif(get(handles.radiobutton3, 'Value')==1)
     mid = floor((size+1)/2) ;
     a = (u_max-u_min)/(mid^2) ;
     velocity_u = u_min+a*(-mid:1:-mid+size).^2 ;
-elseif(get(handles.radiobutton4, 'Value')==1)
-    velocity_u = u_min*(1:1:size) ;
 end
 axes(handles.axes2);
 cla;
@@ -505,6 +503,11 @@ dt = str2num(get(handles.edit5, 'String')) ;
 sc = str2num(get(handles.edit6, 'String')) ;
 it = str2num(get(handles.edit7, 'String')) ;
 N = str2num(get(handles.edit9, 'String')) ;
+if(get(handles.checkbox1, 'Value')==1)
+      periodic = '.true.'
+else
+      periodic = '.false.'
+end;
 velocity_u = [] ;
 if(get(handles.radiobutton2, 'Value')==1)
 
@@ -521,6 +524,8 @@ elseif(get(handles.radiobutton3, 'Value')==1)
     mid = floor((size+1)/2) ;
     a = (u_max-u_min)/(mid^2) ;
     velocity_u = u_min+a*(-mid:1:-mid+size).^2 ;
+elseif(get(handles.radiobutton4, 'Value')==1)
+    velocity_u = u_max*(1:1:size) ;
 end
 
 % Write first file
@@ -548,7 +553,7 @@ fprintf(fid, 'velocity_u');
 for i = 1 : size+1 ; 
     fprintf(fid, ' %f',velocity_u(i));
 end ;
-fprintf(fid, '\nperiodic .true.\n');
+fprintf(fid, '\nperiodic %s\n',periodic);
 fclose(fid);
 
 
@@ -578,7 +583,7 @@ fprintf(fid, 'velocity_u');
 for i = 1 : size+1 ; 
     fprintf(fid, ' %f',velocity_u(i));
 end ;
-fprintf(fid, '\nperiodic .true.\n');
+fprintf(fid, '\nperiodic %s\n',periodic);
 
 fclose(fid);
 
@@ -665,10 +670,10 @@ function radiobutton3_Callback(hObject, eventdata, handles)
 % Hint: get(hObject,'Value') returns toggle state of radiobutton3
 
 
-% --- Executes on button press in radiobutton4.
-function radiobutton4_Callback(hObject, eventdata, handles)
-% hObject    handle to radiobutton4 (see GCBO)
+% --- Executes on button press in checkbox1.
+function checkbox1_Callback(hObject, eventdata, handles)
+% hObject    handle to checkbox1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of radiobutton4
+% Hint: get(hObject,'Value') returns toggle state of checkbox1
