@@ -22,7 +22,7 @@ function varargout = initialized2d(varargin)
 
 % Edit the above text to modify the response to help initialized2d
 
-% Last Modified by GUIDE v2.5 20-Oct-2011 10:35:54
+% Last Modified by GUIDE v2.5 26-Oct-2011 15:19:27
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -262,6 +262,9 @@ function pushbutton4_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton4 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+cone = get(handles.checkbox1, 'Value') 
+
+
 size  = str2num(get(handles.edit16, 'String')) ;
 position = size*(size/2)+(size/2) ;
 csize  = str2num(get(handles.edit13, 'String')) ;
@@ -283,6 +286,7 @@ fprintf(fid, 'dx %f\n', dx);
 fprintf(fid, 'dy %f\n', dy);
 fprintf(fid, 'eps %f\n', 0.000001);
 fprintf(fid, 'sc %f\n', sc);
+fprintf(fid, 'cone %d\n', cone);
 fprintf(fid, 'u %f\n', u);
 fprintf(fid, 'v %f\n', v);
 fprintf(fid, 'iterations %d\n', it);
@@ -304,6 +308,7 @@ fprintf(fid, 'dy %f\n', dy);
 fprintf(fid, 'eps %f\n', 0.000001);
 fprintf(fid, 'sc %f\n', sc);
 fprintf(fid, 'u %f\n', u);
+fprintf(fid, 'cone %d\n', cone);
 fprintf(fid, 'v %f\n', v);
 fprintf(fid, 'iterations %d\n', 0);
 fprintf(fid, 'initial_pos %d\n', position) ;
@@ -418,3 +423,12 @@ function text22_CreateFcn(hObject, eventdata, handles)
 function figure1_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to figure1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
+
+
+% --- Executes on button press in checkbox1.
+function checkbox1_Callback(hObject, eventdata, handles)
+% hObject    handle to checkbox1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of checkbox1

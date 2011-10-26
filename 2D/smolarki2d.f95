@@ -5,9 +5,9 @@ PROGRAM Smolarkiewicz2D
  IMPLICIT NONE
 
 ! Variables 
- INTEGER :: count, ierror = 0, M, N, i, j, k, q, iterations, initial_pos, cloudsize, hc
- REAL :: dx, dy, dt, eps, uv, sc, u, v
- REAL, DIMENSION(:,:), ALLOCATABLE :: grid, A, m_u, m_v, m_u_a, m_v_a
+ INTEGER :: count, ierror = 0, M, N, i, j, k, q, cone = 0, iterations, initial_pos,cloudsize, hc 
+ REAL :: dx, dy, dt, eps, uv, sc, u, v, angvel = 0.1
+ REAL, DIMENSION(:,:), ALLOCATABLE :: grid, A, m_u, m_v, m_u_a, m_v_a, initialmat
  REAL, DIMENSION(:), ALLOCATABLE :: initial, psi_int, psi_tem
  character(len=100) :: input_file
 
@@ -46,12 +46,40 @@ PROGRAM Smolarkiewicz2D
 	initial(initial_pos-(j-1)*M-hc:initial_pos-(j-1)*M+hc) = 1
  ENDDO
  !initial(initial_pos-(cloudsize/2):initial_pos+(cloudsize/2)) = 1 
- psi_int = initial
+
 
 ! Set velocity matrices
  m_u = u
  m_v = v
-
+ PRINT*, cone
+ IF(cone .EQ. 1) THEN
+  PRINT*, 'Cone!' 
+  initial = 0 
+  ALLOCATE(initialmat(M,M), STAT=ierror); IF (ierror /= 0) PRINT*, "initial : Allocation failed"
+  DO j = 1, M 
+	DO k = 1, M
+		initialmat(j,k) = 3.87-0.3*(sqrt(abs(75-REAL(j))**2+abs(50-REAL(k))**2))
+		if(initialmat(j,k)<0) then
+			initialmat(j,k) = 0 		
+		endif
+        ENDDO
+  ENDDO
+  DO j = 1, M+1 
+	DO k = 1, M
+		m_u(j,k) = -angvel*(j-50)
+        ENDDO
+  ENDDO
+  DO j = 1, M 
+	DO k = 1, M+1
+		m_v(j,k) = angvel*(k-50)
+        ENDDO
+  ENDDO
+  DO j = 1, M
+	initial((j-1)*M+1:j*M) = initialmat(j,:)
+  ENDDO
+  DEALLOCATE(initialmat,STAT=ierror)
+ ENDIF
+  psi_int = initial
 ! Repeat for N time steps 
  DO j = 1, N-1
 
@@ -160,12 +188,11 @@ FUNCTION MATRIX(m_u, m_v, dx, dy, dt, M)
    REAL, DIMENSION(:), ALLOCATABLE :: psips
    ALLOCATE(psips(M), STAT=ierror); IF (ierror /= 0) PRINT*, "psips : Allocation failed"
    ! Build antidiffusion matrix u_a
+   u_a = 0 ; v_a = 0 ; 
    DO jj=1, M
      psips = psi((jj-1)*M+1:jj*M)
      DO ii=1, M-1
 	up = u(ii+1,jj)
-	!CALL GETVECTORLOCATION(fi, M, ii+1, jj) 
-	!CALL GETVECTORLOCATION(se, M, ii, jj) 
 	u_a(ii+1,jj) = ((abs(up)*dx-dt*up*up)*(psips(ii+1)-psips(ii)))/((psips(ii)+psips(ii+1)+eps)*dx)
      ENDDO
    ENDDO
@@ -174,8 +201,6 @@ FUNCTION MATRIX(m_u, m_v, dx, dy, dt, M)
      psips = psi(1:(M-1)*M+1:M)
      DO jj=1, M-1 
 	vp = v(ii,jj+1)
-	!CALL GETVECTORLOCATION(fi, M, ii, jj+1) 
-	!CALL GETVECTORLOCATION(se, M, ii, jj) 
 	v_a(ii,jj+1) =  ((abs(vp)*dy-dt*vp*vp)*(psips(ii+1)-psips(ii)))/((psips(ii)+psips(ii+1)+eps)*dy)
 
      ENDDO
@@ -258,6 +283,8 @@ FUNCTION MATRIX(m_u, m_v, dx, dy, dt, M)
       read(buffer,*, iostat=ios) iterations
      case ('sc')
       read(buffer,*, iostat=ios) sc
+     case ('cone')
+      read(buffer,*, iostat=ios) cone
      case ('uv')
       read(buffer,*, iostat=ios) uv
      case ('initial_pos')
