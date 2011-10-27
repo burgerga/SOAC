@@ -318,31 +318,8 @@ fclose(fid);
 
 
 stat = unix('../smolarki2d.out input.txt') ;
-stat = unix('../smolarki2d.out noit.txt') ;
-load('wave0.dat') ;
-mywave = [] ;
-switch it
-   case 1
-      load('wave1.dat') ;
-      mywave = wave1 ;
-   case 2
-      load('wave2.dat') ;
-      mywave = wave2 ;
-   case 3
-      load('wave3.dat') ;
-      mywave = wave3 ;
-   otherwise
-      disp('Three iterations max.')
-end
-maxx = max(max(mywave)) ;
-for i = 1 : N-1 ; 
-axes(handles.axes3);
-cla;
-contour(reshape(wave0(i,:),size,size)) ; caxis([0 maxx]) ; colorbar;
-axes(handles.axes4);
-cla;
-contour(reshape(mywave(i,:),size,size)) ; caxis([0 maxx]) ; colorbar;
-end ;
+%stat = unix('../smolarki2d.out noit.txt') ;
+
 function edit21_Callback(hObject, eventdata, handles)
 % hObject    handle to edit21 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
