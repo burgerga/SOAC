@@ -11,8 +11,6 @@
 \usepackage{lmodern}
 \usepackage[T1]{fontenc}
 
-\usepackage{pdfanim}
-
 \title[Advection equation and antidiffusion]
 {Using antidiffusion to solve the advection equation more accurately}
 
@@ -52,7 +50,7 @@
 % the following command:
 
 %\beamerdefaultoverlayspecification{<+->}
-
+\newcommand{\imsize}{}
 
 \begin{document}
 
@@ -84,23 +82,28 @@ We start with the following upstream advection equation on staggered grid:
 -F \left( \psi_{i-1}^N,\psi_{i}^N,u_{i-1/2}^N\right) \Big),
 \end{equation*}
 where
-\begin{multline*}
-F \left( \psi_i^N,\psi_{i+1}^N,u_{i+1/2}^N\right) =\\
-\Big( \left( u_{i+1/2}^N + \abs{u_{i+1/2}^N} \right) \psi_i^N
-+ \left( u_{i+1/2}^N - \abs{u_{i+1/2}^N} \right) \psi_{i+1}^N \Big)
-\frac{\Delta t}{2 \Delta x}.
-\end{multline*}
+% \begin{multline*}
+% F \left( \psi_i^N,\psi_{i+1}^N,u_{i+1/2}^N\right) =\\
+% \Big( \left( u_{i+1/2}^N + \abs{u_{i+1/2}^N} \right) \psi_i^N
+% + \left( u_{i+1/2}^N - \abs{u_{i+1/2}^N} \right) \psi_{i+1}^N \Big)
+% \frac{\Delta t}{2 \Delta x}.
+% \end{multline*}
 \end{frame}
 
 \begin{frame}
-\PDFAnimLoad{diffusion}{animation/anim}{10}
-
-\begin{Form}
-  \centering
-  % put the animation with name "lorenz1" here
-  \PDFAnimation{diffusion}\\
-\end{Form}
-
+\renewcommand{\imsize}{0.5\textwidth}
+\begin{figure}
+        \includegraphics<1>[width=\imsize]{animation/anim0.pdf}
+        \includegraphics<2>[width=\imsize]{animation/anim1.pdf}
+        \includegraphics<3>[width=\imsize]{animation/anim2.pdf}
+        \includegraphics<4>[width=\imsize]{animation/anim3.pdf}
+        \includegraphics<5>[width=\imsize]{animation/anim4.pdf}
+        \includegraphics<6>[width=\imsize]{animation/anim5.pdf}
+	\includegraphics<7>[width=\imsize]{animation/anim6.pdf}
+	\includegraphics<8>[width=\imsize]{animation/anim7.pdf}
+        \includegraphics<9>[width=\imsize]{animation/anim8.pdf}
+	\includegraphics<10>[width=\imsize]{animation/anim9.pdf}
+    \end{figure}
 \end{frame}
 
 % \begin{frame}{Writing it out}
