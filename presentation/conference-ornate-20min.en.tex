@@ -63,11 +63,55 @@
   % You might wish to add the option [pausesections]
 \end{frame}
 
-\section{The advection equation in modeling}
-\subsection{Examples of use}
+\section{The advection equation}
+\subsection{Importance}
+
+\begin{frame}{Usage examples}
+\begin{itemize}
+   \item everywhere...
+\end{itemize}
+
+\end{frame}
+
+
 \subsection{Diffusion}
 
-\section{Antidiffusion methods}
+\begin{frame}{Example of diffusion with an upstream scheme}
+\renewcommand{\imsize}{0.5\textwidth}
+\begin{figure}
+\includegraphics<1>[width=\imsize]{animation/anim0.pdf}
+\includegraphics<2>[width=\imsize]{animation/anim1.pdf}
+\includegraphics<3>[width=\imsize]{animation/anim2.pdf}
+\includegraphics<4>[width=\imsize]{animation/anim3.pdf}
+\includegraphics<5>[width=\imsize]{animation/anim4.pdf}
+\includegraphics<6>[width=\imsize]{animation/anim5.pdf}
+\includegraphics<7>[width=\imsize]{animation/anim6.pdf}
+\includegraphics<8>[width=\imsize]{animation/anim7.pdf}
+\includegraphics<9>[width=\imsize]{animation/anim8.pdf}
+\includegraphics<10>[width=\imsize]{animation/anim9.pdf}
+\end{figure}
+\end{frame}
+
+\subsection{Antidiffusion methods}
+
+\begin{frame}{Antidiffusion methods 1}
+\begin{itemize}
+\item Flux-corrected transport (FCT) method (Boris and Book, 1973),
+\item self-adjusting hybrid scheme (SAHS) (Harten en Zwas, 1972),
+\end{itemize}
+   both can be very accurate but require excessive computing time, better is the
+\begin{itemize}
+   \item hybrid-type scheme based on a Crowley advection scheme (Clark and Hall, 1979),
+\end{itemize}
+   with more diffusion but half the computation time.
+\end{frame}
+
+\begin{frame}{Antidiffusion methods 2}
+\begin{itemize}
+\item Smolarkiewicz' iterative correction
+\end{itemize}
+   less time consuming while results are comparable to those of the more complex hybrid schemes
+\end{frame}
 
 \section{Case study: Smolarkiewicz}
 \subsection{the scheme and method of lines}
@@ -82,165 +126,53 @@ We start with the following upstream advection equation on staggered grid:
 -F \left( \psi_{i-1}^N,\psi_{i}^N,u_{i-1/2}^N\right) \Big),
 \end{equation*}
 where
-% \begin{multline*}
-% F \left( \psi_i^N,\psi_{i+1}^N,u_{i+1/2}^N\right) =\\
-% \Big( \left( u_{i+1/2}^N + \abs{u_{i+1/2}^N} \right) \psi_i^N
-% + \left( u_{i+1/2}^N - \abs{u_{i+1/2}^N} \right) \psi_{i+1}^N \Big)
-% \frac{\Delta t}{2 \Delta x}.
-% \end{multline*}
+\begin{multline*}
+F \left( \psi_i^N,\psi_{i+1}^N,u_{i+1/2}^N\right) =\\
+\Big( \left( u_{i+1/2}^N + \abs{u_{i+1/2}^N} \right) \psi_i^N
++ \left( u_{i+1/2}^N - \abs{u_{i+1/2}^N} \right) \psi_{i+1}^N \Big)
+\frac{\Delta t}{2 \Delta x}.
+\end{multline*}
 \end{frame}
 
-\begin{frame}
-\renewcommand{\imsize}{0.5\textwidth}
-\begin{figure}
-        \includegraphics<1>[width=\imsize]{animation/anim0.pdf}
-        \includegraphics<2>[width=\imsize]{animation/anim1.pdf}
-        \includegraphics<3>[width=\imsize]{animation/anim2.pdf}
-        \includegraphics<4>[width=\imsize]{animation/anim3.pdf}
-        \includegraphics<5>[width=\imsize]{animation/anim4.pdf}
-        \includegraphics<6>[width=\imsize]{animation/anim5.pdf}
-	\includegraphics<7>[width=\imsize]{animation/anim6.pdf}
-	\includegraphics<8>[width=\imsize]{animation/anim7.pdf}
-        \includegraphics<9>[width=\imsize]{animation/anim8.pdf}
-	\includegraphics<10>[width=\imsize]{animation/anim9.pdf}
-    \end{figure}
+\begin{frame}{Writing it out}
+Inserting this and collecting terms gives us
+\begin{equation*}
+\begin{split}
+\psi_i^{N+1} &=
+\frac{\Delta t}{2 \Delta x} \left( u_{i-1/2}^N + \abs{u_{i-1/2}^N} \right) \psi_{i-1}^N\\
+&+ \left(1 - \frac{\Delta t}{2 \Delta x} \left( u_{i+1/2}^N + \abs{u_{i+1/2}^N} - u_{i-1/2}^N + \abs{u_{i-1/2}^N} \right) \right) \psi_i^N\\
+&-\frac{\Delta t}{2 \Delta x} \left( u_{i+1/2}^N - \abs{u_{i+1/2}^N} \right) \psi_{i+1}^N\\
+\end{split}
+\end{equation*}
 \end{frame}
 
-% \begin{frame}{Writing it out}
-% Inserting this and collecting terms gives us
-% \begin{equation*}
-% \begin{split}
-% \psi_i^{N+1} &=
-% \frac{\Delta t}{2 \Delta x} \left( u_{i-1/2}^N + \abs{u_{i-1/2}^N} \right) \psi_{i-1}^N\\
-% &+ \left(1 - \frac{\Delta t}{2 \Delta x} \left( u_{i+1/2}^N + \abs{u_{i+1/2}^N} - u_{i-1/2}^N + \abs{u_{i-1/2}^N} \right) \right) \psi_i^N\\
-% &-\frac{\Delta t}{2 \Delta x} \left( u_{i+1/2}^N - \abs{u_{i+1/2}^N} \right) \psi_{i+1}^N\\
-% \end{split}
-% \end{equation*}
-% \end{frame}
+\begin{frame}{Writing it out}
+We can write this as
+\begin{equation*}
+\psi_i^{N+1} = \alpha_i \psi_{i-1}^N + \beta_i \psi_i^N +\gamma_i \psi_{i+1}^N, \quad \text{for } i=1,\ldots,M-1,
+\end{equation*}
+ where we have that
+\begin{align*}
+\alpha_i &= \frac{\Delta t}{2 \Delta x} \left( u_{i-1/2}^N + \abs{u_{i-1/2}^N} \right),\\
+ \beta_i &= \left(1 - \frac{\Delta t}{2 \Delta x} \left( u_{i+1/2}^N + \abs{u_{i+1/2}^N} - u_{i-1/2}^N + \abs{u_{i-1/2}^N} \right) \right),\\
+\gamma_i &= -\frac{\Delta t}{2 \Delta x} \left( u_{i+1/2}^N - \abs{u_{i+1/2}^N} \right).
+\end{align*}
+\end{frame}
 
-% \begin{frame}{Writing it out}
-% We can write this as
-% \begin{equation*}
-% \psi_i^{N+1} = \alpha_i \psi_{i-1}^N + \beta_i \psi_i^N +\gamma_i \psi_{i+1}^N, \quad \text{for } i=1,\ldots,M-1,
-% \end{equation*}
-%  where we have that
-% \begin{align*}
-% \alpha_i &= \frac{\Delta t}{2 \Delta x} \left( u_{i-1/2}^N + \abs{u_{i-1/2}^N} \right),\\
-%  \beta_i &= \left(1 - \frac{\Delta t}{2 \Delta x} \left( u_{i+1/2}^N + \abs{u_{i+1/2}^N} - u_{i-1/2}^N + \abs{u_{i-1/2}^N} \right) \right),\\
-% \gamma_i &= -\frac{\Delta t}{2 \Delta x} \left( u_{i+1/2}^N - \abs{u_{i+1/2}^N} \right).
-% \end{align*}
-% \end{frame}
-%
-%
-% \begin{frame}{Matrix form}
-% We can also write this in matrix form
-% \begin{equation*}
-% \begin{bmatrix}\psi_{1}^{N+1}\\\psi_{2}^{N+1}\\ \vdots \\\psi_{M-2}^{N+1}\\\psi_{M-1}^{N+1}\end{bmatrix} =
-% \begin{bmatrix}\beta_1&\gamma_1\\ \alpha_2&\beta_2&\gamma_2\\ &\ddots&\ddots&\ddots\\&&\alpha_{M-2}&\beta_{M-2}&\gamma_{M-2}\\&&&\alpha_{M-1}&\beta_{M-1}\\ \end{bmatrix}
-% \begin{bmatrix}\psi_{1}^N\\\psi_{2}^N\\ \vdots \\\psi_{M-2}^N\\\psi_{M-1}^N\end{bmatrix}
-% \end{equation*}
-%
-%
-% \end{frame}
-%
-% \begin{frame}{Make Titles Informative.}
-%
-%   You can create overlays\dots
-%   \begin{itemize}
-%   \item using the \texttt{pause} command:
-%     \begin{itemize}
-%     \item
-%       First item.
-%       \pause
-%     \item
-%       Second item.
-%     \end{itemize}
-%   \item
-%     using overlay specifications:
-%     \begin{itemize}
-%     \item<3->
-%       First item.
-%     \item<4->
-%       Second item.
-%     \end{itemize}
-%   \item
-%     using the general \texttt{uncover} command:
-%     \begin{itemize}
-%       \uncover<5->{\item
-%         First item.}
-%       \uncover<6->{\item
-%         Second item.}
-%     \end{itemize}
-%   \end{itemize}
-% \end{frame}
-%
-%
-% \subsection{Previous Work}
-%
-% \begin{frame}{Make Titles Informative.}
-% \end{frame}
-%
-% \begin{frame}{Make Titles Informative.}
-% \end{frame}
-%
-%
-%
-% \section{Our Results/Contribution}
-%
-% \subsection{Main Results}
-%
-% \begin{frame}{Make Titles Informative.}
-% \end{frame}
-%
-% \begin{frame}{Make Titles Informative.}
-% \end{frame}
-%
-% \begin{frame}{Make Titles Informative.}
-% \end{frame}
-%
-%
-% \subsection{Basic Ideas for Proofs/Implementation}
-%
-% \begin{frame}{Make Titles Informative.}
-% \end{frame}
-%
-% \begin{frame}{Make Titles Informative.}
-% \end{frame}
-%
-% \begin{frame}{Make Titles Informative.}
-% \end{frame}
-%
-%
-%
-% \section*{Summary}
-%
-% \begin{frame}{Summary}
-%
-%   % Keep the summary *very short*.
-%   \begin{itemize}
-%   \item
-%     The \alert{first main message} of your talk in one or two lines.
-%   \item
-%     The \alert{second main message} of your talk in one or two lines.
-%   \item
-%     Perhaps a \alert{third message}, but not more than that.
-%   \end{itemize}
-%
-%   % The following outlook is optional.
-%   \vskip0pt plus.5fill
-%   \begin{itemize}
-%   \item
-%     Outlook
-%     \begin{itemize}
-%     \item
-%       Something you haven't solved.
-%     \item
-%       Something else you haven't solved.
-%     \end{itemize}
-%   \end{itemize}
-% \end{frame}
-%
-%
+
+\begin{frame}{Matrix form}
+We can also write this in matrix form \only<2>\alert{using periodic boundary conditions}
+\only<1>{\begin{equation*}
+\begin{bmatrix}\psi_{1}^{N+1}\\\psi_{2}^{N+1}\\ \vdots \\\psi_{M-2}^{N+1}\\\psi_{M-1}^{N+1}\end{bmatrix} =
+\begin{bmatrix}\beta_1&\gamma_1&&&0\\ \alpha_2&\beta_2&\gamma_2\\ &\ddots&\ddots&\ddots\\&&\alpha_{M-2}&\beta_{M-2}&\gamma_{M-2}\\0&&&\alpha_{M-1}&\beta_{M-1}\\ \end{bmatrix}
+\begin{bmatrix}\psi_{1}^N\\\psi_{2}^N\\ \vdots \\\psi_{M-2}^N\\\psi_{M-1}^N\end{bmatrix}
+\end{equation*}}
+\only<2>{\begin{equation*}
+\begin{bmatrix}\psi_{1}^{N+1}\\\psi_{2}^{N+1}\\ \vdots \\\psi_{M-2}^{N+1}\\\psi_{M-1}^{N+1}\end{bmatrix} =
+\begin{bmatrix}\beta_1&\gamma_1&&&\alpha_1\\ \alpha_2&\beta_2&\gamma_2\\ &\ddots&\ddots&\ddots\\&&\alpha_{M-2}&\beta_{M-2}&\gamma_{M-2}\\\gamma_{M-1}&&&\alpha_{M-1}&\beta_{M-1}\\ \end{bmatrix}
+\begin{bmatrix}\psi_{1}^N\\\psi_{2}^N\\ \vdots \\\psi_{M-2}^N\\\psi_{M-1}^N\end{bmatrix}
+\end{equation*}}
+\end{frame}
 %
 % % All of the following is optional and typically not needed.
 % \appendix
