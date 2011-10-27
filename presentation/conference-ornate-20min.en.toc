@@ -1,0 +1,8 @@
+\beamer@endinputifotherversion {3.01pt}
+\select@language {english}
+\beamer@sectionintoc {1}{The scheme}{3}{0}{1}
+\beamer@subsectionintoc {1}{1}{Rewriting the scheme into a Method of Lines (MOL) representation}{3}{0}{1}
+\beamer@subsectionintoc {1}{2}{Previous Work}{14}{0}{1}
+\beamer@sectionintoc {2}{Our Results/Contribution}{17}{0}{2}
+\beamer@subsectionintoc {2}{1}{Main Results}{17}{0}{2}
+\beamer@subsectionintoc {2}{2}{Basic Ideas for Proofs/Implementation}{21}{0}{2}

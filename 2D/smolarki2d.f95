@@ -5,7 +5,7 @@ PROGRAM Smolarkiewicz2D
  IMPLICIT NONE
 
 ! Variables 
- INTEGER :: count, ierror = 0, M, N, i, j, k, q, cone = 0, iterations, initial_pos,cloudsize, hc 
+ INTEGER :: count, ierror = 0, M, N, i, j, k, q, cone = 0, iterations, initial_pos,cloudsize, hc, xor, yor 
  REAL :: dx, dy, dt, eps, uv, sc, u, v, angvel = 0.1
  REAL, DIMENSION(:,:), ALLOCATABLE :: grid, A, m_u, m_v, m_u_a, m_v_a, initialmat
  REAL, DIMENSION(:), ALLOCATABLE :: initial, psi_int, psi_tem
@@ -53,12 +53,17 @@ PROGRAM Smolarkiewicz2D
  m_v = v
  PRINT*, cone
  IF(cone .EQ. 1) THEN
+  xor = 25
+  yor = 50
+  dx = 1 
+  dy = 1
+  dt = 0.1
   PRINT*, 'Cone!' 
   initial = 0 
   ALLOCATE(initialmat(M,M), STAT=ierror); IF (ierror /= 0) PRINT*, "initial : Allocation failed"
   DO j = 1, M 
 	DO k = 1, M
-		initialmat(j,k) = 3.87-0.3*(sqrt(abs(75-REAL(j))**2+abs(50-REAL(k))**2))
+		initialmat(j,k) = 3.87-0.3*(sqrt(abs(xor-REAL(j))**2+abs(yor-REAL(k))**2))
 		if(initialmat(j,k)<0) then
 			initialmat(j,k) = 0 		
 		endif
@@ -164,16 +169,17 @@ FUNCTION MATRIX(m_u, m_v, dx, dy, dt, M)
      MATRIX(di,4) = -alpha*(m_u(ii,jj+1)-abs(m_u(ii,jj+1)))
    ENDDO
 
-   DO di=M+1,dimen, 1
+   DO di=M+1+1,dimen, 1
      CALL GETGRIDLOCATION(di, M, ii, jj) 
      MATRIX(di,1) = beta*(m_v(ii,jj)+abs(m_v(ii,jj)))
    ENDDO
 
-   DO di=1, dimen-M, 1
+   DO di=1, dimen-M-1, 1
      CALL GETGRIDLOCATION(di, M, ii, jj)
      MATRIX(di,5) = -beta*(m_v(ii+1,jj)-abs(m_v(ii+1,jj)))
    ENDDO
-
+   MATRIX(1,:) = 0
+   MATRIX(M*M,:) = 0
   END FUNCTION 
 
 
@@ -221,6 +227,12 @@ FUNCTION MATRIX(m_u, m_v, dx, dy, dt, M)
    ENDDO
    DO i = (M-1)*M+1, M*M
     y(i) = A(i,1) * x(i-M) + A(i,2) * x(i-1) + A(i,3) * x(i) + A(i,4) * x(i+1)
+   ENDDO
+   y(1:M) = 0
+   y((M-1)*M+1:M*M) = 0
+   DO i = 2 , M-1 
+	y((i-1)*M+1) = 0
+	y(i*m) = 0
    ENDDO
   END SUBROUTINE
 

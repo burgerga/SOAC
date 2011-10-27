@@ -22,7 +22,7 @@ function varargout = initialized2d(varargin)
 
 % Edit the above text to modify the response to help initialized2d
 
-% Last Modified by GUIDE v2.5 26-Oct-2011 15:19:27
+% Last Modified by GUIDE v2.5 27-Oct-2011 14:46:22
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -334,13 +334,14 @@ switch it
    otherwise
       disp('Three iterations max.')
 end
+maxx = max(max(mywave)) ;
 for i = 1 : N-1 ; 
 axes(handles.axes3);
 cla;
-imagesc(reshape(wave0(i,:),size,size)) ; colorbar;
+contour(reshape(wave0(i,:),size,size)) ; caxis([0 maxx]) ; colorbar;
 axes(handles.axes4);
 cla;
-imagesc(reshape(mywave(i,:),size,size)) ; colorbar;
+contour(reshape(mywave(i,:),size,size)) ; caxis([0 maxx]) ; colorbar;
 end ;
 function edit21_Callback(hObject, eventdata, handles)
 % hObject    handle to edit21 (see GCBO)
@@ -432,3 +433,38 @@ function checkbox1_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of checkbox1
+
+
+% --- Executes on button press in pushbutton6.
+function pushbutton6_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton6 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+it = str2num(get(handles.edit20, 'String')) ;
+N = str2num(get(handles.edit21, 'String')) ;
+size  = str2num(get(handles.edit16, 'String')) ;
+
+load('wave0.dat') ;
+mywave = [] ;
+switch it
+   case 1
+      load('wave1.dat') ;
+      mywave = wave1 ;
+   case 2
+      load('wave2.dat') ;
+      mywave = wave2 ;
+   case 3
+      load('wave3.dat') ;
+      mywave = wave3 ;
+   otherwise
+      disp('Three iterations max.')
+end
+
+for i = 1 : N-1 ; 
+axes(handles.axes3);
+cla;
+contour(reshape(wave0(i,:),size,size),50) ; colorbar;
+axes(handles.axes4);
+cla;
+contour(reshape(mywave(i,:),size,size),50) ; colorbar;
+end ;
