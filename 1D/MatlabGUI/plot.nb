@@ -1,0 +1,301 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 8.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       157,          7]
+NotebookDataLength[      9001,        292]
+NotebookOptionsPosition[      7801,        249]
+NotebookOutlinePosition[      8138,        264]
+CellTagsIndexPosition[      8095,        261]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell[BoxData[
+ RowBox[{"SetDirectory", "[", 
+  RowBox[{"NotebookDirectory", "[", "]"}], "]"}]], "Input",
+ CellChangeTimes->{{3.528699658622328*^9, 3.528699675690061*^9}}],
+
+Cell[BoxData["\<\"/home/gerhard/Documents/UU/Fall 2011/soac/SOAC/1D/MatlabGUI\
+\"\>"], "Output",
+ CellChangeTimes->{3.5287092531529417`*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"files", "=", 
+  RowBox[{"FileNames", "[", "\"\<*.dat\>\"", "]"}]}]], "Input",
+ CellChangeTimes->{{3.528699694460202*^9, 3.528699726924923*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"\<\"wave0.dat\"\>", ",", "\<\"wave2.dat\"\>", 
+   ",", "\<\"wave.dat\"\>"}], "}"}]], "Output",
+ CellChangeTimes->{3.528709257094914*^9}]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"data", "=", 
+   RowBox[{"Import", "[", 
+    RowBox[{"files", "[", 
+     RowBox[{"[", "1", "]"}], "]"}], "]"}]}], ";"}]], "Input",
+ CellChangeTimes->{{3.528699728688151*^9, 3.528699755451212*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Dimensions", "[", "data", "]"}]], "Input",
+ CellChangeTimes->{{3.5286997578355093`*^9, 3.5286997781007423`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"100", ",", "50"}], "}"}]], "Output",
+ CellChangeTimes->{{3.5287092504757338`*^9, 3.5287092573905478`*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Table", "[", 
+  RowBox[{
+   RowBox[{"Export", "[", 
+    RowBox[{
+     RowBox[{"StringJoin", "[", 
+      RowBox[{"\"\<animation/anim\>\"", ",", 
+       RowBox[{"ToString", "[", 
+        RowBox[{"i", "-", "1"}], "]"}], ",", "\"\<.pdf\>\""}], "]"}], ",", 
+     RowBox[{"BarChart", "[", 
+      RowBox[{"data", "[", 
+       RowBox[{"[", "i", "]"}], "]"}], "]"}], ",", 
+     RowBox[{"PlotRange", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{"All", ",", 
+        RowBox[{"{", 
+         RowBox[{"0", ",", "1"}], "}"}]}], "}"}]}], ",", 
+     RowBox[{"ImageSize", "\[Rule]", "Small"}]}], "]"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"i", ",", "1", ",", "10"}], "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.5287093568494577`*^9, 3.528709511700898*^9}, {
+  3.528709944169016*^9, 3.528709944237934*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"\<\"animation/anim0.pdf\"\>", ",", "\<\"animation/anim1.pdf\"\>", 
+   ",", "\<\"animation/anim2.pdf\"\>", ",", "\<\"animation/anim3.pdf\"\>", 
+   ",", "\<\"animation/anim4.pdf\"\>", ",", "\<\"animation/anim5.pdf\"\>", 
+   ",", "\<\"animation/anim6.pdf\"\>", ",", "\<\"animation/anim7.pdf\"\>", 
+   ",", "\<\"animation/anim8.pdf\"\>", ",", "\<\"animation/anim9.pdf\"\>"}], 
+  "}"}]], "Output",
+ CellChangeTimes->{3.528709434410593*^9, 3.528709513911673*^9, 
+  3.528709561629242*^9, 3.528709948768214*^9}]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"t", "=", 
+   RowBox[{"Table", "[", 
+    RowBox[{
+     RowBox[{"BarChart", "[", 
+      RowBox[{
+       RowBox[{"data", "[", 
+        RowBox[{"[", "i", "]"}], "]"}], ",", 
+       RowBox[{"PlotRange", "\[Rule]", 
+        RowBox[{"{", 
+         RowBox[{"All", ",", 
+          RowBox[{"{", 
+           RowBox[{"0", ",", "1"}], "}"}]}], "}"}]}]}], "]"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"i", ",", 
+       RowBox[{"Length", "[", "data", "]"}]}], "}"}]}], "]"}]}], 
+  ";"}]], "Input",
+ CellChangeTimes->{{3.528699787121504*^9, 3.528699933386156*^9}, {
+  3.528700123799164*^9, 3.528700135641181*^9}}],
+
+Cell[BoxData[
+ RowBox[{"ListAnimate", "[", 
+  RowBox[{"t", ",", "10"}], "]"}]], "Input",
+ CellChangeTimes->{{3.528699872955265*^9, 3.52869987766582*^9}, {
+  3.528699952599077*^9, 3.528699989466052*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"data", "=", 
+   RowBox[{"Import", "[", 
+    RowBox[{"files", "[", 
+     RowBox[{"[", "1", "]"}], "]"}], "]"}]}], ";"}]], "Input",
+ CellChangeTimes->{{3.528699728688151*^9, 3.528699755451212*^9}}],
+
+Cell[BoxData[
+ RowBox[{"Dimensions", "[", "data", "]"}]], "Input",
+ CellChangeTimes->{{3.5286997578355093`*^9, 3.5286997781007423`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"t", "=", 
+   RowBox[{"Table", "[", 
+    RowBox[{
+     RowBox[{"BarChart", "[", 
+      RowBox[{
+       RowBox[{"data", "[", 
+        RowBox[{"[", "i", "]"}], "]"}], ",", 
+       RowBox[{"PlotRange", "\[Rule]", 
+        RowBox[{"{", 
+         RowBox[{"All", ",", 
+          RowBox[{"{", 
+           RowBox[{"0", ",", "1"}], "}"}]}], "}"}]}]}], "]"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"i", ",", 
+       RowBox[{"Length", "[", "data", "]"}]}], "}"}]}], "]"}]}], 
+  ";"}]], "Input",
+ CellChangeTimes->{{3.528699787121504*^9, 3.528699933386156*^9}, {
+  3.528700123799164*^9, 3.528700135641181*^9}}],
+
+Cell[BoxData[
+ RowBox[{"ListAnimate", "[", 
+  RowBox[{"t", ",", "10"}], "]"}]], "Input",
+ CellChangeTimes->{{3.528699872955265*^9, 3.52869987766582*^9}, {
+  3.528699952599077*^9, 3.528699989466052*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"data", "=", 
+   RowBox[{"Import", "[", 
+    RowBox[{"files", "[", 
+     RowBox[{"[", "2", "]"}], "]"}], "]"}]}], ";"}]], "Input",
+ CellChangeTimes->{{3.528699728688151*^9, 3.528699755451212*^9}, 
+   3.528700384430943*^9}],
+
+Cell[BoxData[
+ RowBox[{"Dimensions", "[", "data", "]"}]], "Input",
+ CellChangeTimes->{{3.5286997578355093`*^9, 3.5286997781007423`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"t", "=", 
+   RowBox[{"Table", "[", 
+    RowBox[{
+     RowBox[{"BarChart", "[", 
+      RowBox[{
+       RowBox[{"data", "[", 
+        RowBox[{"[", "i", "]"}], "]"}], ",", 
+       RowBox[{"PlotRange", "\[Rule]", 
+        RowBox[{"{", 
+         RowBox[{"All", ",", 
+          RowBox[{"{", 
+           RowBox[{"0", ",", "1"}], "}"}]}], "}"}]}]}], "]"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"i", ",", 
+       RowBox[{"Length", "[", "data", "]"}]}], "}"}]}], "]"}]}], 
+  ";"}]], "Input",
+ CellChangeTimes->{{3.528699787121504*^9, 3.528699933386156*^9}, {
+  3.528700123799164*^9, 3.528700135641181*^9}}],
+
+Cell[BoxData[
+ RowBox[{"ListAnimate", "[", 
+  RowBox[{"t", ",", "10"}], "]"}]], "Input",
+ CellChangeTimes->{{3.528699872955265*^9, 3.52869987766582*^9}, {
+  3.528699952599077*^9, 3.528699989466052*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"data", "=", 
+   RowBox[{"Import", "[", 
+    RowBox[{"files", "[", 
+     RowBox[{"[", "3", "]"}], "]"}], "]"}]}], ";"}]], "Input",
+ CellChangeTimes->{{3.528699728688151*^9, 3.528699755451212*^9}, 
+   3.528700384430943*^9, 3.5287004657295647`*^9}],
+
+Cell[BoxData[
+ RowBox[{"Dimensions", "[", "data", "]"}]], "Input",
+ CellChangeTimes->{{3.5286997578355093`*^9, 3.5286997781007423`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"t", "=", 
+   RowBox[{"Table", "[", 
+    RowBox[{
+     RowBox[{"BarChart", "[", 
+      RowBox[{
+       RowBox[{"data", "[", 
+        RowBox[{"[", "i", "]"}], "]"}], ",", 
+       RowBox[{"PlotRange", "\[Rule]", 
+        RowBox[{"{", 
+         RowBox[{"All", ",", 
+          RowBox[{"{", 
+           RowBox[{"0", ",", "1"}], "}"}]}], "}"}]}]}], "]"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"i", ",", 
+       RowBox[{"Length", "[", "data", "]"}]}], "}"}]}], "]"}]}], 
+  ";"}]], "Input",
+ CellChangeTimes->{{3.528699787121504*^9, 3.528699933386156*^9}, {
+  3.528700123799164*^9, 3.528700135641181*^9}}],
+
+Cell[BoxData[
+ RowBox[{"ListAnimate", "[", 
+  RowBox[{"t", ",", "10"}], "]"}]], "Input",
+ CellChangeTimes->{{3.528699872955265*^9, 3.52869987766582*^9}, {
+  3.528699952599077*^9, 3.528699989466052*^9}}]
+},
+WindowSize->{740, 731},
+WindowMargins->{{134, Automatic}, {Automatic, 0}},
+FrontEndVersion->"8.0 for Linux x86 (64-bit) (February 23, 2011)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[579, 22, 170, 3, 30, "Input"],
+Cell[752, 27, 140, 2, 30, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[929, 34, 167, 3, 30, "Input"],
+Cell[1099, 39, 176, 4, 30, "Output"]
+}, Open  ]],
+Cell[1290, 46, 230, 6, 30, "Input"],
+Cell[CellGroupData[{
+Cell[1545, 56, 136, 2, 30, "Input"],
+Cell[1684, 60, 146, 3, 30, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[1867, 68, 816, 21, 69, "Input"],
+Cell[2686, 91, 543, 9, 88, "Output"]
+}, Open  ]],
+Cell[3244, 103, 633, 19, 30, "Input"],
+Cell[3880, 124, 202, 4, 30, "Input"],
+Cell[4085, 130, 230, 6, 30, "Input"],
+Cell[4318, 138, 136, 2, 30, "Input"],
+Cell[4457, 142, 633, 19, 30, "Input"],
+Cell[5093, 163, 202, 4, 30, "Input"],
+Cell[5298, 169, 256, 7, 30, "Input"],
+Cell[5557, 178, 136, 2, 30, "Input"],
+Cell[5696, 182, 633, 19, 30, "Input"],
+Cell[6332, 203, 202, 4, 30, "Input"],
+Cell[6537, 209, 280, 7, 30, "Input"],
+Cell[6820, 218, 136, 2, 30, "Input"],
+Cell[6959, 222, 633, 19, 30, "Input"],
+Cell[7595, 243, 202, 4, 30, "Input"]
+}
+]
+*)
+
+(* End of internal cache information *)

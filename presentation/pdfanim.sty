@@ -1,0 +1,730 @@
+%
+% pdfanim: a LaTeX package to create animated PDFs with pdfTeX
+%
+% version 0052
+% date 20041214
+%
+% by: Jochen Skupin
+% email: jochen.skupin@uni-bremen.de
+% 
+% History:
+% 
+% 20030323 new
+% 20030324 more than one animation per file
+%          set width, height and depth of animation
+% 20030330 implement options using keyval package
+% 20030426 tested setting of \pageattr 
+%          (not yet optimal, see pdfanim_alternatives.sty)
+% 20030427 implementation most of the javascript on document level 
+%          instead of pagelevel,
+%          implementation of options: reverse, startframe, use
+% 20030503 implementation of options: usecnt
+% 20030510 implementation of options: debug
+% 20030511 enclose document in \begin{Form} \end{Form}
+% 20040311 first steps for an official release
+% 20040520 insert picture as fallback for xpdf 
+%          (activated using option fallback)
+% 20040523 set pageattributes with everyshi.sty,
+%          options: JSdisable, defaultframe
+% 20040529 options: scale, scaletype
+% 20040607 shift PDFAnimLoad to preamble to be able to 
+%          prepare JavaScript before first page 
+%          (woraround to allow animations when started from
+%          shell with acroread file.pdf)
+% 20040613 package options: NoDocJS, NoPageJS
+% 20040622 fixed Form bug (should run without hyperref now)
+% 20041214 disable focus rectangle
+%
+\NeedsTeXFormat{LaTeX2e}
+
+\ProvidesPackage{pdfanim}[2004/12/14 v0.51 Package to create animated PDFs with pdflatex]
+  
+\begingroup
+\@ifundefined{pdfoutput}
+    {\PackageError{PDFAnim}
+            {You're either not using pdfLaTeX\MessageBreak
+             or have turned off PDF output.\MessageBreak
+             `PDFAnim' works only with pdfLaTeX\MessageBreak
+             and PDF output}%
+            {Use `pdflatex' instead of `latex'\MessageBreak
+             and set output to PDF (use: \pdfoutput = 1)!}
+     \expandafter\endinput
+    }{
+     \ifnum\pdfoutput=0
+	 \PackageError{PDFAnim}
+        	 {You don't produce PDF output, which\MessageBreak
+        	  is required for the `PDFAnim' package}%
+        	 {Set output to PDF. (use: \pdfoutput = 1)}
+         \expandafter\endinput
+     \fi
+    }
+\endgroup
+
+\RequirePackage{keyval}
+\RequirePackage{everyshi}
+
+%\RequirePackage{hyperref}%[2001/05/26]
+% only provides \begin{Form} ... \end{Form}, not really necessary
+
+\def\PDFAnim@true{true}
+\def\PDFAnim@false{false}
+\def\PDFAnim@boolkey#1#2{%
+  \lowercase{\def\PDFAnim@tempa{#1}}%
+  \ifx\PDFAnim@tempa\@empty
+    \let\PDFAnim@tempa\PDFAnim@true
+  \fi
+  \ifx\PDFAnim@tempa\PDFAnim@true
+  \else
+    \ifx\PDFAnim@tempa\PDFAnim@false
+    \else
+      \let\PDFAnim@tempa\@empty
+    \fi
+  \fi
+  \ifx\PDFAnim@tempa\@empty
+    \PackageWarning{PDFAnim}{`#2' should be `true' or `false'}%
+  \else
+% just for debugging
+%    \PackageInfo{PDFAnim}{Option `#2' set `\PDFAnim@tempa'}%
+    \csname PDFAnim@#2\PDFAnim@tempa\endcsname
+  \fi
+}
+
+% package options
+% ---------------
+
+% disable creation of
+% document level javascript
+\newif\ifPDFAnim@NoDocJS
+\PDFAnim@NoDocJSfalse
+\DeclareOption{NoDocJS}{\PDFAnim@NoDocJStrue}
+
+% disable automatic inclusion of
+% javascript in PageOpen/CloseAttribute
+\newif\ifPDFAnim@NoPageJS
+\PDFAnim@NoPageJSfalse
+\DeclareOption{NoPageJS}{\PDFAnim@NoPageJStrue}
+
+\ProcessOptions\relax
+
+
+% boolean keyval switches
+% -----------------------
+
+% auto start animation
+\newif\ifPDFAnim@auto
+\PDFAnim@autofalse
+\define@key{PDFAnim}{auto}[true]{%
+  \lowercase{\PDFAnim@boolkey{#1}}{auto}%
+}
+
+% enable debug messages
+\newif\ifPDFAnim@debug
+\PDFAnim@debugfalse
+\define@key{PDFAnim}{debug}[true]{%
+  \lowercase{\PDFAnim@boolkey{#1}}{debug}%
+}
+
+% include startpicture below PictureButton
+% as fallback solution for xpdf, macs ...
+% (gives poor animation results)
+\newif\ifPDFAnim@fallback
+\PDFAnim@fallbackfalse
+\define@key{PDFAnim}{fallback}[true]{%
+  \lowercase{\PDFAnim@boolkey{#1}}{fallback}%
+}
+
+% create hidden PictureButton
+% (mostly for internal use) 
+\newif\ifPDFAnim@hidden
+\PDFAnim@hiddenfalse
+\define@key{PDFAnim}{hidden}[true]{%
+  \lowercase{\PDFAnim@boolkey{#1}}{hidden}%
+}
+
+% loop animation
+\newif\ifPDFAnim@loop
+\PDFAnim@loopfalse
+\define@key{PDFAnim}{loop}[true]{%
+  \lowercase{\PDFAnim@boolkey{#1}}{loop}%
+}
+
+% don't recognize clicks on PictureButton
+\newif\ifPDFAnim@noclick
+\PDFAnim@noclickfalse
+\define@key{PDFAnim}{noclick}[true]{%
+  \lowercase{\PDFAnim@boolkey{#1}}{noclick}%
+}
+
+% remember last displayed picture when
+% changing to another page
+\newif\ifPDFAnim@remember
+\PDFAnim@rememberfalse
+\define@key{PDFAnim}{remember}[true]{%
+  \lowercase{\PDFAnim@boolkey{#1}}{remember}%
+}
+
+% play animation in reversed order
+\newif\ifPDFAnim@reverse
+\PDFAnim@reversefalse
+\define@key{PDFAnim}{reverse}[true]{%
+  \lowercase{\PDFAnim@boolkey{#1}}{reverse}%
+}
+
+% advance animation on every mouseclick
+\newif\ifPDFAnim@step
+\PDFAnim@stepfalse
+\define@key{PDFAnim}{step}[true]{%
+  \lowercase{\PDFAnim@boolkey{#1}}{step}%
+}
+
+% keyval options that take parameters
+% -----------------------------------
+
+% bordercolor of PictureButton
+\let\PDFAnim@bcolor\@empty
+\define@key{PDFAnim}{bcolor}{%
+  \def\PDFAnim@bcolor{#1}%
+}
+
+% backgroundcolor of PictureButton
+\let\PDFAnim@bgcolor\@empty
+\define@key{PDFAnim}{bgcolor}{%
+  \def\PDFAnim@bgcolor{#1}%
+}
+
+% select frame to display when animation not yet running
+\def\PDFAnim@defaultframe{0}
+\define@key{PDFAnim}{defaultframe}{%
+  \def\PDFAnim@defaultframe{#1}%
+}
+
+% depth of PictureButton
+\let\PDFAnim@depth\@empty
+\define@key{PDFAnim}{depth}{%
+  \def\PDFAnim@depth{#1}%
+}
+
+% set extension of included pictures
+% (till now only pdf works)
+\def\PDFAnim@extension{pdf}
+\define@key{PDFAnim}{extension}{%
+  \def\PDFAnim@extension{#1}%
+}
+
+% height of PictureButton
+\let\PDFAnim@height\@empty
+\define@key{PDFAnim}{height}{%
+  \def\PDFAnim@height{#1}%
+}
+
+% set interval in ms between animation frames
+% (only shows effect if interval is longer than
+% the time needed to display a frame)
+\def\PDFAnim@interval{100}
+\define@key{PDFAnim}{interval}{%
+  \def\PDFAnim@interval{#1}%
+}
+
+% name PictureButton
+% (may be usefull for further editing of the pdf,
+% not needed by PDFAnim)
+\let\PDFAnim@name\@empty
+\define@key{PDFAnim}{name}{%
+  \def\PDFAnim@name{#1}%
+}
+
+% javascript action to perform on mouseclick
+% (mostly for internal use)
+\let\PDFAnim@onclick\@empty
+\define@key{PDFAnim}{onclick}{%
+  \def\PDFAnim@onclick{#1}%
+}
+
+% scaling of picture used in PictureButton
+%   A Always scale. 
+%   B Scale only when the icon is bigger than the annotation rectangle. 
+%   S Scale only when the icon is smaller than the annotation rectangle. 
+%   N Never scale.
+\def\PDFAnim@scale{A}
+\define@key{PDFAnim}{scale}{%
+  \def\PDFAnim@scale{#1}%
+}
+
+% type of scaling of picture used in PictureButton
+% A Anamorphic scaling: scale the icon to  ll the annotation rectangle
+%   exactly, without regard to its original aspect ratio (ratio of width to
+%   height). 
+% P Proportional scaling: scale the icon to  t the width or
+%   height of the annotation rectangle while maintaining the icon s
+%   original aspect ratio. If the required horizontal and vertical scaling
+%   factors are different, use the smaller of the two, centering the icon
+%   within the annotation rectangle in the other
+%   dimension.
+\def\PDFAnim@scaletype{A}
+\define@key{PDFAnim}{scaletype}{%
+  \def\PDFAnim@scaletype{#1}%
+}
+
+% use pictures from other animation
+% (to save memory)
+\let\PDFAnim@use\@empty
+\define@key{PDFAnim}{use}{%
+  \def\PDFAnim@use{#1}%
+}
+
+% use counter from other animation
+\let\PDFAnim@usecnt\@empty
+\define@key{PDFAnim}{usecnt}{%
+  \def\PDFAnim@usecnt{#1}%
+}
+
+% select first frame to display
+\def\PDFAnim@startframe{0}
+\define@key{PDFAnim}{startframe}{%
+  \def\PDFAnim@startframe{#1}%
+}
+
+% width of PictureButton
+\let\PDFAnim@width\@empty
+\define@key{PDFAnim}{width}{%
+  \def\PDFAnim@width{#1}%
+}
+
+\ProcessOptions
+
+% exported routines and variables
+% -------------------------------
+
+% define counter for number of animations
+\newcounter{PDFAnimNr}
+\setcounter{PDFAnimNr}{0}
+\xdef\PDFAnimNr{\thePDFAnimNr}%
+
+% declare picture button analog to 
+% PushButton in hyperref.sty and hpdftex.def
+\newcommand*{\PDFAnimPictureButton}{%
+  \@ifnextchar[{\PDFAnim@PictureButton}{\PDFAnim@PictureButton[]}%
+}
+
+% load animation 
+% (this can be done anywhere in the document before
+% the first \PDFAnimation call)
+%
+% arguments:
+%   - name of the animation (with this name it can be reused
+%     several times in one document)
+%   - first part of file name (xxx)
+%   - number n of animation frames i.e. files 
+% the animation will be composed of files 
+% xxx0.pdf, xxx1.pdf ... xxx(n-1).pdf
+%
+%\gdef\PDFAnim@hide#1{{\sbox0{#1}\dp0=0pt \ht0=0pt \wd0=0pt \box0}}
+%\gdef\PDFAnim@hide#1{\vbox to 0pt{\hbox to 0pt{#1}}}
+%\gdef\PDFAnim@hide#1{\vbox to\z@{\hb@xt@\z@{#1\hss}\vss}%\par\vskip -\parskip\vskip -\baselineskip}
+\newcommand*{\PDFAnimLoad}[4][]{%
+%  \vbox to\z@{\hb@xt@\z@{%
+    \@PDFAnimLoad[#1]{#2}{#3}{#4}%\hss}\vss}%
+  }
+
+% place hidden part of animation 
+\newcommand*{\PDFAnimationHidden}[1]{%
+  \ifPDFAnim@debug
+    \message{PDFAnim: using animation dummy }\message{#1}%
+  \fi%
+%  \PDFAnim@pageopencloseJS%  
+  \expandafter\ifx\csname PDFAnimation@#1@h\endcsname\@empty%
+  \else%
+    \count@=0
+    \@whilenum\count@<\csname PDFAnimation@#1@frames\endcsname\do{%
+      \csname PDFAnimation@#1@h\endcsname{\number\count@}%
+      \advance\count@\@ne}%
+    \expandafter\xdef\csname PDFAnimation@#1@frames\endcsname{-1}%
+  \fi%
+}
+
+% use animation 
+\newcommand*{\PDFAnimation}[1]{%
+%  \PDFAnim@pageopencloseJS%  
+  \PDFAnimationHidden{#1}%
+  \csname PDFAnimation@#1\endcsname%
+}
+
+% enable javascript in pageattribute of current page
+\newcommand*{\PDFAnimJSPageEnable}{%
+  \AtNextShipout{\PDFAnim@pageopencloseJS}%
+}
+
+% enable javascript in pageattribute on all following pages
+\newcommand*{\PDFAnimJSEnable}{%
+  \EveryShipout{\PDFAnim@pageopencloseJS}%
+}
+
+% disable javascript in pageattribute of current page
+\newcommand*{\PDFAnimJSPageDisable}{%
+  \AtNextShipout{\PDFAnim@clearpageopenclose}%
+}
+
+% disable javascript in pageattribute on all following pages
+\newcommand*{\PDFAnimJSDisable}{%
+  \EveryShipout{\PDFAnim@clearpageopenclose}%
+}
+
+
+% internal routines
+% -----------------
+
+\gdef\PDFAnimJS@def #1#2{%
+  \expandafter\xdef \csname PDFAnimationJS@#1\endcsname{#2}}
+\gdef\PDFAnimOpen@def #1#2{%
+  \expandafter\xdef \csname PDFAnimationOpen@#1\endcsname{#2}}
+\gdef\PDFAnimClose@def #1#2{%
+  \expandafter\xdef \csname PDFAnimationClose@#1\endcsname{#2}}
+\gdef\PDFAnim@localdef #1#2{%
+  \expandafter\def \csname PDFAnimation@#1\endcsname{#2}}
+\gdef\PDFAnim@def #1#2{%
+  \expandafter\xdef \csname PDFAnimation@#1\endcsname{#2}}
+\gdef\PDFAnim@argdef #1#2{%
+  \expandafter\xdef \csname PDFAnimation@#1\endcsname##1{#2}}
+\gdef\PDFAnim@append#1#2{\xdef#1{#1 #2}}
+\gdef\PDFAnim@add#1#2{\gdef#1{#1 #2}}
+
+\def\PDFAnim@LayoutPictureButtonField#1{\mbox{#1}}
+
+\def\PDFAnim@PictureButtonWidget#1{%
+  /Subtype /Widget
+  \ifPDFAnim@hidden /F 6 \else /F 4 \fi
+  \ifx\PDFAnim@name\@empty
+  \else
+    /T (\PDFAnim@name)
+  \fi
+  /FT /Btn
+  /Ff 65536
+  /H /N
+  /BS << /W 1 /S /S >>
+  /MK <<
+    /TP 1
+    /I #1 0 R
+    /IF << /SW /\PDFAnim@scale /S /\PDFAnim@scaletype /A [0.5 0.5] >>
+    \ifx\PDFAnim@bcolor\@empty
+    \else
+      /BC [\PDFAnim@bcolor]
+    \fi 
+    \ifx\PDFAnim@bgcolor\@empty
+    \else
+      /BG [\PDFAnim@bgcolor]
+    \fi 
+  >>
+  \ifx\PDFAnim@onclick\@empty
+  \else
+    /A << /S /JavaScript /JS (\PDFAnim@onclick;) >>
+  \fi 
+}
+
+\def\PDFAnim@PictureButton[#1]#2{% parameters, picture file name
+  \bgroup
+    \setkeys{PDFAnim}{#1}%
+    \immediate\pdfximage
+      \ifx\PDFAnim@width\@empty\else width \PDFAnim@width\fi 
+      \ifx\PDFAnim@height\@empty\else height \PDFAnim@height\fi
+      \ifx\PDFAnim@depth\@empty\else depth \PDFAnim@depth\fi
+      {#2}%
+    \def\PDFAnim@Obj{\the\pdflastximage}%
+    \PDFAnim@LayoutPictureButtonField{%
+      \leavevmode
+      \pdfstartlink user{\PDFAnim@PictureButtonWidget{\PDFAnim@Obj}}%
+      \ifPDFAnim@hidden
+        \phantom{\pdfrefximage\PDFAnim@Obj}%
+      \else
+        \ifPDFAnim@fallback
+	  \pdfrefximage\PDFAnim@Obj%
+	\else
+          \phantom{\pdfrefximage\PDFAnim@Obj}%
+	\fi
+      \fi
+      \pdfendlink
+    }%
+  \egroup
+}
+
+\newcommand*{\@PDFAnimLoad}[4][]{% options, name, files(s), number of files   
+  \bgroup
+  \setkeys{PDFAnim}{#1}%
+  \ifx\PDFAnim@usecnt\@empty
+  \else
+    \def\PDFAnim@startframe{\PDFAnim@usecnt cnt}%
+  \fi
+  \ifx\PDFAnim@use\@empty
+    \def\PDFAnim@UseName{#2h}%
+    \PDFAnim@argdef{#2@h}{%
+	\noexpand\PDFAnimPictureButton[	
+	  width=0pt,
+	  height=0pt,
+	  depth=0pt,,
+	  name=#2h##1,
+	  hidden=true
+	  ]{#3##1.\PDFAnim@extension}%
+    }%
+  \else
+    \def\PDFAnim@UseName{\PDFAnim@use h}%
+    \PDFAnim@argdef{#2@h}{}%
+  \fi 
+  \PDFAnim@def{#2}{%
+    \noexpand\PDFAnimPictureButton[%
+      #1,
+      name=#2,
+      onclick={
+        \ifPDFAnim@noclick\else
+          \ifPDFAnim@step
+	    if (#2running == 0) {
+	      #2running = 1;
+	      #2cnt = \PDFAnim@startframe;
+              #2PDFAnimate();
+	    } else {
+              #2PDFAnimate();
+	    }
+	  \else
+	    if (#2running == 0) {
+	      #2running = 1;
+	      #2cnt = \PDFAnim@startframe;
+	      #2PDFAnimKey = app.setInterval('#2PDFAnimate()', \PDFAnim@interval);
+	    } else {
+              \ifPDFAnim@remember\else%
+	        #2cnt = \PDFAnim@defaultframe;
+              \fi
+	      #2running = 0;
+	      app.clearInterval(#2PDFAnimKey);
+              this.getField('#2').buttonSetIcon(this.getField('\PDFAnim@UseName'+#2cnt).buttonGetIcon());
+	    }
+          \fi
+	\fi      
+      }
+    ]{#3\PDFAnim@defaultframe.\PDFAnim@extension}%
+  }%
+  \PDFAnim@def{#2@frames}{#4}
+  \ifPDFAnim@reverse
+    \PDFAnimJS@def{\thePDFAnimNr}{%
+      var #2running = 0;
+      var #2cnt = \PDFAnim@defaultframe;
+      function #2PDFAnimate() {
+	#2cnt--;
+	if (#2cnt < 0) {
+	  #2cnt = #4 - 1;
+	  \ifPDFAnim@loop\else
+	    #2running = 0;
+	    #2cnt = \PDFAnim@defaultframe;
+	    app.clearInterval(#2PDFAnimKey);
+	  \fi	  
+	}
+	this.getField('#2').buttonSetIcon(this.getField('\PDFAnim@UseName'+#2cnt).buttonGetIcon());
+      };
+    }% 
+  \else 
+    \PDFAnimJS@def{\thePDFAnimNr}{%
+      var #2running = 0;
+      var #2cnt = \PDFAnim@defaultframe;
+      function #2PDFAnimate() {
+	#2cnt++;
+	if (#2cnt >= #4) {
+	  #2cnt = 0;
+	  \ifPDFAnim@loop\else
+	    #2running = 0;
+	    #2cnt = \PDFAnim@defaultframe;
+	    app.clearInterval(#2PDFAnimKey);
+	  \fi	  
+	}
+	this.getField('#2').buttonSetIcon(this.getField('\PDFAnim@UseName'+#2cnt).buttonGetIcon());
+      };
+    }%  
+  \fi%
+  \PDFAnimOpen@def{\thePDFAnimNr}{%
+    \ifPDFAnim@remember\else%
+      #2cnt = \PDFAnim@defaultframe;
+      this.getField('#2').buttonSetIcon(this.getField('\PDFAnim@UseName'+#2cnt).buttonGetIcon());
+    \fi%
+    \ifPDFAnim@step\else%
+      \ifPDFAnim@auto 
+        if (#2running == 0) {
+	  #2cnt = \PDFAnim@startframe;
+	}
+        #2running = 1;
+	#2PDFAnimKey = app.setInterval('#2PDFAnimate()', \PDFAnim@interval);
+      \fi
+    \fi      
+  }%  
+  \PDFAnimClose@def{\thePDFAnimNr}{%
+    \ifPDFAnim@remember\else%
+      if(#2running != 0) {
+	#2running = 0;
+	app.clearInterval(#2PDFAnimKey);
+      }
+      #2cnt = \PDFAnim@defaultframe;
+      this.getField('#2').buttonSetIcon(this.getField('\PDFAnim@UseName'+#2cnt).buttonGetIcon());
+    \fi
+  }%   
+  \egroup%
+  \global\addtocounter{PDFAnimNr}{1}%
+  \xdef\PDFAnimNr{\thePDFAnimNr}%
+%
+  \ifPDFAnim@debug
+    \message{PDFAnim: defining animation }\message{\PDFAnimNr}%
+    \message{with document level javascript:}\message{\csname PDFAnimationJS@\PDFAnimNr@\endcsname}%
+  \fi%
+%}}
+}
+
+\def\PDFAnim@setpageopenclose#1#2{%}
+  \global\pdfpageattr{%
+    /AA << /O << /S /JavaScript /JS (#1) >> 
+           /C << /S /JavaScript /JS (#2) >>
+        >>
+  }%
+}
+
+\def\PDFAnim@clearpageopenclose{%
+  \global\pdfpageattr{%
+    /AA << >>
+  }%
+}
+
+\newcommand*{\PDFAnim@pageopencloseJS}{%
+  \ifPDFAnim@NoDocJS%
+    \edef\PDFAnim@pageattr{%
+      \noexpand\PDFAnim@setpageopenclose{\PDFAnim@JavaScript PDFAnimPageOpen()}{PDFAnimPageClose()}}%
+  \else%
+    \edef\PDFAnim@pageattr{%
+      \noexpand\PDFAnim@setpageopenclose{PDFAnimPageOpen()}{PDFAnimPageClose()}}%
+  \fi%
+  \PDFAnim@pageattr%
+}
+
+% create JavaScript routines
+% --------------------------
+\newcommand*{\PDFAnim@JavaScriptRoutines}{%
+  % create javascript routines
+  \gdef\PDFAnim@JavaScript{app.focusRect = false;}%
+  \count@=0
+  \@whilenum\count@<\PDFAnimNr\do{%
+    \PDFAnim@append\PDFAnim@JavaScript{%
+      \csname PDFAnimationJS@\number\count@\endcsname}%
+    \advance\count@\@ne}%
+  % javascript for openpage action
+  \gdef\PDFAnim@pageattropen{}%
+  \count@=0
+  \@whilenum\count@<\PDFAnimNr\do{%
+    \PDFAnim@append\PDFAnim@pageattropen{%
+      \csname PDFAnimationOpen@\number\count@\endcsname}%
+    \advance\count@\@ne}%
+  \PDFAnim@append\PDFAnim@JavaScript{%
+    function PDFAnimPageOpen() {\PDFAnim@pageattropen};
+  }%
+  % javascript for closepage action
+  \gdef\PDFAnim@pageattrclose{}%
+  \count@=0
+  \@whilenum\count@<\PDFAnimNr\do{%
+    \PDFAnim@append\PDFAnim@pageattrclose{%
+      \csname PDFAnimationClose@\number\count@\endcsname}%
+    \advance\count@\@ne}%
+  \PDFAnim@append\PDFAnim@JavaScript{%
+    function PDFAnimPageClose() {\PDFAnim@pageattrclose};
+  }%
+}
+
+\newcommand*{\PDFAnim@JavaScriptDocLevel}{%
+  % create document level javascript routines
+  \immediate\pdfobj{ << /S /JavaScript /JS (\PDFAnim@JavaScript) >> }
+  \immediate\pdfobj{ << /Names [(1 PDFAnim JavaScript) \the\pdflastobj\space 0 R ] >>}
+  \pdfnames{/JavaScript \the\pdflastobj\space 0 R}%
+}
+
+% definitions for begin of document
+% ---------------------------------
+
+% \begin{Form} \end{Form} is the only part of hyperref
+% of use for pdfanim, so if hyperref is loaded use them, 
+% if hyperref is not loaded use own (simpler) definition
+\ifx\@Form\@undefined% hyperref loaded?
+  \def\@Form{%
+    \pdfobj { << /Type /Encoding /Differences [ 24 /breve /caron
+    /circumflex /dotaccent /hungarumlaut /ogonek /ring /tilde 39
+    /quotesingle 96 /grave 128 /bullet /dagger /daggerdbl /ellipsis
+    /emdash /endash /florin /fraction /guilsinglleft /guilsinglright
+    /minus /perthousand /quotedblbase /quotedblleft /quotedblright
+    /quoteleft /quoteright /quotesinglbase /trademark /fi /fl /Lslash /OE
+    /Scaron /Ydieresis /Zcaron /dotlessi /lslash /oe /scaron /zcaron 164
+    /currency 166 /brokenbar 168 /dieresis /copyright /ordfeminine 172
+    /logicalnot /.notdef /registered /macron /degree /plusminus
+    /twosuperior /threesuperior /acute /mu 183 /periodcentered /cedilla
+    /onesuperior /ordmasculine 188 /onequarter /onehalf /threequarters 192
+    /Agrave /Aacute /Acircumflex /Atilde /Adieresis /Aring /AE /Ccedilla
+    /Egrave /Eacute /Ecircumflex /Edieresis /Igrave /Iacute /Icircumflex
+    /Idieresis /Eth /Ntilde /Ograve /Oacute /Ocircumflex /Otilde
+    /Odieresis /multiply /Oslash /Ugrave /Uacute /Ucircumflex /Udieresis
+    /Yacute /Thorn /germandbls /agrave /aacute /acircumflex /atilde
+    /adieresis /aring /ae /ccedilla /egrave /eacute /ecircumflex
+    /edieresis /igrave /iacute /icircumflex /idieresis /eth /ntilde
+    /ograve /oacute /ocircumflex /otilde /odieresis /divide /oslash
+    /ugrave /uacute /ucircumflex /udieresis /yacute /thorn /ydieresis ] >>
+    }
+    \def\PDFAnim@pdfdocencoding{\the\pdflastobj}
+    \pdfobj {  <<
+      /Type /Font
+      /Subtype /Type1
+      /Name /Helv
+      /BaseFont /Helvetica
+      /Encoding \PDFAnim@pdfdocencoding\space 0 R
+      >>
+    }
+    \def\PDFAnim@Helv{\the\pdflastobj}
+    \pdfobj {
+      <<
+	/Fields []
+	/DR <<
+	  /Font << /Helv \PDFAnim@Helv\space0 R >>
+	>>
+	/DA (/Helv 10 Tf 0 g )
+	/NeedAppearances true
+      >>
+    }
+    \def\PDFAnim@acroform{\the\pdflastobj}
+    \ifnum\pdftexversion>13
+      \pdfrefobj\PDFAnim@acroform
+    \fi
+    \pdfcatalog{/AcroForm \PDFAnim@acroform\space 0 R}%
+  }%
+  \def\@endForm{}
+\fi
+
+% according to Heiko Oberdiek
+% \begin{Form} \end{Form} has only to be called once
+% anywhere in the document (even before \begin{document}),
+% but according to my experience all Forms have to be
+% enclosed in \begin{Form} \end{Form} to have all
+% attributes set
+\@ifundefined{AfterBeginDocument}{%
+ \let\AfterBeginDocument\AtBeginDocument
+ }{}%
+\AfterBeginDocument{%
+  \begin{Form}%
+  \PDFAnim@JavaScriptRoutines%
+  \ifPDFAnim@NoDocJS%
+  \else%
+    \PDFAnim@JavaScriptDocLevel%
+  \fi%
+  \ifPDFAnim@NoPageJS%
+    \PDFAnimJSDisable%
+  \else%
+    \PDFAnimJSEnable%
+  \fi%
+}
+
+
+% definitions for end of document
+% -------------------------------
+\newcommand*{\PDFAnim@EndDoc}{%
+  \end{Form}%
+}
+
+\AtEndDocument{%
+%  \PDFAnim@JavaScriptDocLevel%
+  \PDFAnim@EndDoc%
+}
