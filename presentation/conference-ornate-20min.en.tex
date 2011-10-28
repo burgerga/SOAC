@@ -130,14 +130,14 @@
 \frametitle{Basis: upstream on a staggered grid}
 We start with the following upstream advection equation on staggered grid:
 \begin{equation*}
- \psi_i^{N+1} = \psi_i^N - \Big( F \left( \psi_i^N,\psi_{i+1}^N,u_{i+1/2}^N\right)
--F \left( \psi_{i-1}^N,\psi_{i}^N,u_{i-1/2}^N\right) \Big),
+ \psi_i^{n+1} = \psi_i^n - \Big( F \left( \psi_i^n,\psi_{i+1}^n,u_{i+1/2}^n\right)
+-F \left( \psi_{i-1}^n,\psi_{i}^n,u_{i-1/2}^n\right) \Big),
 \end{equation*}
 where
 \begin{multline*}
-F \left( \psi_i^N,\psi_{i+1}^N,u_{i+1/2}^N\right) =\\
-\Big( \left( u_{i+1/2}^N + \abs{u_{i+1/2}^N} \right) \psi_i^N
-+ \left( u_{i+1/2}^N - \abs{u_{i+1/2}^N} \right) \psi_{i+1}^N \Big)
+F \left( \psi_i^n,\psi_{i+1}^n,u_{i+1/2}^n\right) =\\
+\Big( \left( u_{i+1/2}^n + \abs{u_{i+1/2}^n} \right) \psi_i^n
++ \left( u_{i+1/2}^n - \abs{u_{i+1/2}^n} \right) \psi_{i+1}^n \Big)
 \frac{\Delta t}{2 \Delta x}.
 \end{multline*}
 \end{frame}
@@ -147,10 +147,10 @@ F \left( \psi_i^N,\psi_{i+1}^N,u_{i+1/2}^N\right) =\\
 Writing the scheme out and collecting terms gives
 \begin{equation*}
 \begin{split}
-\psi_i^{N+1} &=
-\frac{\Delta t}{2 \Delta x} \left( u_{i-1/2}^N + \abs{u_{i-1/2}^N} \right) \psi_{i-1}^N\\
-&+ \left(1 - \frac{\Delta t}{2 \Delta x} \left( u_{i+1/2}^N + \abs{u_{i+1/2}^N} - u_{i-1/2}^N + \abs{u_{i-1/2}^N} \right) \right) \psi_i^N\\
-&-\frac{\Delta t}{2 \Delta x} \left( u_{i+1/2}^N - \abs{u_{i+1/2}^N} \right) \psi_{i+1}^N
+\psi_i^{n+1} &=
+\frac{\Delta t}{2 \Delta x} \left( u_{i-1/2}^n + \abs{u_{i-1/2}^n} \right) \psi_{i-1}^n\\
+&+ \left(1 - \frac{\Delta t}{2 \Delta x} \left( u_{i+1/2}^n + \abs{u_{i+1/2}^n} - u_{i-1/2}^n + \abs{u_{i-1/2}^n} \right) \right) \psi_i^n\\
+&-\frac{\Delta t}{2 \Delta x} \left( u_{i+1/2}^n - \abs{u_{i+1/2}^n} \right) \psi_{i+1}^n
 \end{split}
 \end{equation*}
 \end{frame}
@@ -159,13 +159,13 @@ Writing the scheme out and collecting terms gives
 \frametitle{Method of lines 2}
 This can be rewritten to 
 \begin{equation*}
-\psi_i^{N+1} = \alpha_i \psi_{i-1}^N + \beta_i \psi_i^N +\gamma_i \psi_{i+1}^N, \quad \text{for } i=1,\ldots,M-1,
+\psi_i^{n+1} = \alpha_i \psi_{i-1}^n + \beta_i \psi_i^n +\gamma_i \psi_{i+1}^n, \quad \text{for } i=1,\ldots,M-1,
 \end{equation*}
  where we have that
 \begin{align*}
-\alpha_i &= \frac{\Delta t}{2 \Delta x} \left( u_{i-1/2}^N + \abs{u_{i-1/2}^N} \right),\\
- \beta_i &= \left(1 - \frac{\Delta t}{2 \Delta x} \left( u_{i+1/2}^N + \abs{u_{i+1/2}^N} - u_{i-1/2}^N + \abs{u_{i-1/2}^N} \right) \right),\\
-\gamma_i &= -\frac{\Delta t}{2 \Delta x} \left( u_{i+1/2}^N - \abs{u_{i+1/2}^N} \right).
+\alpha_i &= \frac{\Delta t}{2 \Delta x} \left( u_{i-1/2}^n + \abs{u_{i-1/2}^n} \right),\\
+ \beta_i &= \left(1 - \frac{\Delta t}{2 \Delta x} \left( u_{i+1/2}^n + \abs{u_{i+1/2}^n} - u_{i-1/2}^n + \abs{u_{i-1/2}^n} \right) \right),\\
+\gamma_i &= -\frac{\Delta t}{2 \Delta x} \left( u_{i+1/2}^n - \abs{u_{i+1/2}^n} \right).
 \end{align*}
 \end{frame}
 
@@ -174,60 +174,58 @@ This can be rewritten to
 We can also write this in matrix form using Direchlet boundary conditions
 \begin{itemize}
 \item \only<1>\alert{$y(0)=0$ and $y(M)=0$}
-\item \only<2>\alert{using periodic boundary conditions $y(0)=y(M)$}
+\item \only<2->\alert{using periodic boundary conditions $y(0)=y(M)$}
 \end{itemize}
 \begin{equation*}
-\begin{bmatrix}\psi_{1}^{N+1}\\\psi_{2}^{N+1}\\ \vdots \\\psi_{M-2}^{N+1}\\\psi_{M-1}^{N+1}\end{bmatrix} =
-\begin{bmatrix}\beta_1&\gamma_1&&&\alert{\only<1>{0}\only<2>{\alpha_1}}\\ \alpha_2&\beta_2&\gamma_2\\ &\ddots&\ddots&\ddots\\&&\alpha_{M-2}&\beta_{M-2}&\gamma_{M-2}\\\alert{\only<1>{0}\only<2>{\gamma_{M-1}}}&&&\alpha_{M-1}&\beta_{M-1}\\ \end{bmatrix}
-\begin{bmatrix}\psi_{1}^N\\\psi_{2}^N\\ \vdots \\\psi_{M-2}^N\\\psi_{M-1}^N\end{bmatrix}
+\begin{bmatrix}\psi_{1}^{n+1}\\\psi_{2}^{n+1}\\ \vdots \\\psi_{M-2}^{n+1}\\\psi_{M-1}^{n+1}\end{bmatrix} =
+\begin{bmatrix}\beta_1&\gamma_1&&&\alert{\only<1>{0}\only<2->{\alpha_1}}\\ \alpha_2&\beta_2&\gamma_2\\ &\ddots&\ddots&\ddots\\&&\alpha_{M-2}&\beta_{M-2}&\gamma_{M-2}\\\alert{\only<1>{0}\only<2->{\gamma_{M-1}}}&&&\alpha_{M-1}&\beta_{M-1}\\ \end{bmatrix}
+\begin{bmatrix}\psi_{1}^n\\\psi_{2}^n\\ \vdots \\\psi_{M-2}^n\\\psi_{M-1}^n\end{bmatrix}
 \end{equation*}
-So the new values of $\psi$ can be obtained by a sparse matrix-vector multiplication 
+\uncover<3>{So the new values of $\psi$ can be obtained by a sparse matrix-vector multiplication}
 \end{frame}
 
 \begin{frame}
 \frametitle{Antidiffusion 1}
 To apply antidiffusion we need to redefine the scheme into
 \begin{align*}
- \psi_i^{*} &= \psi_i^N - \Big( F \left( \psi_i^N,\psi_{i+1}^N,u_{i+1/2}^N\right)
--F \left( \psi_{i-1}^N,\psi_{i}^N,u_{i-1/2}^N\right) \Big),\\
- \psi_i^{N+1} &= \psi_i^* - \Big( F \left( \psi_i^*,\psi_{i+1}^*,\tilde{u}_{i+1/2}^N\right)
--F \left( \psi_{*}^N,\psi_{*}^N,\tilde{u}_{i-1/2}^N\right) \Big),\
+ \psi_i^{*} &= \psi_i^n - \Big( F \left( \psi_i^n,\psi_{i+1}^n,u_{i+1/2}^n\right)
+-F \left( \psi_{i-1}^n,\psi_{i}^n,u_{i-1/2}^n\right) \Big),\\
+ \psi_i^{n+1} &= \psi_i^* - \Big( F \left( \psi_i^*,\psi_{i+1}^*,\tilde{u}_{i+1/2}^n\right)
+-F \left( \psi_{*}^n,\psi_{*}^n,\tilde{u}_{i-1/2}^n\right) \Big),\
 \end{align*}
 were the antidiffusion velocity $\tilde{u}_{i+1/2}$ is defined as
 \begin{equation*}
 \tilde{u}_{i+1/2} = \frac{\left(\abs{u_{i+1/2}}\Delta x - \Delta t u_{i+1/2}^2 \right) \left( \psi_{i+1}^*-\psi_i^*\right)}{ \left( \psi_i^*+\psi_{i+1}^*+\epsilon \right) \Delta x}
 \end{equation*}
-\end{frame}
-
-\begin{frame}
-\frametitle{Antidiffusion 2}
-The Method of lines can be applied in the same way to the second step in the scheme,\\
- so the whole scheme can be executed with two sparse matrix-vector multiplications and a matrix update.
+Since the second step is similar to the first we can also apply the `method of lines' to the second step.
 \end{frame}
 
 \subsection{Implementation}
 \begin{frame}
 \frametitle{Algorithm}
+\IncMargin{1em}
 \begin{algorithm}[H]
 \SetKwData{Iter}{iter}\SetKwData{Mone}{mat1}\SetKwData{Mtwo}{mat2}
 \SetKwData{Steps}{tsteps}
 \SetKwFunction{MMat}{ComputeMatrix}\SetKwFunction{MMult}{MatrixMultiplication}
 \SetKwFunction{CADV}{ComputeAntidiffusionVelocity}
 \SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
-\Input{Initial configuration $\psi^0$, velocities $u$, number of iterations \Iter} 
-\Output{Final configuration $\psi^N$}
+\Input{Initial state $\psi^0$, velocities $u$, \Iter, \Steps, $\Delta x$, $\Delta t$} 
+\Output{Final state $\psi^N$}
 \BlankLine
 $\psi \leftarrow \psi^0$\;
-\Mone $\leftarrow$ \MMat{$u$}\;
-\For{$i \leftarrow 0$ \KwTo \Iter}{
+\Mone $\leftarrow$ \MMat{$u,\Delta x, \Delta t$}\;
+\For{$i \leftarrow 0$ \KwTo \Steps}{
 $\psi \leftarrow$ \MMult{\Mone,$\psi$}\;
 \For{$j \leftarrow 1$ \KwTo \Iter}{
 $\widetilde{u} \leftarrow$ \CADV{$\psi,u$}\;
-\Mtwo $\leftarrow$ \MMat{$\widetilde{u}$}\;
+\Mtwo $\leftarrow$ \MMat{$\widetilde{u},\Delta x, \Delta t$}\;
 $\psi \leftarrow$ \MMult{\Mtwo,$\psi$}\;
 }
 }
+$\psi^N \leftarrow \psi$\;
 \end{algorithm}
+\DecMargin{1em}
 \end{frame}
 
 \subsection{numerical results}
