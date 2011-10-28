@@ -7,7 +7,7 @@
 }
 \usepackage[english]{babel}
 \usepackage[utf8]{inputenc}
-\usepackage{epstopdf}
+%\usepackage{epstopdf}
 \usepackage{lmodern}
 \usepackage[T1]{fontenc}
 
@@ -94,6 +94,21 @@ Examples in ocean, atmosphere and climate modelling
 
 \end{frame}
 
+
+\begin{frame}
+\begin{block}{Advection equation}
+Continuity equation describing the advection of a nondiffusive quantity in a flow field:
+
+\begin{equation}
+\frac{\partial \psi}{\partial t} + \text{ div}(V\psi) = 0
+\end{equation}
+
+where $\psi(x,y,z,t)$ is the nondiffusive scalar quantity, $V=(u,v,w)$ is the velocity vector and $x,y,z,t$ are space and time independent variables. 
+\end{block}
+
+
+\end{frame}
+
 \begin{frame}
 \frametitle{Advection simulation}
 
@@ -110,21 +125,30 @@ Constraints on advection simulation \cite{rasch}
 \end{frame}
 
 \subsection{Diffusion}
+\begin{frame}
 \frametitle{Problem: diffusion}
 
-When simulating an advective process, we need to discretize space. When doing so, we introduce numerical constraints on the calculation and we get diffusion.
+\begin{itemize}
+\item When simulating an advective process, we need to discretize space. When doing so, we introduce numerical constraints on the calculation and we get diffusion.
+\item The numerical solution spreads out.
+\item We get interactions, our simulations become less reliable.
+\item $\Longrightarrow$ example
+\end{itemize}
+
+\end{frame}
 
 \begin{frame}
 \frametitle{Example of diffusion with an upstream scheme}
 \begin{figure}
-\includegraphics<1>[width=\imsize]{animation/anime0.eps}
-\includegraphics<2>[width=\imsize]{animation/anime1.eps}
-\includegraphics<3>[width=\imsize]{animation/anime2}
-\includegraphics<4>[width=\imsize]{animation/anime3}
-\includegraphics<5>[width=\imsize]{animation/anime4}
-\includegraphics<6>[width=\imsize]{animation/anime5}
-\includegraphics<7>[width=\imsize]{animation/anime6}
-\includegraphics<8>[width=\imsize]{animation/anime7}
+\renewcommand{\imsize}{0.7\textwidth}
+\includegraphics<1>[width=\imsize]{animation/anime0.pdf}%
+\includegraphics<2>[width=\imsize]{animation/anime1.pdf}%
+\includegraphics<3>[width=\imsize]{animation/anime2}%
+\includegraphics<4>[width=\imsize]{animation/anime3}%
+\includegraphics<5>[width=\imsize]{animation/anime4}%
+\includegraphics<6>[width=\imsize]{animation/anime5}%
+\includegraphics<7>[width=\imsize]{animation/anime6}%
+\includegraphics<8>[width=\imsize]{animation/anime7}%
 \end{figure}
 \end{frame}
 
