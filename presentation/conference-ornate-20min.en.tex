@@ -11,6 +11,8 @@
 \usepackage{lmodern}
 \usepackage[T1]{fontenc}
 
+\usepackage{xmpmulti}
+
 \title[Advection equation and antidiffusion]
 {Using antidiffusion to solve the advection equation more accurately}
 
@@ -51,6 +53,7 @@
 
 %\beamerdefaultoverlayspecification{<+->}
 \newcommand{\imsize}{}
+\providecommand{\abs}[1]{\left\lvert#1\right\rvert}
 
 \begin{document}
 
@@ -77,18 +80,17 @@
 \subsection{Diffusion}
 
 \begin{frame}{Example of diffusion with an upstream scheme}
-\renewcommand{\imsize}{0.5\textwidth}
 \begin{figure}
-\includegraphics<1>[width=\imsize]{animation/anim0.pdf}
-\includegraphics<2>[width=\imsize]{animation/anim1.pdf}
-\includegraphics<3>[width=\imsize]{animation/anim2.pdf}
-\includegraphics<4>[width=\imsize]{animation/anim3.pdf}
-\includegraphics<5>[width=\imsize]{animation/anim4.pdf}
-\includegraphics<6>[width=\imsize]{animation/anim5.pdf}
-\includegraphics<7>[width=\imsize]{animation/anim6.pdf}
-\includegraphics<8>[width=\imsize]{animation/anim7.pdf}
-\includegraphics<9>[width=\imsize]{animation/anim8.pdf}
-\includegraphics<10>[width=\imsize]{animation/anim9.pdf}
+\includegraphics<1>{animation/anim-0}%
+\includegraphics<2>{animation/anim-1}%
+\includegraphics<3>{animation/anim-2}%
+\includegraphics<4>{animation/anim-3}%
+\includegraphics<5>{animation/anim-4}%
+\includegraphics<6>{animation/anim-5}%
+\includegraphics<7>{animation/anim-6}%
+\includegraphics<8>{animation/anim-7}%
+\includegraphics<9>{animation/anim-8}%
+\includegraphics<10>{animation/anim-9}%
 \end{figure}
 \end{frame}
 
