@@ -1,6 +1,6 @@
 \documentclass[hyperref={pdfstartview=Fit}]{beamer}
 %\documentclass[hyperref={pdfstartview=Fit,pdfpagemode=FullScreen}]{beamer}
-\mode<presentation>
+\mode<presentation>%
 {
   \usetheme{Warsaw}
   \setbeamercovered{transparent}
@@ -11,30 +11,16 @@
 \usepackage{lmodern}
 \usepackage[T1]{fontenc}
 
-\title[Advection equation and antidiffusion]
-{Using antidiffusion to solve the advection equation more accurately}
+\usepackage[lined, boxed]{algorithm2e}
 
-\subtitle{Case study: Smolarkiewicz' iterative approach}
+\newcommand{\imsize}{}
+\providecommand{\abs}[1]{\left\lvert#1\right\rvert}
 
-\author[Burger, Wolterink]
-{Gerhard Burger \and Jelmer Wolterink}
-
-\institute[Utrecht University]
-{
-  Scientific Computing\\
-  Department of Mathematics\\
-  Utrecht University
+\newlength{\widthtmp}
+\newcommand{\getWidth}[1]{%
+  \settowidth{\widthtmp}{#1}%
+  \the\widthtmp%
 }
-
-\date[31-Oct-2011] %
-{Project presentations SOAC, 31 October 2011}
-
-\subject{Advection equation and antidiffusion}
-
- \pgfdeclareimage[height=0.5cm]{university-logo}{UU_logo_fullcolor_uncoated_sol_left}
- \logo{\pgfuseimage{university-logo}}
-
-
 
 % Delete this, if you do not want the table of contents to pop up at
 % the beginning of each subsection:
@@ -50,7 +36,29 @@
 % the following command:
 
 %\beamerdefaultoverlayspecification{<+->}
-\newcommand{\imsize}{}
+
+\title[Advection equation and antidiffusion]%
+{Antidiffusion techniques to refine the numerical solution of the advection equation}
+
+\subtitle{Case study: Smolarkiewicz' iterative approach}
+
+\author[Burger, Wolterink]%
+{Gerhard Burger \and Jelmer Wolterink}
+
+\institute[Utrecht University]%
+{
+  Scientific Computing\\
+  Department of Mathematics\\
+  Utrecht University
+}
+
+\date[31-Oct-2011] %
+{Project presentations SOAC, 31 October 2011}
+
+\subject{Advection equation and antidiffusion}
+
+ \pgfdeclareimage[height=0.5cm]{university-logo}{UU_logo_fullcolor_uncoated_sol_left}
+ \logo{\pgfuseimage{university-logo}}
 
 \begin{document}
 
@@ -106,8 +114,8 @@ Constraints on advection simulation \cite{rasch}
 
 When simulating an advective process, we need to discretize space. When doing so, we introduce numerical constraints on the calculation and we get diffusion.
 
-\begin{frame}{Example of diffusion with an upstream scheme}
-\renewcommand{\imsize}{0.5\textwidth}
+\begin{frame}
+\frametitle{Example of diffusion with an upstream scheme}
 \begin{figure}
 \includegraphics<1>[width=\imsize]{animation/anime0.eps}
 \includegraphics<2>[width=\imsize]{animation/anime1.eps}
@@ -122,7 +130,8 @@ When simulating an advective process, we need to discretize space. When doing so
 
 \subsection{Antidiffusion methods}
 
-\begin{frame}{Antidiffusion methods 1}
+\begin{frame}
+\frametitle{Antidiffusion methods 1}
 \begin{itemize}
 \item Flux-corrected transport (FCT) method (Boris and Book, 1973),
 \item self-adjusting hybrid scheme (SAHS) (Harten en Zwas, 1972),
@@ -134,7 +143,8 @@ When simulating an advective process, we need to discretize space. When doing so
    with more diffusion but half the computation time.
 \end{frame}
 
-\begin{frame}{Antidiffusion methods 2}
+\begin{frame}
+\frametitle{Antidiffusion methods 2}
 \begin{itemize}
 \item Smolarkiewicz' iterative correction
 \end{itemize}
@@ -142,12 +152,10 @@ When simulating an advective process, we need to discretize space. When doing so
 \end{frame}
 
 \section{Case study: Smolarkiewicz}
-\subsection{the scheme and method of lines}
-\subsection{implementation}
-\subsection{numerical results}
+\subsection{Analyzing the scheme}
 
 \begin{frame}
-\frametitle{The scheme}
+\frametitle{Basis: upstream on a staggered grid}
 We start with the following upstream advection equation on staggered grid:
 \begin{equation*}
  \psi_i^{N+1} = \psi_i^N - \Big( F \left( \psi_i^N,\psi_{i+1}^N,u_{i+1/2}^N\right)
@@ -162,20 +170,22 @@ F \left( \psi_i^N,\psi_{i+1}^N,u_{i+1/2}^N\right) =\\
 \end{multline*}
 \end{frame}
 
-\begin{frame}{Writing it out}
-Inserting this and collecting terms gives us
+\begin{frame}
+\frametitle{Method of lines 1}
+Writing the scheme out and collecting terms gives
 \begin{equation*}
 \begin{split}
 \psi_i^{N+1} &=
 \frac{\Delta t}{2 \Delta x} \left( u_{i-1/2}^N + \abs{u_{i-1/2}^N} \right) \psi_{i-1}^N\\
 &+ \left(1 - \frac{\Delta t}{2 \Delta x} \left( u_{i+1/2}^N + \abs{u_{i+1/2}^N} - u_{i-1/2}^N + \abs{u_{i-1/2}^N} \right) \right) \psi_i^N\\
-&-\frac{\Delta t}{2 \Delta x} \left( u_{i+1/2}^N - \abs{u_{i+1/2}^N} \right) \psi_{i+1}^N\\
+&-\frac{\Delta t}{2 \Delta x} \left( u_{i+1/2}^N - \abs{u_{i+1/2}^N} \right) \psi_{i+1}^N
 \end{split}
 \end{equation*}
 \end{frame}
 
-\begin{frame}{Writing it out}
-We can write this as
+\begin{frame}
+\frametitle{Method of lines 2}
+This can be rewritten to 
 \begin{equation*}
 \psi_i^{N+1} = \alpha_i \psi_{i-1}^N + \beta_i \psi_i^N +\gamma_i \psi_{i+1}^N, \quad \text{for } i=1,\ldots,M-1,
 \end{equation*}
@@ -187,20 +197,69 @@ We can write this as
 \end{align*}
 \end{frame}
 
-
-\begin{frame}{Matrix form}
-We can also write this in matrix form \only<2>\alert{using periodic boundary conditions}
-\only<1>{\begin{equation*}
+\begin{frame}
+\frametitle{Method of lines 3}
+We can also write this in matrix form using Direchlet boundary conditions
+\begin{itemize}
+\item \only<1>\alert{$y(0)=0$ and $y(M)=0$}
+\item \only<2>\alert{using periodic boundary conditions $y(0)=y(M)$}
+\end{itemize}
+\begin{equation*}
 \begin{bmatrix}\psi_{1}^{N+1}\\\psi_{2}^{N+1}\\ \vdots \\\psi_{M-2}^{N+1}\\\psi_{M-1}^{N+1}\end{bmatrix} =
-\begin{bmatrix}\beta_1&\gamma_1&&&0\\ \alpha_2&\beta_2&\gamma_2\\ &\ddots&\ddots&\ddots\\&&\alpha_{M-2}&\beta_{M-2}&\gamma_{M-2}\\0&&&\alpha_{M-1}&\beta_{M-1}\\ \end{bmatrix}
+\begin{bmatrix}\beta_1&\gamma_1&&&\alert{\only<1>{0}\only<2>{\alpha_1}}\\ \alpha_2&\beta_2&\gamma_2\\ &\ddots&\ddots&\ddots\\&&\alpha_{M-2}&\beta_{M-2}&\gamma_{M-2}\\\alert{\only<1>{0}\only<2>{\gamma_{M-1}}}&&&\alpha_{M-1}&\beta_{M-1}\\ \end{bmatrix}
 \begin{bmatrix}\psi_{1}^N\\\psi_{2}^N\\ \vdots \\\psi_{M-2}^N\\\psi_{M-1}^N\end{bmatrix}
-\end{equation*}}
-\only<2>{\begin{equation*}
-\begin{bmatrix}\psi_{1}^{N+1}\\\psi_{2}^{N+1}\\ \vdots \\\psi_{M-2}^{N+1}\\\psi_{M-1}^{N+1}\end{bmatrix} =
-\begin{bmatrix}\beta_1&\gamma_1&&&\alpha_1\\ \alpha_2&\beta_2&\gamma_2\\ &\ddots&\ddots&\ddots\\&&\alpha_{M-2}&\beta_{M-2}&\gamma_{M-2}\\\gamma_{M-1}&&&\alpha_{M-1}&\beta_{M-1}\\ \end{bmatrix}
-\begin{bmatrix}\psi_{1}^N\\\psi_{2}^N\\ \vdots \\\psi_{M-2}^N\\\psi_{M-1}^N\end{bmatrix}
-\end{equation*}}
+\end{equation*}
+So the new values of $\psi$ can be obtained by a sparse matrix-vector multiplication 
 \end{frame}
+
+\begin{frame}
+\frametitle{Antidiffusion 1}
+To apply antidiffusion we need to redefine the scheme into
+\begin{align*}
+ \psi_i^{*} &= \psi_i^N - \Big( F \left( \psi_i^N,\psi_{i+1}^N,u_{i+1/2}^N\right)
+-F \left( \psi_{i-1}^N,\psi_{i}^N,u_{i-1/2}^N\right) \Big),\\
+ \psi_i^{N+1} &= \psi_i^* - \Big( F \left( \psi_i^*,\psi_{i+1}^*,\tilde{u}_{i+1/2}^N\right)
+-F \left( \psi_{*}^N,\psi_{*}^N,\tilde{u}_{i-1/2}^N\right) \Big),\
+\end{align*}
+were the antidiffusion velocity $\tilde{u}_{i+1/2}$ is defined as
+\begin{equation*}
+\tilde{u}_{i+1/2} = \frac{\left(\abs{u_{i+1/2}}\Delta x - \Delta t u_{i+1/2}^2 \right) \left( \psi_{i+1}^*-\psi_i^*\right)}{ \left( \psi_i^*+\psi_{i+1}^*+\epsilon \right) \Delta x}
+\end{equation*}
+\end{frame}
+
+\begin{frame}
+\frametitle{Antidiffusion 2}
+The Method of lines can be applied in the same way to the second step in the scheme,\\
+ so the whole scheme can be executed with two sparse matrix-vector multiplications and a matrix update.
+\end{frame}
+
+\subsection{Implementation}
+\begin{frame}
+\frametitle{Algorithm}
+\begin{algorithm}[H]
+\SetKwData{Iter}{iter}\SetKwData{Mone}{mat1}\SetKwData{Mtwo}{mat2}
+\SetKwData{Steps}{tsteps}
+\SetKwFunction{MMat}{ComputeMatrix}\SetKwFunction{MMult}{MatrixMultiplication}
+\SetKwFunction{CADV}{ComputeAntidiffusionVelocity}
+\SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
+\Input{Initial configuration $\psi^0$, velocities $u$, number of iterations \Iter} 
+\Output{Final configuration $\psi^N$}
+\BlankLine
+$\psi \leftarrow \psi^0$\;
+\Mone $\leftarrow$ \MMat{$u$}\;
+\For{$i \leftarrow 0$ \KwTo \Iter}{
+$\psi \leftarrow$ \MMult{\Mone,$\psi$}\;
+\For{$j \leftarrow 1$ \KwTo \Iter}{
+$\widetilde{u} \leftarrow$ \CADV{$\psi,u$}\;
+\Mtwo $\leftarrow$ \MMat{$\widetilde{u}$}\;
+$\psi \leftarrow$ \MMult{\Mtwo,$\psi$}\;
+}
+}
+\end{algorithm}
+\end{frame}
+
+\subsection{numerical results}
+
 %
 % % All of the following is optional and typically not needed.
 % \appendix
