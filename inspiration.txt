@@ -5,6 +5,7 @@ Sensitivity of Atmospheric Transport Model Performance to Numerical Advection Sc
 - Solid body rotation
 	- Undershoot (don't want it, but Smolarki is positive definite, hooray)
  	- Overshoot
+	- Unphysical
 	- Mass conserving
 
 - Something about advection equations and high resolution
