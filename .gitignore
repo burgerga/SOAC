@@ -6,6 +6,7 @@
 *.nav
 *.snm
 *.synctex.gz
+*.swp
 *.backup
 report/report.pdf
 presentation/conference-ornate-20min.en.pdf
