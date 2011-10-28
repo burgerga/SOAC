@@ -7,7 +7,7 @@
 }
 \usepackage[english]{babel}
 \usepackage[utf8]{inputenc}
-
+\usepackage{epstopdf}
 \usepackage{lmodern}
 \usepackage[T1]{fontenc}
 
@@ -63,32 +63,60 @@
   % You might wish to add the option [pausesections]
 \end{frame}
 
-\section{The advection equation}
+\section{The advection equation in climate modelling}
 \subsection{Importance}
 
-\begin{frame}{Usage examples}
+\begin{frame}
+
+\begin{block}{Advection}
+Transport mechanism of a \textbf{substance} by a \textit{fluid}, due to the fluids \underline{motion} in a particular direction.
+\end{block}
+
+Examples in ocean, atmosphere and climate modelling
+
 \begin{itemize}
-   \item everywhere...
+   \item Transport of \textbf{trace gasses} by \textit{air} due to \underline{wind}
+   \item Transport of \textbf{heat} by \textit{ocean water} due to \underline{currents}
+   \item Transport of \textbf{warm and moist air} over a colder surface by \textit{air} due to \underline{wind}: advection fog
+\end{itemize}
+
+\begin{figure}
+\includegraphics[width=7cm]{advfog.png}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Advection simulation}
+
+Constraints on advection simulation \cite{rasch}
+
+\begin{itemize}
+\item Solutions should contain no unphysical overshoot or undershoot: positive definite
+\item Methods should be volume preserving. No loss of matter
+\item The solutions should be local: the solution at any one point should not be influenced by what is going on far away from that point
+\item The numerical solution should not introduce new extrema in the solution, because the continuous form of the solution would not
+\item The method should be cost effective: memory and computational requirements should be sufficiently small so that practical problems may be solved
 \end{itemize}
 
 \end{frame}
 
-
 \subsection{Diffusion}
+\frametitle{Problem: diffusion}
+
+When simulating an advective process, we need to discretize space. When doing so, we introduce numerical constraints on the calculation and we get diffusion.
 
 \begin{frame}{Example of diffusion with an upstream scheme}
 \renewcommand{\imsize}{0.5\textwidth}
 \begin{figure}
-\includegraphics<1>[width=\imsize]{animation/anim0.pdf}
-\includegraphics<2>[width=\imsize]{animation/anim1.pdf}
-\includegraphics<3>[width=\imsize]{animation/anim2.pdf}
-\includegraphics<4>[width=\imsize]{animation/anim3.pdf}
-\includegraphics<5>[width=\imsize]{animation/anim4.pdf}
-\includegraphics<6>[width=\imsize]{animation/anim5.pdf}
-\includegraphics<7>[width=\imsize]{animation/anim6.pdf}
-\includegraphics<8>[width=\imsize]{animation/anim7.pdf}
-\includegraphics<9>[width=\imsize]{animation/anim8.pdf}
-\includegraphics<10>[width=\imsize]{animation/anim9.pdf}
+\includegraphics<1>[width=\imsize]{animation/anime0.eps}
+\includegraphics<2>[width=\imsize]{animation/anime1.eps}
+\includegraphics<3>[width=\imsize]{animation/anime2}
+\includegraphics<4>[width=\imsize]{animation/anime3}
+\includegraphics<5>[width=\imsize]{animation/anime4}
+\includegraphics<6>[width=\imsize]{animation/anime5}
+\includegraphics<7>[width=\imsize]{animation/anime6}
+\includegraphics<8>[width=\imsize]{animation/anime7}
 \end{figure}
 \end{frame}
 
@@ -203,6 +231,9 @@ We can also write this in matrix form \only<2>\alert{using periodic boundary con
 %     2000.
 %   \end{thebibliography}
 % \end{frame}
+
+\bibliographystyle{alpha}
+\bibliography{presentation.bib}
 
 \end{document}
 

@@ -37,7 +37,8 @@ PROGRAM Smolarkiewicz2D
  elseif(iterations .EQ. 3) then
  OPEN(20, file = "wave3.dat")
  endif
-
+ OPEN(80, file = "mua.dat")
+ OPEN(90, file = "mva.dat")
 ! Initialize system. Initial is an M*M vector which represents the 2D space.
  initial = 0 
  hc = cloudsize/2
@@ -53,17 +54,17 @@ PROGRAM Smolarkiewicz2D
  m_v = v
  PRINT*, cone
  IF(cone .EQ. 1) THEN
-  xor = 25
-  yor = 50
-  dx = 1 
-  dy = 1
-  dt = 0.1
+  xor = 25*dx
+  yor = 50*dy
+  !dx = 1 
+  !dy = 1
+  !dt = 0.1
   PRINT*, 'Cone!' 
   initial = 0 
   ALLOCATE(initialmat(M,M), STAT=ierror); IF (ierror /= 0) PRINT*, "initial : Allocation failed"
   DO j = 1, M 
 	DO k = 1, M
-		initialmat(j,k) = 3.87-0.3*(sqrt(abs(xor-REAL(j))**2+abs(yor-REAL(k))**2))
+		initialmat(j,k) = 3.87-(0.3/dx)*(sqrt(abs(xor-REAL(j*dx))**2+abs(yor-REAL(k*dx))**2))
 		if(initialmat(j,k)<0) then
 			initialmat(j,k) = 0 		
 		endif
@@ -71,12 +72,12 @@ PROGRAM Smolarkiewicz2D
   ENDDO
   DO j = 1, M+1 
 	DO k = 1, M
-		m_u(j,k) = -angvel*(j-50)
+		m_u(j,k) = -angvel*(j*dx-50*dx)
         ENDDO
   ENDDO
   DO j = 1, M 
 	DO k = 1, M+1
-		m_v(j,k) = angvel*(k-50)
+		m_v(j,k) = angvel*(k*dx-50*dy)
         ENDDO
   ENDDO
   DO j = 1, M
@@ -104,18 +105,30 @@ PROGRAM Smolarkiewicz2D
 	  psi_tem = psi_int
 ! Build antidiffusion velocity matrices u~ and v~
 	  CALL ANTIDIF(m_u, m_v, m_u_a, m_v_a, psi_tem, eps, dx, dy, dt, M)
+	m_u_a = m_u_a * sc
+        m_v_a = m_v_a * sc
+  IF(MOD(j, 10).EQ.0) THEN
+	  WRITE(80,*), reshape(m_u_a,(/1, (M+1)*M/))
+          WRITE(90,*), reshape(m_v_a,(/1, M*(M+1)/))
+  ENDIF
+!print*, maxval(m_v_a,2)
 	  !PRINT*, m_u_a
 ! Build new multiplication matrix with antidiffusion vector
 	  A =  MATRIX(m_u_a, m_v_a, dx, dy, dt, M) 
 ! Multiply
 	  CALL MVEC(A, psi_tem, psi_int,M)
+
   ENDDO
 ! Write new situation to file
-  WRITE(20,*), psi_int
+  IF(MOD(j, 10).EQ.0) THEN
+	  WRITE(20,*), psi_int
+  ENDIF
  ENDDO
 
 ! Close output file
  CLOSE(20)
+ CLOSE(80)
+ CLOSE(90)
 
 ! Deallocation
  IF (ALLOCATED(initial)) DEALLOCATE(initial,STAT=ierror)
@@ -186,7 +199,7 @@ FUNCTION MATRIX(m_u, m_v, dx, dy, dt, M)
 
 ! Build antidiffusion matrices
   SUBROUTINE ANTIDIF(u, v, u_a, v_a, psi, eps, dx, dy, dt, M)
-   REAL :: eps, dx, dy, dt, up, vp
+   REAL :: eps, dx, dy, dt, up, vp, psipsum
    REAL, DIMENSION(:) :: psi
    REAL, DIMENSION(M+1, M) :: u, u_a
    REAL, DIMENSION(M, M+1) :: v, v_a 
@@ -194,23 +207,35 @@ FUNCTION MATRIX(m_u, m_v, dx, dy, dt, M)
    REAL, DIMENSION(:), ALLOCATABLE :: psips
    ALLOCATE(psips(M), STAT=ierror); IF (ierror /= 0) PRINT*, "psips : Allocation failed"
    ! Build antidiffusion matrix u_a
-   u_a = 0 ; v_a = 0 ; 
-   DO jj=1, M
-     psips = psi((jj-1)*M+1:jj*M)
-     DO ii=1, M-1
-	up = u(ii+1,jj)
-	u_a(ii+1,jj) = ((abs(up)*dx-dt*up*up)*(psips(ii+1)-psips(ii)))/((psips(ii)+psips(ii+1)+eps)*dx)
-     ENDDO
-   ENDDO
-! Build antidiffusion matrix v_a
-   DO ii=1, M
-     psips = psi(1:(M-1)*M+1:M)
-     DO jj=1, M-1 
-	vp = v(ii,jj+1)
-	v_a(ii,jj+1) =  ((abs(vp)*dy-dt*vp*vp)*(psips(ii+1)-psips(ii)))/((psips(ii)+psips(ii+1)+eps)*dy)
+   u_a = 0 ; v_a = 0 ;
+   DO ii = 1, M+1
+	!PRINT*, ii
+	psips = psi((ii-1)*M+1:ii*M)
 
-     ENDDO
-  ENDDO
+        DO jj = 1, M-1
+		up  = u(ii+1,jj)
+		psipsum = psips(jj)+psips(jj+1)
+		if(psipsum>0.0001) then
+		u_a(ii+1,jj) = ((abs(up)*dx-dt*up*up)*(psips(jj+1)-psips(jj)))/(psipsum*dx)
+		else
+		u_a(ii+1,jj) = 0
+		endif
+  	ENDDO
+   ENDDO
+   DO ii = 1, M+1
+	!PRINT*, ii
+	psips = psi(ii:(M-1)*M+ii:M)
+
+	DO jj = 1, M
+		vp = v(ii, jj+1)
+		psipsum = psips(jj)+psips(jj+1) 
+		if(psipsum>0.0001) then
+		v_a(ii,jj+1) = ((abs(vp)*dy-dt*vp*vp)*(psips(jj+1)-psips(jj)))/(psipsum*dy)
+		else
+		v_a(ii,jj+1) = 0
+		endif
+	ENDDO
+   ENDDO
   END SUBROUTINE
  
 ! This subroutine multiplies a sparse matrix A with a vector x and returns their product y

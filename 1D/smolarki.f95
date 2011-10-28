@@ -39,6 +39,9 @@ logical :: periodic
  elseif(iterations .EQ. 3) then
  OPEN(20, file = "wave3.dat")
  endif
+
+ OPEN(80, file = "antidif.dat")
+
 ! Initialize and write to file
  write(20,*), initial_x
 
@@ -76,6 +79,7 @@ PRINT*, velocity_u
 ! Apply factor Sc (optional, sc could be 1)
 	  velocity_antidif = velocity_antidif * sc
 ! Build new multiplication matrix with antidiffusion vector
+	  WRITE(80,*), velocity_antidif
 	  A =  MATRIX(velocity_antidif, dx, dt) 
 ! Multiply
 	  CALL MVEC(A, psi_tem, psi_int)
@@ -85,6 +89,7 @@ PRINT*, velocity_u
   WRITE(20,*), psi_int
  ENDDO
  CLOSE(20)
+ CLOSE(80)
 
 ! Deallocation
  IF (ALLOCATED(initial_x)) DEALLOCATE(initial_x,STAT=ierror)
