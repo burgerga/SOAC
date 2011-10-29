@@ -7,7 +7,7 @@
 }
 \usepackage[english]{babel}
 \usepackage[utf8]{inputenc}
-%\usepackage{epstopdf}
+\usepackage{epstopdf}
 \usepackage{lmodern}
 \usepackage[T1]{fontenc}
 
@@ -115,7 +115,7 @@ where $\psi(x,y,z,t)$ is the nondiffusive scalar quantity, $V=(u,v,w)$ is the ve
 Constraints on advection simulation \cite{rasch}
 
 \begin{itemize}
-\item Solutions should contain no unphysical overshoot or undershoot: positive definite
+\item Solutions should contain no unphysical overshoot or undershoot: positive definite schemes
 \item Methods should be volume preserving. No loss of matter
 \item The solutions should be local: the solution at any one point should not be influenced by what is going on far away from that point
 \item The numerical solution should not introduce new extrema in the solution, because the continuous form of the solution would not
@@ -155,12 +155,12 @@ Constraints on advection simulation \cite{rasch}
 \subsection{Antidiffusion methods}
 
 \begin{frame}
-\frametitle{Antidiffusion methods 1}
+\frametitle{Antidiffusion methods}
 \begin{itemize}
 \item Flux-corrected transport (FCT) method (Boris and Book, 1973),
 \item self-adjusting hybrid scheme (SAHS) (Harten en Zwas, 1972),
 \end{itemize}
-   both can be very accurate but require excessive computing time, better is the
+   Both can be very accurate but require excessive computing time, better is the
 \begin{itemize}
    \item hybrid-type scheme based on a Crowley advection scheme (Clark and Hall, 1979),
 \end{itemize}
@@ -168,11 +168,16 @@ Constraints on advection simulation \cite{rasch}
 \end{frame}
 
 \begin{frame}
-\frametitle{Antidiffusion methods 2}
-\begin{itemize}
-\item Smolarkiewicz' iterative correction
+\frametitle{Antidiffusion methods}
+
+\begin{block}{Smolarkiewicz' iterative correction, 1983}
+\begin{itemize} 
+\item Less time consuming while results are comparable to those of the more complex hybrid schemes
+\item Positive semidefinite
+\item Iterative method
+\item Does not contain strong implicit diffusion
 \end{itemize}
-   less time consuming while results are comparable to those of the more complex hybrid schemes
+\end{block}
 \end{frame}
 
 \section{Case study: Smolarkiewicz}
@@ -233,7 +238,7 @@ We can also write this in matrix form using Direchlet boundary conditions
 \begin{bmatrix}\beta_1&\gamma_1&&&\alert{\only<1>{0}\only<2->{\alpha_1}}\\ \alpha_2&\beta_2&\gamma_2\\ &\ddots&\ddots&\ddots\\&&\alpha_{M-2}&\beta_{M-2}&\gamma_{M-2}\\\alert{\only<1>{0}\only<2->{\gamma_{M-1}}}&&&\alpha_{M-1}&\beta_{M-1}\\ \end{bmatrix}
 \begin{bmatrix}\psi_{1}^n\\\psi_{2}^n\\ \vdots \\\psi_{M-2}^n\\\psi_{M-1}^n\end{bmatrix}
 \end{equation*}
-\uncover<3>{So the new values of $\psi$ can be obtained by a sparse matrix-vector multiplication}
+\uncover<3>{So the values of $\psi$ at timestep $N+1$ can be obtained by a sparse matrix-vector multiplication}
 \end{frame}
 
 \begin{frame}
@@ -280,7 +285,34 @@ $\psi^N \leftarrow \psi$\;
 \DecMargin{1em}
 \end{frame}
 
-\subsection{numerical results}
+\subsection{Numerical Results}
+
+\begin{frame}
+\frametitle{Example of antidiffusion with an upstream scheme}
+\begin{figure}
+\renewcommand{\imsize}{0.7\textwidth}
+\includegraphics<1>[width=\imsize]{animation/aanime0}%
+\includegraphics<2>[width=\imsize]{animation/aanime1}%
+\includegraphics<3>[width=\imsize]{animation/aanime2}%
+\includegraphics<4>[width=\imsize]{animation/aanime3}%
+\includegraphics<5>[width=\imsize]{animation/aanime4}%
+\includegraphics<6>[width=\imsize]{animation/aanime5}%
+\includegraphics<7>[width=\imsize]{animation/aanime6}%
+\includegraphics<8>[width=\imsize]{animation/aanime7}%
+\end{figure}
+\end{frame}
+
+\begin{frame}
+
+\frametitle{Less interaction}
+Simulations are more localized, less interaction between neighbouring pockets.
+
+\begin{figure}
+\renewcommand{\imsize}{0.9\textwidth}
+\includegraphics[width=\imsize]{animation/peaks}%
+\end{figure}
+\end{frame}
+
 
 \begin{frame}
 \frametitle{Example of diffusion with an upstream scheme}
@@ -384,6 +416,32 @@ $\psi^N \leftarrow \psi$\;
 %     2000.
 %   \end{thebibliography}
 % \end{frame}
+
+
+\subsection{Progress}
+\begin{frame}
+\begin{itemize}
+\item Since 1983 a lot of progress has been made
+\item Advection calculations on the sphere pose new problems. 
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+Reduced grid (Spee, 1991)
+\begin{figure}
+\renewcommand{\imsize}{0.75\textwidth}
+\includegraphics[width=\imsize]{globe}%
+\end{figure}
+\end{frame}
+
+\begin{frame}
+Spherical hexagonal-pentagonal grid (Lipscomb and Ringler, 2005)
+\begin{figure}
+\renewcommand{\imsize}{0.75\textwidth}
+\includegraphics[width=\imsize]{lipcomb}%
+\end{figure}
+\end{frame}
+
 
 \bibliographystyle{alpha}
 \bibliography{presentation.bib}

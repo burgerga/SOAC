@@ -12,4 +12,6 @@ report/report.pdf
 presentation/conference-ornate-20min.en.pdf
 advec.dat
 wave*.dat
+*/wave*.dat
+**/wave*.dat
 smolarki.out
