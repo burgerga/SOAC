@@ -258,6 +258,16 @@ were the antidiffusion velocity $\tilde{u}_{i+1/2}$ is defined as
 Since the second step is similar to the first we can also apply the `method of lines' to the second step.
 \end{frame}
 
+
+\begin{frame}
+\frametitle{Stability}
+For stability we need that 
+\begin{equation*}
+\max_{i}\left(\frac{\abs{u_{i+1/2}}\Delta t}{\Delta x}\right) \leq 1
+\end{equation*}
+
+\end{frame}
+
 \subsection{Implementation}
 \begin{frame}
 \frametitle{Algorithm}
@@ -285,6 +295,9 @@ $\psi^N \leftarrow \psi$\;
 \end{algorithm}
 \DecMargin{1em}
 \end{frame}
+
+
+
 
 \subsection{Numerical Results}
 
@@ -446,7 +459,7 @@ Reduced grid (Spee, 1991)
 \end{frame}
 
 \begin{frame}
-Spherical hexagonal-pentagonal grid (Lipscomb and Ringler, 2005)
+Spherical hexagonal-pentagonal grid (Lipscomb and Ringler, 2005) 
 \begin{figure}
 \renewcommand{\imsize}{0.75\textwidth}
 \includegraphics[width=\imsize]{lipcomb}%
@@ -457,8 +470,19 @@ Spherical hexagonal-pentagonal grid (Lipscomb and Ringler, 2005)
 \begin{frame}
 \begin{itemize}
 \item Since 1983 a lot of progress has been made
-\item Advection calculations on the sphere pose new problems/possibilities. 
-\item Faster machines, more complex schemes.
+\item Advection calculations on the sphere pose new problems/possibilities
+\item Finite difference as well as finite volume methods 
+\item Faster machines, more complex schemes
+\item Much higher accuracy
+\end{itemize}
+\end{frame}
+
+\section{Conclusions}
+\begin{frame}
+\begin{itemize}
+\item Diffusion is a threat for reliable advection simulations
+\item Antidiffusive advection schemes reduce this threat
+\item Smolarkiewicz' relatively simple scheme already significantly improves results
 \end{itemize}
 \end{frame}
 
