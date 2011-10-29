@@ -1,5 +1,5 @@
 #CC=pgf95
-CC=gfortran
+CC=gfortran-4.5
 CFLAGS=-g
 
 TRG1=smolarki
