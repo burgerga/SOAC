@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.10.21)  29 OCT 2011 22:22
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.10.21)  29 OCT 2011 23:09
 entering extended mode
  \write18 enabled.
  %&-line parsing enabled.
@@ -1004,14 +1004,6 @@ subscribe by emailing sympa@lirmm.fr with 'subscribe <list> <firstname name>'
 )
 \widthtmp=\skip71
  (./conference-ornate-20min.en.aux)
-Runaway argument?
-{\headcommand {\slideentry {2}{1}{5}{23/23}{Analyzing the scheme}{ 
-! File ended while scanning use of \@writefile.
-<inserted text> 
-                \par 
-l.63 \begin{document}
-                     
-? 
 \openout1 = `conference-ornate-20min.en.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 63.
@@ -1029,7 +1021,7 @@ LaTeX Font Info:    ... okay on input line 63.
 LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 63.
 LaTeX Font Info:    ... okay on input line 63.
 LaTeX Font Info:    Try loading font information for T1+lmss on input line 63.
-(/usr/share/texmf/tex/latex/lm/t1lmss.fd
+ (/usr/share/texmf/tex/latex/lm/t1lmss.fd
 File: t1lmss.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 *geometry auto-detecting driver*
@@ -1216,7 +1208,7 @@ LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <8> not available
 LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <6> not available
 (Font)              Font shape `T1/lmss/m/sl' tried instead on input line 95.
 
-<advfog.png, id=109, 702.86118pt x 283.41176pt>
+<advfog.png, id=145, 702.86118pt x 283.41176pt>
 File: advfog.png Graphic file (type png)
  <use advfog.png> [3
 
@@ -1230,49 +1222,49 @@ LaTeX Warning: Citation `rasch' on page 5 undefined on input line 125.
 
 ] [6
 
-] <animation/anime0.pdf, id=244, 562.1pt x 357.335pt>
+] <animation/anime0.pdf, id=277, 562.1pt x 357.335pt>
 File: animation/anime0.pdf Graphic file (type pdf)
 
 <use animation/anime0.pdf> [7
 
  <./animation/anime0.pdf>]
-<animation/anime1.pdf, id=282, 562.1pt x 357.335pt>
+<animation/anime1.pdf, id=315, 562.1pt x 357.335pt>
 File: animation/anime1.pdf Graphic file (type pdf)
  <use animation/anime1.pdf>
 [8
 
  <./animation/anime1.pdf>]
-<animation/anime2.pdf, id=319, 562.1pt x 357.335pt>
+<animation/anime2.pdf, id=352, 562.1pt x 357.335pt>
 File: animation/anime2.pdf Graphic file (type pdf)
  <use animation/anime2.pdf>
 [9
 
  <./animation/anime2.pdf>]
-<animation/anime3.pdf, id=356, 562.1pt x 357.335pt>
+<animation/anime3.pdf, id=389, 562.1pt x 357.335pt>
 File: animation/anime3.pdf Graphic file (type pdf)
  <use animation/anime3.pdf>
 [10
 
  <./animation/anime3.pdf>]
-<animation/anime4.pdf, id=393, 562.1pt x 357.335pt>
+<animation/anime4.pdf, id=426, 562.1pt x 357.335pt>
 File: animation/anime4.pdf Graphic file (type pdf)
  <use animation/anime4.pdf>
 [11
 
  <./animation/anime4.pdf>]
-<animation/anime5.pdf, id=430, 562.1pt x 357.335pt>
+<animation/anime5.pdf, id=463, 562.1pt x 357.335pt>
 File: animation/anime5.pdf Graphic file (type pdf)
  <use animation/anime5.pdf>
 [12
 
  <./animation/anime5.pdf>]
-<animation/anime6.pdf, id=467, 562.1pt x 357.335pt>
+<animation/anime6.pdf, id=500, 562.1pt x 357.335pt>
 File: animation/anime6.pdf Graphic file (type pdf)
  <use animation/anime6.pdf>
 [13
 
  <./animation/anime6.pdf>]
-<animation/anime7.pdf, id=504, 562.1pt x 357.335pt>
+<animation/anime7.pdf, id=537, 562.1pt x 357.335pt>
 File: animation/anime7.pdf Graphic file (type pdf)
  <use animation/anime7.pdf>
 [14
@@ -1315,7 +1307,7 @@ rted-to.pdf animation/aanime0.eps>
 (epstopdf)             \includegraphics on input line 303.
 Package epstopdf Info: Output file is already uptodate.
 
-<animation/aanime0-eps-converted-to.pdf, id=867, 751.80875pt x 493.845pt>
+<animation/aanime0-eps-converted-to.pdf, id=896, 751.80875pt x 493.845pt>
 File: animation/aanime0-eps-converted-to.pdf Graphic file (type pdf)
 
 <use animation/aanime0-eps-converted-to.pdf> [25
@@ -1332,7 +1324,7 @@ rted-to.pdf animation/aanime1.eps>
 (epstopdf)             \includegraphics on input line 303.
 Package epstopdf Info: Output file is already uptodate.
 
-<animation/aanime1-eps-converted-to.pdf, id=916, 751.80875pt x 493.845pt>
+<animation/aanime1-eps-converted-to.pdf, id=945, 751.80875pt x 493.845pt>
 File: animation/aanime1-eps-converted-to.pdf Graphic file (type pdf)
 
 <use animation/aanime1-eps-converted-to.pdf> [26
@@ -1349,7 +1341,7 @@ rted-to.pdf animation/aanime2.eps>
 (epstopdf)             \includegraphics on input line 303.
 Package epstopdf Info: Output file is already uptodate.
 
-<animation/aanime2-eps-converted-to.pdf, id=961, 751.80875pt x 493.845pt>
+<animation/aanime2-eps-converted-to.pdf, id=990, 751.80875pt x 493.845pt>
 File: animation/aanime2-eps-converted-to.pdf Graphic file (type pdf)
 
 <use animation/aanime2-eps-converted-to.pdf> [27
@@ -1366,7 +1358,7 @@ rted-to.pdf animation/aanime3.eps>
 (epstopdf)             \includegraphics on input line 303.
 Package epstopdf Info: Output file is already uptodate.
 
-<animation/aanime3-eps-converted-to.pdf, id=1006, 751.80875pt x 493.845pt>
+<animation/aanime3-eps-converted-to.pdf, id=1035, 751.80875pt x 493.845pt>
 File: animation/aanime3-eps-converted-to.pdf Graphic file (type pdf)
 
 <use animation/aanime3-eps-converted-to.pdf> [28
@@ -1383,7 +1375,7 @@ rted-to.pdf animation/aanime4.eps>
 (epstopdf)             \includegraphics on input line 303.
 Package epstopdf Info: Output file is already uptodate.
 
-<animation/aanime4-eps-converted-to.pdf, id=1051, 751.80875pt x 493.845pt>
+<animation/aanime4-eps-converted-to.pdf, id=1080, 751.80875pt x 493.845pt>
 File: animation/aanime4-eps-converted-to.pdf Graphic file (type pdf)
 
 <use animation/aanime4-eps-converted-to.pdf> [29
@@ -1400,7 +1392,7 @@ rted-to.pdf animation/aanime5.eps>
 (epstopdf)             \includegraphics on input line 303.
 Package epstopdf Info: Output file is already uptodate.
 
-<animation/aanime5-eps-converted-to.pdf, id=1096, 751.80875pt x 493.845pt>
+<animation/aanime5-eps-converted-to.pdf, id=1125, 751.80875pt x 493.845pt>
 File: animation/aanime5-eps-converted-to.pdf Graphic file (type pdf)
 
 <use animation/aanime5-eps-converted-to.pdf> [30
@@ -1417,7 +1409,7 @@ rted-to.pdf animation/aanime6.eps>
 (epstopdf)             \includegraphics on input line 303.
 Package epstopdf Info: Output file is already uptodate.
 
-<animation/aanime6-eps-converted-to.pdf, id=1141, 751.80875pt x 493.845pt>
+<animation/aanime6-eps-converted-to.pdf, id=1170, 751.80875pt x 493.845pt>
 File: animation/aanime6-eps-converted-to.pdf Graphic file (type pdf)
 
 <use animation/aanime6-eps-converted-to.pdf> [31
@@ -1434,12 +1426,28 @@ rted-to.pdf animation/aanime7.eps>
 (epstopdf)             \includegraphics on input line 303.
 Package epstopdf Info: Output file is already uptodate.
 
-<animation/aanime7-eps-converted-to.pdf, id=1186, 751.80875pt x 493.845pt>
+<animation/aanime7-eps-converted-to.pdf, id=1215, 751.80875pt x 493.845pt>
 File: animation/aanime7-eps-converted-to.pdf Graphic file (type pdf)
 
 <use animation/aanime7-eps-converted-to.pdf> [32
 
  <./animation/aanime7-eps-converted-to.pdf>]
+Package epstopdf Info: Source file: <maxs.eps>
+(epstopdf)                    date: 2011-10-29 23:06:47
+(epstopdf)                    size: 45783 bytes
+(epstopdf)             Output file: <maxs-eps-converted-to.pdf>
+(epstopdf)                    date: 2011-10-29 23:08:21
+(epstopdf)                    size: 21305 bytes
+(epstopdf)             Command: <epstopdf --outfile=maxs-eps-converted-to.pdf m
+axs.eps>
+(epstopdf)             \includegraphics on input line 314.
+Package epstopdf Info: Output file is already uptodate.
+ <maxs-eps-converted-to.pdf, id=1259, 801.99625pt x 490.83376pt>
+File: maxs-eps-converted-to.pdf Graphic file (type pdf)
+
+<use maxs-eps-converted-to.pdf> [33
+
+ <./maxs-eps-converted-to.pdf>]
 Package epstopdf Info: Source file: <animation/peaks.eps>
 (epstopdf)                    date: 2011-10-29 21:28:33
 (epstopdf)                    size: 11769 bytes
@@ -1448,28 +1456,28 @@ Package epstopdf Info: Source file: <animation/peaks.eps>
 (epstopdf)                    size: 8965 bytes
 (epstopdf)             Command: <epstopdf --outfile=animation/peaks-eps-convert
 ed-to.pdf animation/peaks.eps>
-(epstopdf)             \includegraphics on input line 314.
+(epstopdf)             \includegraphics on input line 325.
 Package epstopdf Info: Output file is already uptodate.
 
-<animation/peaks-eps-converted-to.pdf, id=1230, 838.13126pt x 398.48875pt>
+<animation/peaks-eps-converted-to.pdf, id=1300, 838.13126pt x 398.48875pt>
 File: animation/peaks-eps-converted-to.pdf Graphic file (type pdf)
 
-<use animation/peaks-eps-converted-to.pdf> [33
+<use animation/peaks-eps-converted-to.pdf> [34
 
- <./animation/peaks-eps-converted-to.pdf>] [34
+ <./animation/peaks-eps-converted-to.pdf>] [35
 
-] <globe.png, id=1304, 1174.3875pt x 1059.96pt>
+] <globe.png, id=1373, 1174.3875pt x 1059.96pt>
 File: globe.png Graphic file (type png)
  <use globe.png>
-Overfull \vbox (8.66621pt too high) detected at line 363
+Overfull \vbox (8.66621pt too high) detected at line 373
  []
 
-[35
+[36
 
- <./globe.png>] <lipcomb.png, id=1338, 1304.875pt x 1120.185pt>
+ <./globe.png>] <lipcomb.png, id=1407, 1304.875pt x 1120.185pt>
 File: lipcomb.png Graphic file (type png)
 
-<use lipcomb.png> [36
+<use lipcomb.png> [37
 
  <./lipcomb.png>]
 No file conference-ornate-20min.en.bbl.
@@ -1488,10 +1496,10 @@ LaTeX Warning: There were undefined references.
 
  ) 
 Here is how much of TeX's memory you used:
- 16969 strings out of 495061
- 307560 string characters out of 1182620
+ 16988 strings out of 495061
+ 307865 string characters out of 1182620
  396973 words of memory out of 3000000
- 19565 multiletter control sequences out of 15000+50000
+ 19581 multiletter control sequences out of 15000+50000
  34421 words of font info for 42 fonts, out of 3000000 for 9000
  28 hyphenation exceptions out of 8191
  49i,19n,62p,435b,662s stack positions out of 5000i,500n,10000p,200000b,50000s
@@ -1508,9 +1516,9 @@ mss8.pfb></usr/share/texmf/fonts/type1/public/lm/lmssbx10.pfb></usr/share/texmf
 o8.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy10.pfb></usr/share/texmf/fon
 ts/type1/public/lm/lmsy8.pfb></usr/share/texmf/fonts/type1/public/lm/lmtt10.pfb
 >
-Output written on conference-ornate-20min.en.pdf (36 pages, 2365440 bytes).
+Output written on conference-ornate-20min.en.pdf (37 pages, 2394466 bytes).
 PDF statistics:
- 1438 PDF objects out of 1440 (max. 8388607)
- 82 named destinations out of 1000 (max. 500000)
- 192 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 1511 PDF objects out of 1728 (max. 8388607)
+ 84 named destinations out of 1000 (max. 500000)
+ 269 words of extra memory for PDF output out of 10000 (max. 10000000)
 

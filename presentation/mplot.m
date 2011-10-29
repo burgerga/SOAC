@@ -44,10 +44,17 @@ ti = title('System after 140 iterations') ;
 set([gca xl yl le ti],'FontSize',16) ;
 
 
+clf ;
+hold on ;
+p0 = plot(max(wave0'),'k*') ;
+p1 = plot(max(wave1'),'r') ;
+p2 = plot(max(wave2'),'b') ;
+p3 = plot(max(wave3'),'k') ;
+set([p0 p1 p2 p3],'LineWidth',2) ;
+le = legend('No antidiffusion','1 iteration', '2 iterations', '3 iterations')
 
-
-
-
+ti = title('Maximum value in simulation') ; xl = xlabel('Timestep N') ; yl = ylabel('max(\psi^N)') ;
+set([gca le xl yl ti],'FontSize',16) ;
 
 
 

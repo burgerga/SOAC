@@ -85,6 +85,7 @@ Examples in ocean, atmosphere and climate modelling
 \begin{itemize}
    \item Transport of \textbf{trace gasses} by \textit{air} due to \underline{wind}
    \item Transport of \textbf{heat} by \textit{ocean water} due to \underline{currents}
+   \item Transport of \textbf{ice} by \textit{ocean water} due to \underline{currents}
    \item Transport of \textbf{warm and moist air} over a colder surface by \textit{air} due to \underline{wind}: advection fog
 \end{itemize}
 
@@ -112,7 +113,7 @@ where $\psi(x,y,z,t)$ is the nondiffusive scalar quantity, $V=(u,v,w)$ is the ve
 \begin{frame}
 \frametitle{Advection simulation}
 
-Constraints on advection simulation \cite{rasch}
+Constraints on advection simulation
 
 \begin{itemize}
 \item Solutions should contain no unphysical overshoot or undershoot: positive definite schemes
@@ -304,6 +305,17 @@ $\psi^N \leftarrow \psi$\;
 
 \begin{frame}
 
+\frametitle{Less diffusion}
+Iterating with antidiffusion vector reduces diffusion.
+
+\begin{figure}
+\renewcommand{\imsize}{0.8\textwidth}
+\includegraphics[width=\imsize]{maxs}%
+\end{figure}
+\end{frame}
+
+\begin{frame}
+
 \frametitle{Less interaction}
 Simulations are more localized, less interaction between neighbouring pockets.
 
@@ -312,7 +324,6 @@ Simulations are more localized, less interaction between neighbouring pockets.
 \includegraphics[width=\imsize]{animation/peaks}%
 \end{figure}
 \end{frame}
-
 
 %
 % % All of the following is optional and typically not needed.
@@ -350,7 +361,7 @@ Simulations are more localized, less interaction between neighbouring pockets.
 \begin{frame}
 \begin{itemize}
 \item Since 1983 a lot of progress has been made
-\item Advection calculations on the sphere pose new problems. 
+\item Advection calculations on the sphere pose new problems/possibilities. 
 \end{itemize}
 \end{frame}
 
@@ -370,6 +381,14 @@ Spherical hexagonal-pentagonal grid (Lipscomb and Ringler, 2005)
 \end{figure}
 \end{frame}
 
+\subsection{Progress}
+\begin{frame}
+\begin{itemize}
+\item Since 1983 a lot of progress has been made
+\item Advection calculations on the sphere pose new problems/possibilities. 
+\item Faster machines, more complex schemes.
+\end{itemize}
+\end{frame}
 
 \bibliographystyle{alpha}
 \bibliography{presentation.bib}
