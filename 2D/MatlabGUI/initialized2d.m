@@ -22,7 +22,7 @@ function varargout = initialized2d(varargin)
 
 % Edit the above text to modify the response to help initialized2d
 
-% Last Modified by GUIDE v2.5 19-Oct-2011 14:46:23
+% Last Modified by GUIDE v2.5 27-Oct-2011 14:46:22
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -262,6 +262,9 @@ function pushbutton4_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton4 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+cone = get(handles.checkbox1, 'Value') 
+
+
 size  = str2num(get(handles.edit16, 'String')) ;
 position = size*(size/2)+(size/2) ;
 csize  = str2num(get(handles.edit13, 'String')) ;
@@ -276,14 +279,14 @@ N = str2num(get(handles.edit21, 'String')) ;
 
 % Write first file
 fid = fopen('input.txt', 'w');
-fprintf(fid, 'MX %d\n', size);
-fprintf(fid, 'MY %d\n', size);
+fprintf(fid, 'M %d\n', size);
 fprintf(fid, 'N %d\n', N);
 fprintf(fid, 'dt %f\n', dt);
 fprintf(fid, 'dx %f\n', dx);
 fprintf(fid, 'dy %f\n', dy);
 fprintf(fid, 'eps %f\n', 0.000001);
 fprintf(fid, 'sc %f\n', sc);
+fprintf(fid, 'cone %d\n', cone);
 fprintf(fid, 'u %f\n', u);
 fprintf(fid, 'v %f\n', v);
 fprintf(fid, 'iterations %d\n', it);
@@ -297,8 +300,7 @@ fclose(fid);
 
 % Write second file
 fid = fopen('noit.txt', 'w');
-fprintf(fid, 'MX %d\n', size);
-fprintf(fid, 'MY %d\n', size);
+fprintf(fid, 'M %d\n', size);
 fprintf(fid, 'N %d\n', N);
 fprintf(fid, 'dt %f\n', dt);
 fprintf(fid, 'dx %f\n', dx);
@@ -306,6 +308,7 @@ fprintf(fid, 'dy %f\n', dy);
 fprintf(fid, 'eps %f\n', 0.000001);
 fprintf(fid, 'sc %f\n', sc);
 fprintf(fid, 'u %f\n', u);
+fprintf(fid, 'cone %d\n', cone);
 fprintf(fid, 'v %f\n', v);
 fprintf(fid, 'iterations %d\n', 0);
 fprintf(fid, 'initial_pos %d\n', position) ;
@@ -316,6 +319,7 @@ fclose(fid);
 
 stat = unix('../smolarki2d.out input.txt') ;
 stat = unix('../smolarki2d.out noit.txt') ;
+
 load('wave0.dat') ;
 mywave = [] ;
 switch it
@@ -331,14 +335,18 @@ switch it
    otherwise
       disp('Three iterations max.')
 end
-for i = 1 : N-1 ; 
+
+
+
+for i = 1 : (N/10)-1 ; 
 axes(handles.axes3);
 cla;
-imagesc(reshape(wave0(i,:),size,size)) ; colorbar;
+imagesc(reshape(wave0(i,:),size,size)) ; caxis([0 max(max(wave0))]) ; colorbar;
 axes(handles.axes4);
 cla;
-imagesc(reshape(mywave(i,:),size,size)) ; colorbar;
+imagesc(reshape(mywave(i,:),size,size)) ; caxis([0 max(max(wave0))]) ;colorbar;
 end ;
+
 function edit21_Callback(hObject, eventdata, handles)
 % hObject    handle to edit21 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -420,4 +428,48 @@ function text22_CreateFcn(hObject, eventdata, handles)
 function figure1_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to figure1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
+
+
+% --- Executes on button press in checkbox1.
+function checkbox1_Callback(hObject, eventdata, handles)
+% hObject    handle to checkbox1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of checkbox1
+
+
+% --- Executes on button press in pushbutton6.
+function pushbutton6_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton6 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+it = str2num(get(handles.edit20, 'String')) ;
+N = str2num(get(handles.edit21, 'String')) ;
+size  = str2num(get(handles.edit16, 'String')) ;
+
+load('wave0.dat') ;
+mywave = [] ;
+switch it
+   case 1
+      load('wave1.dat') ;
+      mywave = wave1 ;
+   case 2
+      load('wave2.dat') ;
+      mywave = wave2 ;
+   case 3
+      load('wave3.dat') ;
+      mywave = wave3 ;
+   otherwise
+      disp('Three iterations max.')
+end
+
+for i = 1 : N-1 ; 
+axes(handles.axes3);
+cla;
+imagesc(reshape(wave0(i,:),size,size)) ; caxis([0 max(max(wave0))]) ; colorbar;
+axes(handles.axes4);
+cla;
+imagesc(reshape(mywave(i,:),size,size))  ; caxis([0 max(max(wave0))]) ;colorbar;
+end ;
 

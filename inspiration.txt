@@ -1,0 +1,33 @@
+Advection equations in simulation of oceans, climate and models
+
+Sensitivity of Atmospheric Transport Model Performance to Numerical Advection Schemes and Resolution
+
+- Solid body rotation
+	- Undershoot (don't want it, but Smolarki is positive definite, hooray)
+ 	- Overshoot
+	- Unphysical
+	- Mass conserving
+
+- Something about advection equations and high resolution
+
+- Advection schemes
+	- MOL RG: Method of Lines on Reduced Grid (less dense at north + south poles)
+	- 	
+
+- Tests
+	- Solid body rotation on sphere/band
+	- Exact solution after one full iteration equal to exact solution
+- Radon test
+	- Chemical transport
+
+- Error measures
+	- EMIN
+	- EMAX
+	- ERR0
+
+- Use images as advection examples (Figure 9)
+
+Recent Development in Transport Methods at NCAR
+- Five characteristics of good advection schemes
+
+- Practical problems: spherical geometry: use reduced grid
