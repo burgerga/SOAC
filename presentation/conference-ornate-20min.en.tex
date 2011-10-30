@@ -202,7 +202,7 @@ F \left( \psi_i^n,\psi_{i+1}^n,u_{i+1/2}^n\right) =\\
 \end{frame}
 
 \begin{frame}
-\frametitle{Method of lines 1}
+\frametitle{Method of lines}
 Writing the scheme out and collecting terms gives
 \begin{equation*}
 \begin{split}
@@ -215,7 +215,7 @@ Writing the scheme out and collecting terms gives
 \end{frame}
 
 \begin{frame}
-\frametitle{Method of lines 2}
+\frametitle{Method of lines}
 This can be rewritten to 
 \begin{equation*}
 \psi_i^{n+1} = \alpha_i \psi_{i-1}^n + \beta_i \psi_i^n +\gamma_i \psi_{i+1}^n, \quad \text{for } i=1,\ldots,M-1,
@@ -229,7 +229,7 @@ This can be rewritten to
 \end{frame}
 
 \begin{frame}
-\frametitle{Method of lines 3}
+\frametitle{Method of lines}
 We can also write this in matrix form using Direchlet boundary conditions
 \begin{itemize}
 \item \only<1>\alert{$y(0)=0$ and $y(M)=0$}
@@ -244,7 +244,7 @@ We can also write this in matrix form using Direchlet boundary conditions
 \end{frame}
 
 \begin{frame}
-\frametitle{Antidiffusion 1}
+\frametitle{Antidiffusion}
 To apply antidiffusion we need to introduce an intermediate step
 \begin{align*}
  \psi_i^{*} &= \psi_i^n - \Big( F \left( \psi_i^n,\psi_{i+1}^n,u_{i+1/2}^n\right)
