@@ -1,13 +1,13 @@
 M 100
-N 2000
+N 100
 dt 0.100000
 dx 1.000000
 dy 1.000000
 eps 0.000001
 sc 1.000000
-cone 1
+cone 0
 u 0.500000
-v 0.500000
+v 0.000000
 iterations 2
 initial_pos 5050
 cloudsize 4
