@@ -1,5 +1,5 @@
-\documentclass[hyperref={pdfstartview=Fit}]{beamer}
-%\documentclass[hyperref={pdfstartview=Fit,pdfpagemode=FullScreen}]{beamer}
+%\documentclass[hyperref={pdfstartview=Fit}]{beamer}
+\documentclass[hyperref={pdfstartview=Fit,pdfpagemode=FullScreen}]{beamer}
 \mode<presentation>%
 {
   \usetheme{Warsaw}
@@ -284,7 +284,7 @@ For stability we need that
 \BlankLine
 $\psi \leftarrow \psi^0$\;
 \Mone $\leftarrow$ \MMat{$u,\Delta x, \Delta t$}\;
-\For{$i \leftarrow 0$ \KwTo \Steps}{
+\For{$i \leftarrow 1$ \KwTo \Steps}{
 $\psi \leftarrow$ \MMult{\Mone,$\psi$}\;
 \For{$j \leftarrow 1$ \KwTo \Iter}{
 $\widetilde{u} \leftarrow$ \CADV{$\psi,u$}\;
