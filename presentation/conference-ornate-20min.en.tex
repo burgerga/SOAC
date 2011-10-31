@@ -1,5 +1,5 @@
-\documentclass[hyperref={pdfstartview=Fit}]{beamer}
-%\documentclass[hyperref={pdfstartview=Fit,pdfpagemode=FullScreen}]{beamer}
+%\documentclass[hyperref={pdfstartview=Fit},handout]{beamer}
+\documentclass[hyperref={pdfstartview=Fit,pdfpagemode=FullScreen}]{beamer}
 \mode<presentation>%
 {
   \usetheme{Warsaw}
@@ -42,7 +42,7 @@
 
 \subtitle{Case study: Smolarkiewicz' iterative approach}
 
-\author[Burger, Wolterink]%
+\author[Gerhard Burger \and Jelmer Wolterink]%
 {Gerhard Burger \and Jelmer Wolterink}
 
 \institute[Utrecht University]%
@@ -66,7 +66,8 @@
   \titlepage
 \end{frame}
 
-\begin{frame}{Outline}
+\begin{frame}
+\frametitle{Outline}
   \tableofcontents
   % You might wish to add the option [pausesections]
 \end{frame}
@@ -77,14 +78,14 @@
 \begin{frame}
 
 \begin{block}{Advection}
-Transport mechanism of a \textbf{substance} by a \textit{fluid}, due to the fluid's \underline{motion} in a particular direction.
+Transport mechanism of a \textbf{substance or conserved property} by a \textit{fluid}, due to the fluid's \underline{motion} in a particular direction.
 \end{block}
 
 Examples in ocean, atmosphere and climate modelling
 
 \begin{itemize}
    \item Transport of \textbf{trace gasses} by \textit{air} due to \underline{wind}
-   \item Transport of \textbf{heat} by \textit{ocean water} due to \underline{currents}
+   \item Transport of \textbf{warm water} by \textit{ocean water} due to \underline{currents}
    \item Transport of \textbf{ice} by \textit{ocean water} due to \underline{currents}
    \item Transport of \textbf{warm and moist air} over a colder surface by \textit{air} due to \underline{wind}: advection fog
 \end{itemize}
@@ -230,7 +231,7 @@ This can be rewritten to
 
 \begin{frame}
 \frametitle{Method of lines}
-We can also write this in matrix form using Direchlet boundary conditions
+We can also write this in matrix form using Dirichlet boundary conditions
 \begin{itemize}
 \item \only<1>\alert{$y(0)=0$ and $y(M)=0$}
 \item \only<2->\alert{using periodic boundary conditions $y(0)=y(M)$}
@@ -284,7 +285,7 @@ For stability we need that
 \BlankLine
 $\psi \leftarrow \psi^0$\;
 \Mone $\leftarrow$ \MMat{$u,\Delta x, \Delta t$}\;
-\For{$i \leftarrow 0$ \KwTo \Steps}{
+\For{$i \leftarrow 1$ \KwTo \Steps}{
 $\psi \leftarrow$ \MMult{\Mone,$\psi$}\;
 \For{$j \leftarrow 1$ \KwTo \Iter}{
 $\widetilde{u} \leftarrow$ \CADV{$\psi,u$}\;
@@ -346,81 +347,86 @@ Simulations are more localized, less interaction between neighbouring pockets.
 \end{frame}
 
 \begin{frame}
-\frametitle{Example of diffusion with an upstream scheme}
-Solid body rotation
+\frametitle{The antidiffusion vector}
+\renewcommand{\imsize}{\textwidth}
+\includegraphics<1>[width=0.8\imsize]{ad1d}
+\includegraphics<2>[width=\imsize]{ad2d}
+\end{frame}
 
+\begin{frame}
+\frametitle{Example: solid body rotation}
 \begin{figure}
 \renewcommand{\imsize}{\textwidth}
-\includegraphics<1>[width=\imsize]{animation2/anim-0}
-\includegraphics<2>[width=\imsize]{animation2/anim-1}
-\includegraphics<3>[width=\imsize]{animation2/anim-2}
-\includegraphics<4>[width=\imsize]{animation2/anim-3}
-\includegraphics<5>[width=\imsize]{animation2/anim-4}
-\includegraphics<6>[width=\imsize]{animation2/anim-5}
-\includegraphics<7>[width=\imsize]{animation2/anim-6}
-\includegraphics<8>[width=\imsize]{animation2/anim-7}
-\includegraphics<9>[width=\imsize]{animation2/anim-8}
-\includegraphics<10>[width=\imsize]{animation2/anim-9}
-\includegraphics<11>[width=\imsize]{animation2/anim-10}
-\includegraphics<12>[width=\imsize]{animation2/anim-11}
-\includegraphics<13>[width=\imsize]{animation2/anim-12}
-\includegraphics<14>[width=\imsize]{animation2/anim-13}
-\includegraphics<15>[width=\imsize]{animation2/anim-14}
-\includegraphics<16>[width=\imsize]{animation2/anim-15}
-\includegraphics<17>[width=\imsize]{animation2/anim-16}
-\includegraphics<18>[width=\imsize]{animation2/anim-17}
-\includegraphics<19>[width=\imsize]{animation2/anim-18}
-\includegraphics<20>[width=\imsize]{animation2/anim-19}
-\includegraphics<21>[width=\imsize]{animation2/anim-20}
-\includegraphics<22>[width=\imsize]{animation2/anim-21}
-\includegraphics<23>[width=\imsize]{animation2/anim-22}
-\includegraphics<24>[width=\imsize]{animation2/anim-23}
-\includegraphics<25>[width=\imsize]{animation2/anim-24}
-\includegraphics<26>[width=\imsize]{animation2/anim-25}
-\includegraphics<27>[width=\imsize]{animation2/anim-26}
-\includegraphics<28>[width=\imsize]{animation2/anim-27}
-\includegraphics<29>[width=\imsize]{animation2/anim-28}
-\includegraphics<30>[width=\imsize]{animation2/anim-29}
-\includegraphics<31>[width=\imsize]{animation2/anim-30}
-\includegraphics<32>[width=\imsize]{animation2/anim-31}
-\includegraphics<33>[width=\imsize]{animation2/anim-32}
-\includegraphics<34>[width=\imsize]{animation2/anim-33}
-\includegraphics<35>[width=\imsize]{animation2/anim-34}
-\includegraphics<36>[width=\imsize]{animation2/anim-35}
-\includegraphics<37>[width=\imsize]{animation2/anim-36}
-\includegraphics<38>[width=\imsize]{animation2/anim-37}
-\includegraphics<39>[width=\imsize]{animation2/anim-38}
-\includegraphics<40>[width=\imsize]{animation2/anim-39}
-\includegraphics<41>[width=\imsize]{animation2/anim-40}
-\includegraphics<42>[width=\imsize]{animation2/anim-41}
-\includegraphics<43>[width=\imsize]{animation2/anim-42}
-\includegraphics<44>[width=\imsize]{animation2/anim-43}
-\includegraphics<45>[width=\imsize]{animation2/anim-44}
-\includegraphics<46>[width=\imsize]{animation2/anim-45}
-\includegraphics<47>[width=\imsize]{animation2/anim-46}
-\includegraphics<48>[width=\imsize]{animation2/anim-47}
-\includegraphics<49>[width=\imsize]{animation2/anim-48}
-\includegraphics<50>[width=\imsize]{animation2/anim-49}
-\includegraphics<51>[width=\imsize]{animation2/anim-50}
-\includegraphics<52>[width=\imsize]{animation2/anim-51}
-\includegraphics<53>[width=\imsize]{animation2/anim-52}
-\includegraphics<54>[width=\imsize]{animation2/anim-53}
-\includegraphics<55>[width=\imsize]{animation2/anim-54}
-\includegraphics<56>[width=\imsize]{animation2/anim-55}
-\includegraphics<57>[width=\imsize]{animation2/anim-56}
-\includegraphics<58>[width=\imsize]{animation2/anim-57}
-\includegraphics<59>[width=\imsize]{animation2/anim-58}
-\includegraphics<60>[width=\imsize]{animation2/anim-59}
-\includegraphics<61>[width=\imsize]{animation2/anim-60}
-\includegraphics<62>[width=\imsize]{animation2/anim-61}
-\includegraphics<63>[width=\imsize]{animation2/anim-62}
-\includegraphics<64>[width=\imsize]{animation2/anim-63}
-\includegraphics<65>[width=\imsize]{animation2/anim-64}
+\includegraphics<1>[width=\imsize]{animation2/anim-0}%
+%\includegraphics<2>[width=\imsize]{animation2/anim-1}
+\includegraphics<2>[width=\imsize]{animation2/anim-2}%
+%\includegraphics<4>[width=\imsize]{animation2/anim-3}
+\includegraphics<3>[width=\imsize]{animation2/anim-4}%
+%\includegraphics<6>[width=\imsize]{animation2/anim-5}
+\includegraphics<4>[width=\imsize]{animation2/anim-6}%
+%\includegraphics<8>[width=\imsize]{animation2/anim-7}
+\includegraphics<5>[width=\imsize]{animation2/anim-8}%
+%\includegraphics<10>[width=\imsize]{animation2/anim-9}
+\includegraphics<6>[width=\imsize]{animation2/anim-10}%
+%\includegraphics<12>[width=\imsize]{animation2/anim-11}
+\includegraphics<7>[width=\imsize]{animation2/anim-12}%
+%\includegraphics<14>[width=\imsize]{animation2/anim-13}
+\includegraphics<8>[width=\imsize]{animation2/anim-14}%
+%\includegraphics<16>[width=\imsize]{animation2/anim-15}
+\includegraphics<9>[width=\imsize]{animation2/anim-16}%
+%\includegraphics<18>[width=\imsize]{animation2/anim-17}
+\includegraphics<10>[width=\imsize]{animation2/anim-18}%
+%\includegraphics<20>[width=\imsize]{animation2/anim-19}
+\includegraphics<11>[width=\imsize]{animation2/anim-20}%
+%\includegraphics<22>[width=\imsize]{animation2/anim-21}
+\includegraphics<12>[width=\imsize]{animation2/anim-22}%
+%\includegraphics<24>[width=\imsize]{animation2/anim-23}
+\includegraphics<13>[width=\imsize]{animation2/anim-24}%
+%\includegraphics<26>[width=\imsize]{animation2/anim-25}
+\includegraphics<14>[width=\imsize]{animation2/anim-26}%
+%\includegraphics<28>[width=\imsize]{animation2/anim-27}
+\includegraphics<15>[width=\imsize]{animation2/anim-28}%
+%\includegraphics<30>[width=\imsize]{animation2/anim-29}
+\includegraphics<16>[width=\imsize]{animation2/anim-30}%
+%\includegraphics<32>[width=\imsize]{animation2/anim-31}
+\includegraphics<17>[width=\imsize]{animation2/anim-32}%
+%\includegraphics<34>[width=\imsize]{animation2/anim-33}
+\includegraphics<18>[width=\imsize]{animation2/anim-34}%
+%\includegraphics<36>[width=\imsize]{animation2/anim-35}
+\includegraphics<19>[width=\imsize]{animation2/anim-36}%
+%\includegraphics<38>[width=\imsize]{animation2/anim-37}
+\includegraphics<20>[width=\imsize]{animation2/anim-38}%
+%\includegraphics<40>[width=\imsize]{animation2/anim-39}
+\includegraphics<21>[width=\imsize]{animation2/anim-40}%
+%\includegraphics<42>[width=\imsize]{animation2/anim-41}
+\includegraphics<22>[width=\imsize]{animation2/anim-42}%
+%\includegraphics<44>[width=\imsize]{animation2/anim-43}
+\includegraphics<23>[width=\imsize]{animation2/anim-44}%
+%\includegraphics<46>[width=\imsize]{animation2/anim-45}
+\includegraphics<24>[width=\imsize]{animation2/anim-46}%
+%\includegraphics<48>[width=\imsize]{animation2/anim-47}
+\includegraphics<25>[width=\imsize]{animation2/anim-48}%
+%\includegraphics<50>[width=\imsize]{animation2/anim-49}
+\includegraphics<26>[width=\imsize]{animation2/anim-50}%
+%\includegraphics<52>[width=\imsize]{animation2/anim-51}
+\includegraphics<27>[width=\imsize]{animation2/anim-52}%
+%\includegraphics<54>[width=\imsize]{animation2/anim-53}
+\includegraphics<28>[width=\imsize]{animation2/anim-54}%
+%\includegraphics<56>[width=\imsize]{animation2/anim-55}
+\includegraphics<29>[width=\imsize]{animation2/anim-56}%
+%\includegraphics<58>[width=\imsize]{animation2/anim-57}
+\includegraphics<30>[width=\imsize]{animation2/anim-58}%
+%\includegraphics<60>[width=\imsize]{animation2/anim-59}
+\includegraphics<31>[width=\imsize]{animation2/anim-60}%
+%\includegraphics<62>[width=\imsize]{animation2/anim-61}
+\includegraphics<32>[width=\imsize]{animation2/anim-62}%
+\includegraphics<33>[width=\imsize]{animation2/anim-63}%
+%\includegraphics<33>[width=\imsize]{animation2/anim-64}
 \end{figure}
 \end{frame}
 
 \begin{frame}
-\frametitle{Example of diffusion with an upstream scheme}
+\frametitle{Example: solid body rotation}
 \begin{itemize}
 \item Without antidiffusion, the body diffuses in one full rotation
 \item With antidiffusion, the body keeps its shape
@@ -459,7 +465,9 @@ Solid body rotation
 
 
 \section{Current state of research}
+\subsection{Possibilities}
 \begin{frame}
+\frametitle{Current state of research}
 \begin{itemize}
 \item Since 1983 a lot of progress has been made
 \item Advection calculations on the sphere pose new problems/possibilities
@@ -486,7 +494,7 @@ Spherical hexagonal-pentagonal grid (Lipscomb and Ringler, 2005)
 \end{figure}
 \end{frame}
 
-
+\subsection{MPDATA}
 
 \begin{frame}
 \frametitle{MPDATA}
@@ -514,10 +522,21 @@ Over the two decades, MPDATA evolved from an advection scheme into a class of ge
 \item Smolarkiewicz' relatively simple scheme already significantly improves results
 \end{itemize}
 
-\begin{figure}
-\renewcommand{\imsize}{0.75\textwidth}
-\includegraphics<2>[width=\imsize]{thanks}%
-\end{figure}
+\begin{thebibliography}{10}
+      
+  \beamertemplatearticlebibitems
+  % Followed by interesting articles. Keep the list short. 
+
+  \bibitem{Smolarkiewicz}
+    Piotr~K.~Smolarkiewicz
+    \newblock A Simple Positive Advection Scheme with Small Implicit Diffusion
+    \newblock {\em Monthly Weather Review}, 111:479--486,
+    1983.
+  \end{thebibliography}
+%\begin{figure}
+%\renewcommand{\imsize}{0.75\textwidth}
+%\includegraphics<2>[width=\imsize]{thanks}%
+%\end{figure}
 \end{frame}
 
 \bibliographystyle{alpha}
