@@ -385,6 +385,8 @@ There are also schemes that have no diffusion. An example of such a scheme is a 
 \section{Conclusion}
 The advection equation is important in many areas of climate modeling. Because diffusion is a threat to reliable advection simulation, it is important to develop anti-diffusion techniques that are both efficient and accurate. Smolarkiewicz' iterative approach, later generalized into MPDATA, is such a technique; since it iterative in nature it is fairly straightforward to implement and in reasonable computation time it is as accurate as some of the more complex hybrid schemes.
 
+The numerical results shown in this report show that with the right parameters even a simple technique such as the iterative approach by Smolarkiewicz works already quite well to reduce the diffusion.
+
 For even more realistic and reliable results the existing techniques need still to be improved. Examples of some advanced grids that were introduced are the reduced grid \cite{spee} and the spherical hexagonal-pentagonal grid \cite{lipscomb}. MPDATA, the multi-dimensional generalization of Smolarkiewicz' scheme has also been expanded and improved to cover generalized transport algorithms and complete fluid models with a wide range of underlying governing equations. Fortunately there are also schemes, such as the fully Lagrangian schemes, that do not have diffusion at all.
 
 Despite the existing efficient schemes it is still necessary to search for improvements to be able to model climate more accurately.
