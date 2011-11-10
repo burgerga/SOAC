@@ -150,6 +150,7 @@ where
 We see that \ref{eq:anti1} is the same as \ref{eq:noanti}, only now the result is not directly stored in $\psi^{N+1}$, but in an intermediate vector $\psi^*$. Then we can apply \ref{eq:anti2} any number of times to increase the accuracy of the simulation. In practice, the gain in accuracy decreases with the number of iterations. The exact number of iterations to use depends on the computational resources at hand, Smolarkiewicz suggests using 2 iterations.
 
 \subsection{Implementation}
+\label{sec:implementation}
 We implement the antidiffusion scheme in Fortran. For this, we use the method of lines. First, we write out the equations. We see that \ref{eq:anti1} and \ref{eq:anti2} use the same flux operators, only the input velocity vector and system state vector are different. Therefore, we only need to write out \ref{eq:anti1}.
 
 \begin{multline}
@@ -264,7 +265,11 @@ We have applied the antidiffusive scheme to the one dimensional case and the two
 \subsubsection{Results in one dimension}
 We have developed a graphical user interface (GUI) in Matlab (Figure \ref{fig:1dgui}) so that we can test different configurations on the fly. In the GUI, we can check for instabilities and set the initial condition and the velocity vector very easily. Using this GUI we find that the scheme is indeed both volume preserving and positive definite. 
 
-We can visualize the effect of using antidiffusion iterations by again taking the problem in Figure \ref{fig:dif}, but now applying two antidiffusion iterations at each timestep. In the blue bars, we have the original diffused 
+We can visualize the effect of using antidiffusion iterations by again taking the problem in Figure \ref{fig:dif}, but now applying two antidiffusion iterations at each timestep. In the blue bars, we have the original diffused numerical solution. In the black bars we have the antidiffusive solution. We see that the antidiffusive solution is more concentrated around the exact solution.
+
+Is is interesting to visualize the antidiffusion vector to see what exactly is going on. In Figure \ref{fig:antivec} we see the antidiffusion vector for a system where there the exact solution lies around $\psi_{25}$. The substance is moving to the right at a constant speed $u=0.5$, which makes this simulation similar to those in Figures \ref{fig:dif} and \ref{fig:antidif}. We see that whereas the velocity vector is positive everywhere, the antidiffusive velocity vector is negative in front of the exact solution, thus pushing the substance back, and positive behind the exact solution, thus pushing the substance forward. In fact, the substance is compressed around the exact solution, which helps preserve the shape of the substance.
+
+
 
 \begin{figure}[htp]
 \renewcommand{\imsize}{0.3\textwidth}
@@ -282,10 +287,19 @@ We can visualize the effect of using antidiffusion iterations by again taking th
 \label{fig:diffusion}
 \end{figure}
 
+\begin{figure}
+\centering
+ \includegraphics[width=0.6\textwidth]{../presentation/ad1d.pdf}
+\caption{Antidiffusion vector in one dimension}
+\label{fig:antivec}
+\end{figure}
 
-Furthermore, we find that when we use antidiffusive iterations, the diffusion is much smaller than in the case where we just apply the basic upstream scheme. We see this very clearly in Figure \ref{fig:maxs}, where we have plotted the maximum value of the simulation as a function of the time step $N$. When we do not use antidiffusion, the maximum value rapidly drops to 0, when we use 3 antidiffusion iterations, the maximum value drops to 0.5, but then remains constant around that value. In this example, the move from 2 to 3 antidiffusion iterations adds relatively little to the validity of the simulation, compared to the extra computational cost.
 
-In Figure \ref{fig:local} we see that without antidiffusion iterations, 
+We find that when we use antidiffusive iterations, the diffusion is much smaller than in the case where we just apply the basic upstream scheme. We see this very clearly in Figure \ref{fig:maxs}, where we have plotted the maximum value of the simulation as a function of the time step $N$. When we do not use antidiffusion, the maximum value rapidly drops to 0, when we use 3 antidiffusion iterations, the maximum value drops to 0.5, but then remains constant around that value. In this example, the move from 2 to 3 antidiffusion iterations adds relatively little to the validity of the simulation, compared to the extra computational cost.
+
+In Figure \ref{fig:local} we see that without antidiffusion iterations, the smearing causes interactions between pockets which are not meant to interact. We start with three independent substance pockets. After 100 time steps, diffusion has caused the three peaks to merge (blue line), whereas antidiffusion (black line) preserves the local character of the pockets.
+
+
 
 \begin{figure}
 \centering
@@ -301,6 +315,22 @@ In Figure \ref{fig:local} we see that without antidiffusion iterations,
  \label{fig:maxs}
 \end{figure}
 
+
+\begin{figure}
+\centering
+ \includegraphics[width=0.8\textwidth]{../presentation/animation/peaks-eps-converted-to.pdf}
+ \caption{Interactions between neighboring pockets.}
+ \label{fig:1ocal}
+\end{figure}
+
+\subsubsection{Results in two dimensions}
+
+As we have seen in Section \ref{sec:implementation}, we can implement Smolarkiewicz' scheme in two dimensions as well as in one dimension. As for the one dimensional simulations, we have built a Matlab GUI (Figure \ref{fig:2dgui}). We will show the results of a rotating cone simulation in two dimensions. The cone starts at $(25\Delta x, 75\Delta y)$ and rotates around the center $(50 \Delta x, 50 \Delta y)$ in a $100 \Delta x \times 100 \Delta y$ grid. The initial cone has a maximum value of 3.87. The scheme is stable with $\Delta x = \Delta y = 1$ and $\Delta t = 0.1$. With an angular velocity of $\omega = 0.1$, the velocity components are $u=-\omega(y-y_0)$ and $v=\omega(x-x_0)$, where $(x_0,y_0)$ is the center $(50 \Delta x, 50 \Delta y)$. These parameters are the same as in \cite{smolarki}. One full rotation around the center is equivalent to 628 time steps.
+
+Again, it is interesting to take a look at the antidiffusion vectors (Figure \ref{fig:antivec2d}). On the left, we have the initial condition, the cone around $(25\Delta x, 75\Delta y)$. In the middle we have the vertical antidiffusion velocity vector, to the right we have the horizontal antidiffusion velocity vector. From the antidiffusion vectors we see that this cone will move counterclockwise. Note that these figures are very similar to Figure \ref{fig:antivec}.
+
+If we take a look at the simulation after one full rotation (Figure \ref{fig:rotcone}, we see that there is almost nothing left of the cone when we don't use antidiffusive iterations. If we do however use two antidiffusive iterations, the cone preserves its shape quite well, thus showing results similar to those in Figure \ref{fig:maxs}.
+
 \begin{figure}
 \centering
  \includegraphics[width=0.8\textwidth]{2dscreenshot.jpg}
@@ -308,9 +338,22 @@ In Figure \ref{fig:local} we see that without antidiffusion iterations,
  \label{fig:2dgui}
 \end{figure}
 
-\subsubsection{Results in two dimensions}
+\begin{figure}
+\centering
+ \includegraphics[width=\textwidth]{../presentation/ad2d.pdf}
+\caption{Antidiffusion vector in two dimensions}
+\label{fig:antivec2d}
+\end{figure}
 
-In both cases it is interesting to vi
+
+\begin{figure}
+\centering
+ \includegraphics[width=\textwidth]{../presentation/animation2/anim-64}
+\caption{Rotating cone simulation after one full rotation. No antidiffusion (left) and two antidiffusive iterations (right).}
+\label{fig:rotcone}
+\end{figure}
+
+
 \section{Current state of research}
 Something about no diffusion schemes
 \subsection{Possibilities}
@@ -320,19 +363,7 @@ Something about no diffusion schemes
 
 
 
-Collecting terms gives the method of lines representation
 
-\begin{equation}
-\begin{split}
-\psi_{ij}^{N+1} &=
-\frac{\Delta t}{2 \Delta y} \left( v_{i,j-1/2}^N + \abs{v_{i,j-1/2}^N} \right) \psi_{i,j-1}^N\\
-&+\frac{\Delta t}{2 \Delta x} \left( u_{i-1/2,j}^N + \abs{u_{i-1/2,j}^N} \right) \psi_{i-1,j}^N\\
-&+ \Big(1 - u_{i+1/2,j}^N - \abs{u_{i+1/2,j}^N} + u_{i-1/2,j}^N - \abs{u_{i-1/2,j}^N} - v_{i,j+1/2}^N - \abs{v_{i,j+1/2}^N} \\
-&+ v_{i,j-1/2}^N - \abs{v_{i,j-1/2}^N} \Big) \psi_i^N\\
-&-\frac{\Delta t}{2 \Delta x} \left( u_{i+1/2,j}^N - \abs{u_{i+1/2,j}^N} \right) \psi_{i+1,j}^N\\
-&-\frac{\Delta t}{2 \Delta y} \left( v_{i,j+1/2}^N - \abs{v_{i,j+1/2}^N} \right) \psi_{i,j+1}^N\\
-\end{split}
-\end{equation}
 
 \bibliographystyle{plain}
 \bibliography{report}
