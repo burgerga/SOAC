@@ -12,7 +12,7 @@
 \usepackage{rotating}
 \usepackage[lined, boxed]{algorithm2e}
 \usepackage[T1]{fontenc}
-\renewcommand{\familydefault}{\sfdefault} 
+\renewcommand{\familydefault}{\sfdefault}
 \newcommand{\imsize}{}
 \newlength{\widthtmp}
 \newcommand{\getWidth}[1]{%
@@ -37,7 +37,7 @@ pdfstartview=FitH
 \maketitle
 
 \section{Introduction}
-The advection equation describes the transport of a substance by a fluid, due to the fluid's motion in a particular direction. It plays an important role in climate modelling, e.g. in the modelling of 
+The advection equation describes the transport of a substance by a fluid, due to the fluid's motion in a particular direction. It plays an important role in climate modelling, e.g. in the modelling of
 \begin{itemize}
    \item Transport of trace gasses air due to wind
    \item Transport of heat by ocean water due to currents
@@ -59,7 +59,7 @@ The continuity equation describing the advection of a non-diffusive quantity in 
 \frac{\partial \psi}{\partial t} + \text{ div}(V\psi) = 0
 \end{equation}
 
-where $\psi(x,y,z,t)$ is the non-diffusive scalar quantity, $V=(u,v,w)$ is the velocity vector and $x,y,z,t$ are the independent variables of space and time. In the one-dimensional case, this is 
+where $\psi(x,y,z,t)$ is the non-diffusive scalar quantity, $V=(u,v,w)$ is the velocity vector and $x,y,z,t$ are the independent variables of space and time. In the one-dimensional case, this is
 
 \begin{equation}
 \frac{\partial \psi}{\partial t} + \frac{\partial}{\partial x}(u\psi) = 0,
@@ -81,7 +81,7 @@ Figure~\ref{fig:dif} provides a nice illustration of what diffusion in 1D is. In
  u(x,t)=F(x-ut)=F(x-0.5t).
 \end{equation}
 
-Clearly this diffusive behavior is undesirable. If your simulation runs for some time, the solution `smears' out and becomes zero everywhere. Though the solution of this method is volume preserving and no unphysical values are introduced, it is a rather bad simulation of non-diffusive advection. Furtermore, the diffusive effect extends the domain of the substance very rapidly, which could cause interactions between the substance and substances in other domains, thereby further reducing the validity of the simulation. 
+Clearly this diffusive behavior is undesirable. If your simulation runs for some time, the solution `smears' out and becomes zero everywhere. Though the solution of this method is volume preserving and no unphysical values are introduced, it is a rather bad simulation of non-diffusive advection. Furtermore, the diffusive effect extends the domain of the substance very rapidly, which could cause interactions between the substance and substances in other domains, thereby further reducing the validity of the simulation.
 \begin{figure}[htp]
 \renewcommand{\imsize}{0.3\textwidth}
 \begin{tabular}{ccc}
@@ -124,7 +124,7 @@ F \left( \psi_i^N,\psi_{i+1}^N,u_{i+1/2}^N\right) =
 
 Here $\psi_i^N$ is the value of $\psi$ at the $i$-th grid point for time step $N$, $\Delta t$ and $\Delta x$ are the time and space incrmeents and the fluxes $F$ are defined at the same staggered points as the velocity values.
 
-For stability we require that 
+For stability we require that
 
 \begin{equation}
 \max_{i}\left(\frac{\abs{u_{i+1/2}}\Delta t}{\Delta x}\right) \leq 1
@@ -139,7 +139,7 @@ As we can see in Figure \ref{fig:diffusion}, just applying this upstream scheme 
 -F \left( \psi_{i-1}^n,\psi_{i}^n,u_{i-1/2}^n\right) \Big),\label{eq:anti1}\\
  \psi_i^{n+1} &= \psi_i^* - \Big( F \left( \psi_i^*,\psi_{i+1}^*,\tilde{u}_{i+1/2}^n\right)
 -F \left( \psi_{*}^n,\psi_{*}^n,\tilde{u}_{i-1/2}^n\right) \Big),\label{eq:anti2}\,
-\end{align} 
+\end{align}
 
 where
 
@@ -199,7 +199,7 @@ or with periodic boundary conditions, so that we only need to store a limited do
 
 The values of $\psi^*$ can be obtained very efficiently from those of $\psi^N$ using a sparse matrix vector multiplication. It follows that we can apply this matrix-vector multiplication also to \ref{eq:anti2}, where we substitute $u \rightarrow \tilde{u}$, $\psi^N \rightarrow \psi^*$, $\psi^* \rightarrow \psi^{N+1}$ in case we only run one iteration of \ref{eq:anti2}. If we run more than one iteration, we should update the intermediate vector $\psi^*$ and the antidiffusion velocity $\tilde{u}$ at each iteration.
 
-Note that the tri-diagonal matrix is only useful for the one dimensional case. If we apply Smolarkiewicz' antidiffusion scheme in two dimensions, we need to take into account two extra neighboring grid points for every grid point $\psi_{ij}$. Thus, we get the collection of terms 
+Note that the tri-diagonal matrix is only useful for the one dimensional case. If we apply Smolarkiewicz' antidiffusion scheme in two dimensions, we need to take into account two extra neighboring grid points for every grid point $\psi_{ij}$. Thus, we get the collection of terms
 
 \begin{align*}
 \psi_{ij}^* &=
@@ -237,7 +237,7 @@ In general, we find a numerical solution using the following algorithm
 \SetKwFunction{MMat}{ComputeMatrix}\SetKwFunction{MMult}{MatrixMultiplication}
 \SetKwFunction{CADV}{ComputeAntidiffusionVelocity}
 \SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
-\Input{Initial state $\psi^0$, velocities $u$, \Iter, \Steps, $\Delta x$, $\Delta t$} 
+\Input{Initial state $\psi^0$, velocities $u$, \Iter, \Steps, $\Delta x$, $\Delta t$}
 \Output{Final state $\psi^N$}
 \BlankLine
 $\psi \leftarrow \psi^0$\;
@@ -263,7 +263,7 @@ We have applied the antidiffusive scheme to the one dimensional case and the two
 
 
 \subsubsection{Results in one dimension}
-We have developed a graphical user interface (GUI) in Matlab (Figure \ref{fig:1dgui}) so that we can test different configurations on the fly. In the GUI, we can check for instabilities and set the initial condition and the velocity vector very easily. Using this GUI we find that the scheme is indeed both volume preserving and positive definite. 
+We have developed a graphical user interface (GUI) in Matlab (Figure \ref{fig:1dgui}) so that we can test different configurations on the fly. In the GUI, we can check for instabilities and set the initial condition and the velocity vector very easily. Using this GUI we find that the scheme is indeed both volume preserving and positive definite.
 
 We can visualize the effect of using antidiffusion iterations by again taking the problem in Figure \ref{fig:dif}, but now applying two antidiffusion iterations at each timestep. In the blue bars, we have the original diffused numerical solution. In the black bars we have the antidiffusive solution. We see that the antidiffusive solution is more concentrated around the exact solution.
 
@@ -355,9 +355,33 @@ If we take a look at the simulation after one full rotation (Figure \ref{fig:rot
 
 
 \section{Current state of research}
-Something about no diffusion schemes
-\subsection{Possibilities}
-\subsection{MPDATA}
+Since Smolarkiewicz' paper in 1983, there are numerous improvements and alternatives developed to solve the advection equation for larger and more complex grids. Examples of this are the methods on a reduced grid developed by Spee et al. in 1997 \cite{spee}. The reduced grid is a grid with the shape of the globe, except that there are less cells near the poles to avoid the well known pole-singularity. Figure~\ref{fig:redgrid} gives an illustration of this reduced grid.
+
+\begin{figure}[htp]
+\centering
+\renewcommand{\imsize}{0.75\textwidth}%
+\includegraphics[width=\imsize]{figures/globe}%
+\caption{\label{fig:redgrid} Illustration of the reduced grid as used by Spee et al. \cite{spee}.}
+\end{figure}
+
+Another example is the spherical geodesic grids used by Lipscomb and Ringler in 2005 \cite{lipscomb}. Figure~\ref{fig:hexpent} shows for example the spherical hexagonal-pentagonal grid, this grid consists of 20 spherical triangles, which in turn can be split in 5 groups of 4 triangles and as the figure shows these groups form rectangles.
+
+\begin{figure}[htp]
+\centering
+\renewcommand{\imsize}{0.75\textwidth}
+\includegraphics[width=\imsize]{figures/lipcomb}%
+\caption{\label{fig:hexpent} The spherical hexagonal-pentagonal grid introduced by Lipscomb and Ringler \cite{lipscomb}}
+\end{figure}
+
+\subsection{Multidimensional Positive Definite Advection Transport Algorithm}
+Smolarkiewicz' himself is also still active in the development of the Multidimensional Positive Definite Advection Transport Algorithm (MPDATA), a multi-dimensional generalization of the origal approach by Smolarkiewicz described in this rapport \cite{mpdata}. This finite-difference method is still in wide use, and recently the transition to finite-volume has been made. MPDATA evolved and expanded over time; according to Smolarkiewicz (2005)
+\begin{quotation}
+[...] MPDATA evolved from an advection scheme into a class of generalized transport algorithms that expand beyond advective transport to alternate PDEs and complete fluid models with a wide range of underlying governing equations.
+\end{quotation}
+
+\subsection{Schemes without diffusion}
+There are also schemes that have no diffusion. An example of such a scheme is a fully Lagrangian Advection Scheme. As opposed to an Eulerian fixed grid, Lagrangian schemes use a grid that moves with the flow. That means that the derivatives are calclaed in the Lagrangian frame of reference since the advection equation can best be described in a Lagrangian frame. The two key components of a Lagrangian scheme are a method to follow the characteristics, and a method to view the solution on a Eulerian grid. There are two different kinds of Lagrangian schemes: in a fully Lagrangian scheme the grid is attached to, and moves with, the flow, and needs typically to be remeshed after a finited number of steps, there are however also fully Lagrangian schemes that don't need to be remeshed \cite{nodif}.
+
 \section{Conclusion}
 
 
