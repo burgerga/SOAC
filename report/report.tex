@@ -8,6 +8,7 @@
 \usepackage{ctable}
 \usepackage{appendix}
 \usepackage{verbatim,listings}
+\usepackage{epstopdf}
 \usepackage{rotating}
 \usepackage[lined, boxed]{algorithm2e}
 \usepackage[T1]{fontenc}
@@ -226,9 +227,90 @@ substitution gives
 
 which gives a pentadiagonal sparse matrix. Again, we can use sparse matrix vector multiplication. In the three-dimensional case, we would get a septadiagonal matrix.
 
+In general, we find a numerical solution using the following algorithm
+
+\IncMargin{1em}
+\begin{algorithm}[H]
+\SetKwData{Iter}{iter}\SetKwData{Mone}{mat1}\SetKwData{Mtwo}{mat2}
+\SetKwData{Steps}{tsteps}
+\SetKwFunction{MMat}{ComputeMatrix}\SetKwFunction{MMult}{MatrixMultiplication}
+\SetKwFunction{CADV}{ComputeAntidiffusionVelocity}
+\SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
+\Input{Initial state $\psi^0$, velocities $u$, \Iter, \Steps, $\Delta x$, $\Delta t$} 
+\Output{Final state $\psi^N$}
+\BlankLine
+$\psi \leftarrow \psi^0$\;
+\Mone $\leftarrow$ \MMat{$u,\Delta x, \Delta t$}\;
+\For{$i \leftarrow 1$ \KwTo \Steps}{
+$\psi \leftarrow$ \MMult{\Mone,$\psi$}\;
+\For{$j \leftarrow 1$ \KwTo \Iter}{
+$\widetilde{u} \leftarrow$ \CADV{$\psi,u$}\;
+\Mtwo $\leftarrow$ \MMat{$\widetilde{u},\Delta x, \Delta t$}\;
+$\psi \leftarrow$ \MMult{\Mtwo,$\psi$}\;
+}
+}
+$\psi^N \leftarrow \psi$\;
+\end{algorithm}
+\DecMargin{1em}
+
+
+
+
 
 \subsection{Numerical results}
-We have applied the antidiffusive scheme to the one dimensional case and the two dimensional case. In both cases, visualizing the antidiffusion velocity vector
+We have applied the antidiffusive scheme to the one dimensional case and the two dimensional case. We will first discuss some results for the one dimensional case.
+
+
+\subsubsection{Results in one dimension}
+We have developed a graphical user interface (GUI) in Matlab (Figure \ref{fig:1dgui}) so that we can test different configurations on the fly. In the GUI, we can check for instabilities and set the initial condition and the velocity vector very easily. Using this GUI we find that the scheme is indeed both volume preserving and positive definite. 
+
+We can visualize the effect of using antidiffusion iterations by again taking the problem in Figure \ref{fig:dif}, but now applying two antidiffusion iterations at each timestep. In the blue bars, we have the original diffused 
+
+\begin{figure}[htp]
+\renewcommand{\imsize}{0.3\textwidth}
+\begin{tabular}{ccc}
+{\resizebox{\imsize}{!}{\includegraphics{../presentation/animation/aanime0-eps-converted-to.pdf}}} &
+{\resizebox{\imsize}{!}{\includegraphics{../presentation/animation/aanime1-eps-converted-to.pdf}}} &
+{\resizebox{\imsize}{!}{\includegraphics{../presentation/animation/aanime2-eps-converted-to.pdf}}} \\
+{\resizebox{\imsize}{!}{\includegraphics{../presentation/animation/aanime3-eps-converted-to.pdf}}} &
+{\resizebox{\imsize}{!}{\includegraphics{../presentation/animation/aanime4-eps-converted-to.pdf}}} &
+{\resizebox{\imsize}{!}{\includegraphics{../presentation/animation/aanime5-eps-converted-to.pdf}}} \\
+{\resizebox{\imsize}{!}{\includegraphics{../presentation/animation/aanime6-eps-converted-to.pdf}}} &
+{\resizebox{\imsize}{!}{\includegraphics{../presentation/animation/aanime7-eps-converted-to.pdf}}} \\
+\end{tabular}
+\caption{\label{fig:antidif}Example of antidiffusion when the speed $u=0.5$.}
+\label{fig:diffusion}
+\end{figure}
+
+
+Furthermore, we find that when we use antidiffusive iterations, the diffusion is much smaller than in the case where we just apply the basic upstream scheme. We see this very clearly in Figure \ref{fig:maxs}, where we have plotted the maximum value of the simulation as a function of the time step $N$. When we do not use antidiffusion, the maximum value rapidly drops to 0, when we use 3 antidiffusion iterations, the maximum value drops to 0.5, but then remains constant around that value. In this example, the move from 2 to 3 antidiffusion iterations adds relatively little to the validity of the simulation, compared to the extra computational cost.
+
+In Figure \ref{fig:local} we see that without antidiffusion iterations, 
+
+\begin{figure}
+\centering
+ \includegraphics[width=0.8\textwidth]{1dscreenshot.png}
+ \caption{Matlab GUI for one dimensional case. We can set the velocity vector $u$, the initial condition $\psi^0$ and a range of other parameters.}
+ \label{fig:1dgui}
+\end{figure}
+
+\begin{figure}
+\centering
+ \includegraphics[width=0.8\textwidth]{maxs}
+ \caption{Maximum value in the simulation when running with 0, 1, 2 or 3 antidiffusive iterations.}
+ \label{fig:maxs}
+\end{figure}
+
+\begin{figure}
+\centering
+ \includegraphics[width=0.8\textwidth]{2dscreenshot.jpg}
+ \caption{Matlab GUI for two dimensional case. We can set the velocity vectors $u$ and $v$, the initial condition $\psi^0$ and a range of other parameters. We can view the results of the simulation directly.}
+ \label{fig:2dgui}
+\end{figure}
+
+\subsubsection{Results in two dimensions}
+
+In both cases it is interesting to vi
 \section{Current state of research}
 Something about no diffusion schemes
 \subsection{Possibilities}
@@ -237,78 +319,6 @@ Something about no diffusion schemes
 
 
 
-\subsection{One dimensional case}
-
-Upstream advection equation on staggered grid:
-\begin{equation}
- \psi_i^{N+1} = \psi_i^N - \Big( F \left( \psi_i^N,\psi_{i+1}^N,u_{i+1/2}^N\right)
--F \left( \psi_{i-1}^N,\psi_{i}^N,u_{i-1/2}^N\right) \Big),
-\end{equation}
-where
-\begin{multline}
-F \left( \psi_i^N,\psi_{i+1}^N,u_{i+1/2}^N\right) =\\
-\Big( \left( u_{i+1/2}^N + \abs{u_{i+1/2}^N} \right) \psi_i^N
-+ \left( u_{i+1/2}^N - \abs{u_{i+1/2}^N} \right) \psi_{i+1}^N \Big)
-\frac{\Delta t}{2 \Delta x}.
-\end{multline}
-This gives
-\begin{multline}
-\psi_i^{N+1} = \psi_i^N - \frac{\Delta t}{2 \Delta x} \bigg( \Big( \left( u_{i+1/2}^N + \abs{u_{i+1/2}^N} \right) \psi_i^N
-+ \left( u_{i+1/2}^N - \abs{u_{i+1/2}^N} \right) \psi_{i+1}^N \Big)
-\\
-- \Big( \left( u_{i-1/2}^N + \abs{u_{i-1/2}^N} \right) \psi_{i-1}^N
-+ \left( u_{i-1/2}^N - \abs{u_{i-1/2}^N} \right) \psi_{i}^N \Big) \bigg).
-\end{multline}
-Collecting terms gives the method of lines representation
-\begin{equation}
-\begin{split}
-\psi_i^{N+1} &=
-\frac{\Delta t}{2 \Delta x} \left( u_{i-1/2}^N + \abs{u_{i-1/2}^N} \right) \psi_{i-1}^N\\
-&+ \left(1 - \frac{\Delta t}{2 \Delta x} \left( u_{i+1/2}^N + \abs{u_{i+1/2}^N} - u_{i-1/2}^N + \abs{u_{i-1/2}^N} \right) \right) \psi_i^N\\
-&-\frac{\Delta t}{2 \Delta x} \left( u_{i+1/2}^N - \abs{u_{i+1/2}^N} \right) \psi_{i+1}^N\\
-\end{split}
-\end{equation}
-
-\section*{Two dimensional case}
-Upstream advection equation on staggered grid:
-
-\begin{multline}
- \psi_{ij}^{N+1} = \psi_{ij}^N - \Big( F \left( \psi_{ij}^N,\psi_{i+1,j}^N,u_{i+1/2,j}^N\right)
--F \left( \psi_{i-1,j}^N,\psi_{ij}^N,u_{i-1/2,j}^N\right) + \\ F \left( \psi_{ij}^N,\psi_{i,j+1}^N,v_{i,j+1/2}^N\right) -F \left( \psi_{i,j-1}^N,\psi_{ij}^N,v_{i,j-1/2}^N\right) \Big),
-\end{multline}
-
-where
-\begin{multline}
-F \left( \psi_{ij}^N,\psi_{i+1,j}^N,u_{i+1/2,j}^N\right) =\\
-\Big( \left( u_{i+1/2,j}^N + \abs{u_{i+1/2,j}^N} \right) \psi_{ij}^N
-+ \left( u_{i+1/2,j}^N - \abs{u_{i+1/2,j}^N} \right) \psi_{i+1,j}^N \Big)
-\frac{\Delta t}{2 \Delta x}
-\end{multline}
-
-and
-\begin{multline}
-F \left( \psi_{ij}^N,\psi_{i,j+1}^N,v_{i,j+1/2}^N\right) =\\
-\Big( \left( v_{i,j+1/2}^N + \abs{v_{i,j+1/2}^N} \right) \psi_{ij}^N
-+ \left( v_{i,j+1/2}^N - \abs{v_{i,j+1/2}^N} \right) \psi_{i,j+1}^N \Big)
-\frac{\Delta t}{2 \Delta y}.
-\end{multline}
-
-This gives
-
-\begin{multline}
- \psi_{ij}^{N+1} = \psi_{ij}^N - \Big( \Big( \left( u_{i+1/2,j}^N + \abs{u_{i+1/2,j}^N} \right) \psi_{ij}^N
-+ \left( u_{i+1/2,j}^N - \abs{u_{i+1/2,j}^N} \right) \psi_{i+1,j}^N \Big)
-\frac{\Delta t}{2 \Delta x} \\
--\Big( \left( u_{i-1/2,j}^N + \abs{u_{i-1/2,j}^N} \right) \psi_{i-1,j}^N
-+ \left( u_{i-1/2,j}^N - \abs{u_{i-1/2,j}^N} \right) \psi_{ij}^N \Big)
-\frac{\Delta t}{2 \Delta x} \\
- + \Big( \left( v_{i,j+1/2}^N + \abs{v_{i,j+1/2}^N} \right) \psi_{ij}^N
-+ \left( v_{i,j+1/2}^N - \abs{v_{i,j+1/2}^N} \right) \psi_{i,j+1}^N \Big)
-\frac{\Delta t}{2 \Delta y} \\
- -\Big( \left( v_{i,j-1/2}^N + \abs{v_{i,j-1/2}^N} \right) \psi_{i,j-1}^N
-+ \left( v_{i,j-1/2}^N - \abs{v_{i,j-1/2}^N} \right) \psi_{ij}^N \Big)
-\frac{\Delta t}{2 \Delta y} \Big),
-\end{multline}
 
 Collecting terms gives the method of lines representation
 

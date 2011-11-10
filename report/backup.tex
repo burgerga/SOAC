@@ -1,0 +1,73 @@
+
+\subsection{One dimensional case}
+
+Upstream advection equation on staggered grid:
+\begin{equation}
+ \psi_i^{N+1} = \psi_i^N - \Big( F \left( \psi_i^N,\psi_{i+1}^N,u_{i+1/2}^N\right)
+-F \left( \psi_{i-1}^N,\psi_{i}^N,u_{i-1/2}^N\right) \Big),
+\end{equation}
+where
+\begin{multline}
+F \left( \psi_i^N,\psi_{i+1}^N,u_{i+1/2}^N\right) =\\
+\Big( \left( u_{i+1/2}^N + \abs{u_{i+1/2}^N} \right) \psi_i^N
++ \left( u_{i+1/2}^N - \abs{u_{i+1/2}^N} \right) \psi_{i+1}^N \Big)
+\frac{\Delta t}{2 \Delta x}.
+\end{multline}
+This gives
+\begin{multline}
+\psi_i^{N+1} = \psi_i^N - \frac{\Delta t}{2 \Delta x} \bigg( \Big( \left( u_{i+1/2}^N + \abs{u_{i+1/2}^N} \right) \psi_i^N
++ \left( u_{i+1/2}^N - \abs{u_{i+1/2}^N} \right) \psi_{i+1}^N \Big)
+\\
+- \Big( \left( u_{i-1/2}^N + \abs{u_{i-1/2}^N} \right) \psi_{i-1}^N
++ \left( u_{i-1/2}^N - \abs{u_{i-1/2}^N} \right) \psi_{i}^N \Big) \bigg).
+\end{multline}
+Collecting terms gives the method of lines representation
+\begin{equation}
+\begin{split}
+\psi_i^{N+1} &=
+\frac{\Delta t}{2 \Delta x} \left( u_{i-1/2}^N + \abs{u_{i-1/2}^N} \right) \psi_{i-1}^N\\
+&+ \left(1 - \frac{\Delta t}{2 \Delta x} \left( u_{i+1/2}^N + \abs{u_{i+1/2}^N} - u_{i-1/2}^N + \abs{u_{i-1/2}^N} \right) \right) \psi_i^N\\
+&-\frac{\Delta t}{2 \Delta x} \left( u_{i+1/2}^N - \abs{u_{i+1/2}^N} \right) \psi_{i+1}^N\\
+\end{split}
+\end{equation}
+
+\section*{Two dimensional case}
+Upstream advection equation on staggered grid:
+
+\begin{multline}
+ \psi_{ij}^{N+1} = \psi_{ij}^N - \Big( F \left( \psi_{ij}^N,\psi_{i+1,j}^N,u_{i+1/2,j}^N\right)
+-F \left( \psi_{i-1,j}^N,\psi_{ij}^N,u_{i-1/2,j}^N\right) + \\ F \left( \psi_{ij}^N,\psi_{i,j+1}^N,v_{i,j+1/2}^N\right) -F \left( \psi_{i,j-1}^N,\psi_{ij}^N,v_{i,j-1/2}^N\right) \Big),
+\end{multline}
+
+where
+\begin{multline}
+F \left( \psi_{ij}^N,\psi_{i+1,j}^N,u_{i+1/2,j}^N\right) =\\
+\Big( \left( u_{i+1/2,j}^N + \abs{u_{i+1/2,j}^N} \right) \psi_{ij}^N
++ \left( u_{i+1/2,j}^N - \abs{u_{i+1/2,j}^N} \right) \psi_{i+1,j}^N \Big)
+\frac{\Delta t}{2 \Delta x}
+\end{multline}
+
+and
+\begin{multline}
+F \left( \psi_{ij}^N,\psi_{i,j+1}^N,v_{i,j+1/2}^N\right) =\\
+\Big( \left( v_{i,j+1/2}^N + \abs{v_{i,j+1/2}^N} \right) \psi_{ij}^N
++ \left( v_{i,j+1/2}^N - \abs{v_{i,j+1/2}^N} \right) \psi_{i,j+1}^N \Big)
+\frac{\Delta t}{2 \Delta y}.
+\end{multline}
+
+This gives
+
+\begin{multline}
+ \psi_{ij}^{N+1} = \psi_{ij}^N - \Big( \Big( \left( u_{i+1/2,j}^N + \abs{u_{i+1/2,j}^N} \right) \psi_{ij}^N
++ \left( u_{i+1/2,j}^N - \abs{u_{i+1/2,j}^N} \right) \psi_{i+1,j}^N \Big)
+\frac{\Delta t}{2 \Delta x} \\
+-\Big( \left( u_{i-1/2,j}^N + \abs{u_{i-1/2,j}^N} \right) \psi_{i-1,j}^N
++ \left( u_{i-1/2,j}^N - \abs{u_{i-1/2,j}^N} \right) \psi_{ij}^N \Big)
+\frac{\Delta t}{2 \Delta x} \\
+ + \Big( \left( v_{i,j+1/2}^N + \abs{v_{i,j+1/2}^N} \right) \psi_{ij}^N
++ \left( v_{i,j+1/2}^N - \abs{v_{i,j+1/2}^N} \right) \psi_{i,j+1}^N \Big)
+\frac{\Delta t}{2 \Delta y} \\
+ -\Big( \left( v_{i,j-1/2}^N + \abs{v_{i,j-1/2}^N} \right) \psi_{i,j-1}^N
++ \left( v_{i,j-1/2}^N - \abs{v_{i,j-1/2}^N} \right) \psi_{ij}^N \Big)
+\frac{\Delta t}{2 \Delta y} \Big),
+\end{multline}
