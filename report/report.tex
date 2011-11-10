@@ -29,7 +29,7 @@ pdfstartview=FitH
 
 
 \author{Gerhard Burger \and Jelmer Wolterink}
-\title{Antidiffusion techniques to refine the numerical solution of the advection equation\\ Case study: Smolarkiewicz' iterative approach}
+\title{Anti-diffusion techniques to refine the numerical solution of the advection equation\\ Case study: Smolarkiewicz' iterative approach}
 
 \newcommand{\abs}[1]{\left\lvert#1\right\rvert}
 
@@ -37,7 +37,7 @@ pdfstartview=FitH
 \maketitle
 
 \section{Introduction}
-The advection equation describes the transport of a substance by a fluid, due to the fluid's motion in a particular direction. It plays an important role in climate modelling, e.g. in the modelling of
+The advection equation describes the transport of a substance by a fluid, due to the fluid's motion in a particular direction. It plays an important role in climate modeling, e.g. in the modeling of
 \begin{itemize}
    \item Transport of trace gasses air due to wind
    \item Transport of heat by ocean water due to currents
@@ -75,13 +75,13 @@ To solve this partial differential equation numerically we need to take into acc
 \end{itemize}
 
 \subsection{Diffusion}
-Figure~\ref{fig:dif} provides a nice illustration of what diffusion in 1D is. In this example the horizontal velocity $u=0.5$ is not integral, so per time step only a portion of the quantity in the gridbox moves to the next gridbox. The red bars show the exact solution of the advection equation
+Figure~\ref{fig:dif} provides a nice illustration of what diffusion in 1D is. In this example the horizontal velocity $u=0.5$ is not integral, so per time step only a portion of the quantity in the grid box moves to the next grid box. The red bars show the exact solution of the advection equation
 
 \begin{equation}
  u(x,t)=F(x-ut)=F(x-0.5t).
 \end{equation}
 
-Clearly this diffusive behavior is undesirable. If your simulation runs for some time, the solution `smears' out and becomes zero everywhere. Though the solution of this method is volume preserving and no unphysical values are introduced, it is a rather bad simulation of non-diffusive advection. Furtermore, the diffusive effect extends the domain of the substance very rapidly, which could cause interactions between the substance and substances in other domains, thereby further reducing the validity of the simulation.
+Clearly this diffusive behavior is undesirable. If your simulation runs for some time, the solution `smears' out and becomes zero everywhere. Though the solution of this method is volume preserving and no unphysical values are introduced, it is a rather bad simulation of non-diffusive advection. Furthermore, the diffusive effect extends the domain of the substance very rapidly, which could cause interactions between the substance and substances in other domains, thereby further reducing the validity of the simulation.
 \begin{figure}[htp]
 \renewcommand{\imsize}{0.3\textwidth}
 \begin{tabular}{ccc}
@@ -95,16 +95,15 @@ Clearly this diffusive behavior is undesirable. If your simulation runs for some
 {\resizebox{\imsize}{!}{\includegraphics{../presentation/animation/anime7.pdf}}} \\
 \end{tabular}
 \caption{\label{fig:dif}Example of diffusion when the speed $u=0.5$.}
-\label{fig:diffusion}
 \end{figure}
 
 
 
 \subsection{Anti-diffusion}
-To correct for the diffusion in numerical models several techniques were proposed. There is always a trade-off between computing cost and accuracy. In \cite{smolarki}, three anti-diffusive methods are briefly introduced. The first two methods, flux-corrected transport (FCT) \cite{borisbook} and self-adjusting hybrid scheme method (SAHS) \cite{hartenzwas} share high accuracy but also require excessive computing time. Both methods calculate a weighted average of different ordered schemes to deal with diffusion. A third method by Clark and Hall \cite{clarkhall}, the hybrid-type scheme based on a Crowley advection scheme, requires less computing time but is less accurate and might introduce negative values, causing unphysical undershoot. Though these values might be small enough to be neglected, it does violate one of the contraints we set in Section \ref{sec:solvadveq}.
+To correct for the diffusion in numerical models several techniques were proposed. There is always a trade-off between computing cost and accuracy. In \cite{smolarki}, three anti-diffusive methods are briefly introduced. The first two methods, flux-corrected transport (FCT) \cite{borisbook} and self-adjusting hybrid scheme method (SAHS) \cite{hartenzwas} share high accuracy but also require excessive computing time. Both methods calculate a weighted average of different ordered schemes to deal with diffusion. A third method by Clark and Hall \cite{clarkhall}, the hybrid-type scheme based on a Crowley advection scheme, requires less computing time but is less accurate and might introduce negative values, causing unphysical undershoot. Though these values might be small enough to be neglected, it does violate one of the constraints we set in Section \ref{sec:solvadveq}.
 
 \section{Case study: Smolarkiewicz}
-In his 1983 paper, Smolarkiewicz introduces a simple upstream scheme on a staggered grid with iterative corrections for diffusion. At every time step, a simple upstream scheme is used to calculate the advection. This results in the diffusion that we have seen in Figure \ref{fig:diffusion}. Then, the diffusive effect is reversed by a number of iterations using an antidiffusion velocity $\tilde{u}$.
+In his 1983 paper, Smolarkiewicz introduces a simple upstream scheme on a staggered grid with iterative corrections for diffusion. At every time step, a simple upstream scheme is used to calculate the advection. This results in the diffusion that we have seen in Figure \ref{fig:diffusion}. Then, the diffusive effect is reversed by a number of iterations using an anti-diffusion velocity $\tilde{u}$.
 
 In step 1 of the algorithm, Smolarkiewicz uses the upstream advection equation on a staggered grid:
 \begin{equation}
@@ -122,7 +121,7 @@ F \left( \psi_i^N,\psi_{i+1}^N,u_{i+1/2}^N\right) =
 \end{equation}
 
 
-Here $\psi_i^N$ is the value of $\psi$ at the $i$-th grid point for time step $N$, $\Delta t$ and $\Delta x$ are the time and space incrmeents and the fluxes $F$ are defined at the same staggered points as the velocity values.
+Here $\psi_i^N$ is the value of $\psi$ at the $i$-th grid point for time step $N$, $\Delta t$ and $\Delta x$ are the time and space increments and the fluxes $F$ are defined at the same staggered points as the velocity values.
 
 For stability we require that
 
@@ -132,7 +131,7 @@ For stability we require that
 
 This also guarantees that the scheme is positive definite: there are no unphysical negative values in a solution at any time.
 
-As we can see in Figure \ref{fig:diffusion}, just applying this upstream scheme will result in a highly smeared out solution after only a few steps. Therefore, in step 2 of the algorith, this upstream scheme is applied a number of times using an antidiffusive velocity, which is meant to counter the diffusion of the algorithm. We can therefore write the scheme as
+As we can see in Figure \ref{fig:diffusion}, just applying this upstream scheme will result in a highly smeared out solution after only a few steps. Therefore, in step 2 of the algorithm, this upstream scheme is applied a number of times using an anti-diffusive velocity, which is meant to counter the diffusion of the algorithm. We can therefore write the scheme as
 
 \begin{align}
  \psi_i^{*} &= \psi_i^n - \Big( F \left( \psi_i^n,\psi_{i+1}^n,u_{i+1/2}^n\right)
@@ -151,7 +150,7 @@ We see that \ref{eq:anti1} is the same as \ref{eq:noanti}, only now the result i
 
 \subsection{Implementation}
 \label{sec:implementation}
-We implement the antidiffusion scheme in Fortran. For this, we use the method of lines. First, we write out the equations. We see that \ref{eq:anti1} and \ref{eq:anti2} use the same flux operators, only the input velocity vector and system state vector are different. Therefore, we only need to write out \ref{eq:anti1}.
+We implement the anti-diffusion scheme in Fortran. For this, we use the method of lines. First, we write out the equations. We see that \ref{eq:anti1} and \ref{eq:anti2} use the same flux operators, only the input velocity vector and system state vector are different. Therefore, we only need to write out \ref{eq:anti1}.
 
 \begin{multline}
 \psi_i^* = \psi_i^N - \frac{\Delta t}{2 \Delta x} \bigg( \Big( \left( u_{i+1/2}^N + \abs{u_{i+1/2}^N} \right) \psi_i^N
@@ -197,9 +196,9 @@ or with periodic boundary conditions, so that we only need to store a limited do
 \begin{bmatrix}\psi_{1}^N\\\psi_{2}^N\\ \vdots \\\psi_{M-2}^N\\\psi_{M-1}^N\end{bmatrix}
 \end{equation*}
 
-The values of $\psi^*$ can be obtained very efficiently from those of $\psi^N$ using a sparse matrix vector multiplication. It follows that we can apply this matrix-vector multiplication also to \ref{eq:anti2}, where we substitute $u \rightarrow \tilde{u}$, $\psi^N \rightarrow \psi^*$, $\psi^* \rightarrow \psi^{N+1}$ in case we only run one iteration of \ref{eq:anti2}. If we run more than one iteration, we should update the intermediate vector $\psi^*$ and the antidiffusion velocity $\tilde{u}$ at each iteration.
+The values of $\psi^*$ can be obtained very efficiently from those of $\psi^N$ using a sparse matrix vector multiplication. It follows that we can apply this matrix-vector multiplication also to \ref{eq:anti2}, where we substitute $u \rightarrow \tilde{u}$, $\psi^N \rightarrow \psi^*$, $\psi^* \rightarrow \psi^{N+1}$ in case we only run one iteration of \ref{eq:anti2}. If we run more than one iteration, we should update the intermediate vector $\psi^*$ and the anti-diffusion velocity $\tilde{u}$ at each iteration.
 
-Note that the tri-diagonal matrix is only useful for the one dimensional case. If we apply Smolarkiewicz' antidiffusion scheme in two dimensions, we need to take into account two extra neighboring grid points for every grid point $\psi_{ij}$. Thus, we get the collection of terms
+Note that the tri-diagonal matrix is only useful for the one dimensional case. If we apply Smolarkiewicz' anti-diffusion scheme in two dimensions, we need to take into account two extra neighboring grid points for every grid point $\psi_{ij}$. Thus, we get the collection of terms
 
 \begin{align*}
 \psi_{ij}^* &=
@@ -259,15 +258,15 @@ $\psi^N \leftarrow \psi$\;
 
 
 \subsection{Numerical results}
-We have applied the antidiffusive scheme to the one dimensional case and the two dimensional case. We will first discuss some results for the one dimensional case.
+We have applied the anti-diffusive scheme to the one dimensional case and the two dimensional case. We will first discuss some results for the one dimensional case.
 
 
 \subsubsection{Results in one dimension}
 We have developed a graphical user interface (GUI) in Matlab (Figure \ref{fig:1dgui}) so that we can test different configurations on the fly. In the GUI, we can check for instabilities and set the initial condition and the velocity vector very easily. Using this GUI we find that the scheme is indeed both volume preserving and positive definite.
 
-We can visualize the effect of using antidiffusion iterations by again taking the problem in Figure \ref{fig:dif}, but now applying two antidiffusion iterations at each timestep. In the blue bars, we have the original diffused numerical solution. In the black bars we have the antidiffusive solution. We see that the antidiffusive solution is more concentrated around the exact solution.
+We can visualize the effect of using anti-diffusion iterations by again taking the problem in Figure \ref{fig:dif}, but now applying two anti-diffusion iterations at each time step. In the blue bars, we have the original diffused numerical solution. In the black bars we have the anti-diffusive solution. We see that the anti-diffusive solution is more concentrated around the exact solution.
 
-Is is interesting to visualize the antidiffusion vector to see what exactly is going on. In Figure \ref{fig:antivec} we see the antidiffusion vector for a system where there the exact solution lies around $\psi_{25}$. The substance is moving to the right at a constant speed $u=0.5$, which makes this simulation similar to those in Figures \ref{fig:dif} and \ref{fig:antidif}. We see that whereas the velocity vector is positive everywhere, the antidiffusive velocity vector is negative in front of the exact solution, thus pushing the substance back, and positive behind the exact solution, thus pushing the substance forward. In fact, the substance is compressed around the exact solution, which helps preserve the shape of the substance.
+Is is interesting to visualize the anti-diffusion vector to see what exactly is going on. In Figure \ref{fig:antivec} we see the anti-diffusion vector for a system where there the exact solution lies around $\psi_{25}$. The substance is moving to the right at a constant speed $u=0.5$, which makes this simulation similar to those in Figures \ref{fig:dif} and \ref{fig:antidif}. We see that whereas the velocity vector is positive everywhere, the anti-diffusive velocity vector is negative in front of the exact solution, thus pushing the substance back, and positive behind the exact solution, thus pushing the substance forward. In fact, the substance is compressed around the exact solution, which helps preserve the shape of the substance.
 
 
 
@@ -290,46 +289,46 @@ Is is interesting to visualize the antidiffusion vector to see what exactly is g
 \begin{figure}
 \centering
  \includegraphics[width=0.6\textwidth]{../presentation/ad1d.pdf}
-\caption{Antidiffusion vector in one dimension}
+\caption{Anti-diffusion vector in one dimension}
 \label{fig:antivec}
 \end{figure}
 
 
-We find that when we use antidiffusive iterations, the diffusion is much smaller than in the case where we just apply the basic upstream scheme. We see this very clearly in Figure \ref{fig:maxs}, where we have plotted the maximum value of the simulation as a function of the time step $N$. When we do not use antidiffusion, the maximum value rapidly drops to 0, when we use 3 antidiffusion iterations, the maximum value drops to 0.5, but then remains constant around that value. In this example, the move from 2 to 3 antidiffusion iterations adds relatively little to the validity of the simulation, compared to the extra computational cost.
+We find that when we use anti-diffusive iterations, the diffusion is much smaller than in the case where we just apply the basic upstream scheme. We see this very clearly in Figure~\ref{fig:maxs}, where we have plotted the maximum value of the simulation as a function of the time step $N$. When we do not use anti-diffusion, the maximum value rapidly drops to 0, when we use 3 anti-diffusion iterations, the maximum value drops to 0.5, but then remains constant around that value. In this example, the move from 2 to 3 anti-diffusion iterations adds relatively little to the validity of the simulation, compared to the extra computational cost.
 
-In Figure \ref{fig:local} we see that without antidiffusion iterations, the smearing causes interactions between pockets which are not meant to interact. We start with three independent substance pockets. After 100 time steps, diffusion has caused the three peaks to merge (blue line), whereas antidiffusion (black line) preserves the local character of the pockets.
+In Figure~\ref{fig:local} we see that without anti-diffusion iterations, the smearing causes interactions between pockets which are not meant to interact. We start with three independent substance pockets. After 100 time steps, diffusion has caused the three peaks to merge (blue line), whereas anti-diffusion (black line) preserves the local character of the pockets.
 
 
 
-\begin{figure}
+\begin{figure}[htp]
 \centering
  \includegraphics[width=0.8\textwidth]{1dscreenshot.png}
  \caption{Matlab GUI for one dimensional case. We can set the velocity vector $u$, the initial condition $\psi^0$ and a range of other parameters.}
  \label{fig:1dgui}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[htp]
 \centering
  \includegraphics[width=0.8\textwidth]{maxs}
- \caption{Maximum value in the simulation when running with 0, 1, 2 or 3 antidiffusive iterations.}
+ \caption{Maximum value in the simulation when running with 0, 1, 2 or 3 anti-diffusive iterations.}
  \label{fig:maxs}
 \end{figure}
 
 
-\begin{figure}
+\begin{figure}[htp]
 \centering
  \includegraphics[width=0.8\textwidth]{../presentation/animation/peaks-eps-converted-to.pdf}
  \caption{Interactions between neighboring pockets.}
- \label{fig:1ocal}
+\label{fig:local}
 \end{figure}
 
 \subsubsection{Results in two dimensions}
 
 As we have seen in Section \ref{sec:implementation}, we can implement Smolarkiewicz' scheme in two dimensions as well as in one dimension. As for the one dimensional simulations, we have built a Matlab GUI (Figure \ref{fig:2dgui}). We will show the results of a rotating cone simulation in two dimensions. The cone starts at $(25\Delta x, 75\Delta y)$ and rotates around the center $(50 \Delta x, 50 \Delta y)$ in a $100 \Delta x \times 100 \Delta y$ grid. The initial cone has a maximum value of 3.87. The scheme is stable with $\Delta x = \Delta y = 1$ and $\Delta t = 0.1$. With an angular velocity of $\omega = 0.1$, the velocity components are $u=-\omega(y-y_0)$ and $v=\omega(x-x_0)$, where $(x_0,y_0)$ is the center $(50 \Delta x, 50 \Delta y)$. These parameters are the same as in \cite{smolarki}. One full rotation around the center is equivalent to 628 time steps.
 
-Again, it is interesting to take a look at the antidiffusion vectors (Figure \ref{fig:antivec2d}). On the left, we have the initial condition, the cone around $(25\Delta x, 75\Delta y)$. In the middle we have the vertical antidiffusion velocity vector, to the right we have the horizontal antidiffusion velocity vector. From the antidiffusion vectors we see that this cone will move counterclockwise. Note that these figures are very similar to Figure \ref{fig:antivec}.
+Again, it is interesting to take a look at the anti-diffusion vectors (Figure \ref{fig:antivec2d}). On the left, we have the initial condition, the cone around $(25\Delta x, 75\Delta y)$. In the middle we have the vertical anti-diffusion velocity vector, to the right we have the horizontal anti-diffusion velocity vector. From the anti-diffusion vectors we see that this cone will move counterclockwise. Note that these figures are very similar to Figure \ref{fig:antivec}.
 
-If we take a look at the simulation after one full rotation (Figure \ref{fig:rotcone}, we see that there is almost nothing left of the cone when we don't use antidiffusive iterations. If we do however use two antidiffusive iterations, the cone preserves its shape quite well, thus showing results similar to those in Figure \ref{fig:maxs}.
+If we take a look at the simulation after one full rotation (Figure \ref{fig:rotcone}, we see that there is almost nothing left of the cone when we don't use anti-diffusive iterations. If we do however use two anti-diffusive iterations, the cone preserves its shape quite well, thus showing results similar to those in Figure \ref{fig:maxs}.
 
 \begin{figure}
 \centering
@@ -341,7 +340,7 @@ If we take a look at the simulation after one full rotation (Figure \ref{fig:rot
 \begin{figure}
 \centering
  \includegraphics[width=\textwidth]{../presentation/ad2d.pdf}
-\caption{Antidiffusion vector in two dimensions}
+\caption{Anti-diffusion vector in two dimensions}
 \label{fig:antivec2d}
 \end{figure}
 
@@ -349,7 +348,7 @@ If we take a look at the simulation after one full rotation (Figure \ref{fig:rot
 \begin{figure}
 \centering
  \includegraphics[width=\textwidth]{../presentation/animation2/anim-64}
-\caption{Rotating cone simulation after one full rotation. No antidiffusion (left) and two antidiffusive iterations (right).}
+\caption{Rotating cone simulation after one full rotation. No anti-diffusion (left) and two anti-diffusive iterations (right).}
 \label{fig:rotcone}
 \end{figure}
 
@@ -374,20 +373,21 @@ Another example is the spherical geodesic grids used by Lipscomb and Ringler in 
 \end{figure}
 
 \subsection{Multidimensional Positive Definite Advection Transport Algorithm}
-Smolarkiewicz' himself is also still active in the development of the Multidimensional Positive Definite Advection Transport Algorithm (MPDATA), a multi-dimensional generalization of the origal approach by Smolarkiewicz described in this rapport \cite{mpdata}. This finite-difference method is still in wide use, and recently the transition to finite-volume has been made. MPDATA evolved and expanded over time; according to Smolarkiewicz (2005)
+Smolarkiewicz' himself is also still active in the development of the Multidimensional Positive Definite Advection Transport Algorithm (MPDATA), a multi-dimensional generalization of the original approach by Smolarkiewicz described in this rapport \cite{mpdata}. This finite-difference method is still in wide use, and recently the transition to finite-volume has been made. MPDATA evolved and expanded over time; according to Smolarkiewicz (2005)
 \begin{quotation}
 [...] MPDATA evolved from an advection scheme into a class of generalized transport algorithms that expand beyond advective transport to alternate PDEs and complete fluid models with a wide range of underlying governing equations.
 \end{quotation}
 
+\clearpage
 \subsection{Schemes without diffusion}
-There are also schemes that have no diffusion. An example of such a scheme is a fully Lagrangian Advection Scheme. As opposed to an Eulerian fixed grid, Lagrangian schemes use a grid that moves with the flow. That means that the derivatives are calclaed in the Lagrangian frame of reference since the advection equation can best be described in a Lagrangian frame. The two key components of a Lagrangian scheme are a method to follow the characteristics, and a method to view the solution on a Eulerian grid. There are two different kinds of Lagrangian schemes: in a fully Lagrangian scheme the grid is attached to, and moves with, the flow, and needs typically to be remeshed after a finited number of steps, there are however also fully Lagrangian schemes that don't need to be remeshed \cite{nodif}.
+There are also schemes that have no diffusion. An example of such a scheme is a fully Lagrangian Advection Scheme. As opposed to an Eulerian fixed grid, Lagrangian schemes use a grid that moves with the flow. That means that the derivatives are calculated in the Lagrangian frame of reference since the advection equation can best be described in a Lagrangian frame. The two key components of a Lagrangian scheme are a method to follow the characteristics, and a method to view the solution on a Eulerian grid. There are two different kinds of Lagrangian schemes: in a fully Lagrangian scheme the grid is attached to, and moves with, the flow, and needs typically to be re-meshed after a finite number of steps, there are however also fully Lagrangian schemes that don't need to be re-meshed \cite{nodif}.
 
 \section{Conclusion}
+The advection equation is important in many areas of climate modeling. Because diffusion is a threat to reliable advection simulation, it is important to develop anti-diffusion techniques that are both efficient and accurate. Smolarkiewicz' iterative approach, later generalized into MPDATA, is such a technique; since it iterative in nature it is fairly straightforward to implement and in reasonable computation time it is as accurate as some of the more complex hybrid schemes.
 
+For even more realistic and reliable results the existing techniques need still to be improved. Examples of some advanced grids that were introduced are the reduced grid \cite{spee} and the spherical hexagonal-pentagonal grid \cite{lipscomb}. MPDATA, the multi-dimensional generalization of Smolarkiewicz' scheme has also been expanded and improved to cover generalized transport algorithms and complete fluid models with a wide range of underlying governing equations. Fortunately there are also schemes, such as the fully Lagrangian schemes, that do not have diffusion at all.
 
-
-
-
+Despite the existing efficient schemes it is still necessary to search for improvements to be able to model climate more accurately.
 
 \bibliographystyle{plain}
 \bibliography{report}
